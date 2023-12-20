@@ -10,13 +10,7 @@ public class EnterPoint : MonoBehaviour
 {
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
-    
-    //привет я!
-
-    /*/
-     * bcfbv
-     * dv
-     /*/ 
+    private float _timeScale = 5;
     void Start()
     {
         _settings.LoadPrefabs();

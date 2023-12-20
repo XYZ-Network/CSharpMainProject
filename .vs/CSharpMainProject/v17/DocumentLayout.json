@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\user\\CSharpMainProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|c:\\users\\user\\csharpmainproject\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|c:\\users\\user\\csharpmainproject\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,36 +14,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BotController.cs",
-              "DocumentMoniker": "C:\\Users\\user\\CSharpMainProject\\Assets\\Scripts\\Controller\\BotController.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
-              "ToolTip": "C:\\Users\\user\\CSharpMainProject\\Assets\\Scripts\\Controller\\BotController.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-12-20T11:46:13.959Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "EnterPoint.cs",
               "DocumentMoniker": "C:\\Users\\user\\CSharpMainProject\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
               "ToolTip": "C:\\Users\\user\\CSharpMainProject\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2023-12-20T11:32:29.24Z"
+              "WhenOpened": "2023-12-20T11:32:29.24Z",
+              "EditorCaption": ""
             }
           ]
         }
