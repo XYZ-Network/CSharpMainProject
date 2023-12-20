@@ -11,6 +11,7 @@ public class EnterPoint : MonoBehaviour
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
     
+    // just a small change
     void Start()
     {
         _settings.LoadPrefabs();
