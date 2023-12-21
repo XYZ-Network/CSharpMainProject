@@ -7,6 +7,7 @@ using Model.Config;
 using UnityEngine;
 using Utilities;
 
+// Тестовое изменение 
 namespace Controller
 {
     public class BotController
