@@ -14,7 +14,7 @@ public class EnterPoint : MonoBehaviour
     
     void Start()
     {
-        Time.timeScale = _timeScale;
+        Time.timeScale = 5;
         _settings.LoadPrefabs();
         ServiceLocator.Register(_settings);
         
