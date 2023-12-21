@@ -8,6 +8,7 @@ using UnityEngine;
 using Utilities;
 
 // Тестовое изменение 
+// ABOBA ABOBA 
 namespace Controller
 {
     public class BotController
