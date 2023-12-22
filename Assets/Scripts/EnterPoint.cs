@@ -10,11 +10,11 @@ public class EnterPoint : MonoBehaviour
 {
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
-    private float _timeScale = 1;
+    private float _timeScale = 5;
     
     void Start()
     {
-        Time.timeScale = 5;
+        Time.timeScale = _timeScale;
         _settings.LoadPrefabs();
         ServiceLocator.Register(_settings);
         
