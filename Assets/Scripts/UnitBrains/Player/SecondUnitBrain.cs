@@ -7,18 +7,18 @@ namespace UnitBrains.Player
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
         public override string TargetUnitName => "Cobra Commando";
-        private const float OverheatTemperature = 2f;
+        private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
+        private bool _overheated;
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            var overheatTemperature = OverheatTemperature;
-            
+            float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////
+            ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
             ///////////////////////////////////////
@@ -29,39 +29,40 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            var result = GetReachableTargets();
+            List<Vector2Int> result = GetReachableTargets();
             while (result.Count > 1)
+            {
                 result.RemoveAt(result.Count - 1);
+            }
             return result;
             ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
         {
-            if (_temperature > OverheatTemperature)
-            {
-                if (_cooldownTime <= 0f)
-                    _cooldownTime = time + OverheatCooldown;
-
-                if (time > _cooldownTime)
+            if (_overheated)
+            {              
+                _cooldownTime += Time.deltaTime;
+                float t = _cooldownTime / (OverheatCooldown/10);
+                _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
+                if (t >= 1)
                 {
-                    _temperature = _cooldownTime = 0f;
+                    _cooldownTime = 0;
+                    _overheated = false;
                 }
-            }
-            else
-            {
-                _temperature = Mathf.Max(0f, _temperature - deltaTime);
             }
         }
 
         private int GetTemperature()
         {
-            return (int)_temperature;
+            if(_overheated) return (int) OverheatTemperature;
+            else return (int)_temperature;
         }
 
         private void IncreaseTemperature()
         {
-            _temperature += 0.5f;
+            _temperature += 1f;
+            if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }
 }
