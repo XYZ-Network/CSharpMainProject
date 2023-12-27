@@ -23,17 +23,12 @@ namespace Model.Runtime.Projectiles
             
             Pos = Vector2.Lerp(StartPoint, _target, t);
             
-            Height = 0f;
+            float localHeight = 0f;
             var totalDistance = _totalDistance;
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
+
+
             
-            
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
-            
+            Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
         }
