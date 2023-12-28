@@ -7,5 +7,7 @@ namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
+        protected float DistanceToOwnBase(Vector2Int fromPos) =>
+            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
     }
 }
