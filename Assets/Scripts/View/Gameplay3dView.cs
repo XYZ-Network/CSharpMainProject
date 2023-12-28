@@ -112,7 +112,7 @@ namespace View
 
         private void UpdateProjectile(IReadOnlyProjectile projModel, ProjectileView projView)
         {
-            projView.transform.position = ToWorldPosition(projModel.Pos, projModel.Height);
+            projView.transform.position = ToWorldPosition(projModel.Position, projModel.Height);
         }
 
         private void UpdateCamera()
