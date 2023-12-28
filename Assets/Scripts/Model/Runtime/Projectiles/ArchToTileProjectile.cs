@@ -29,12 +29,18 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            float multiplier = 0.6f;
+            float maxHeight = _totalDistance * multiplier;
+
+            localHeight = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
+
+            Debug.Log(localHeight);
 
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
