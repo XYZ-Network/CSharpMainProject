@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnitBrains.Player
 {
-    public class SecondUnitBrain : DefaultPlayerUnitBrain
+    public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
@@ -15,22 +15,17 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+            float temp = GetTemperature();
 
-            while (GenerateProjectiles)
+            if (GetTemperature() >= overheatTemperature)
             {
-                GetTemperature();
+                return;
+            }
+            for(var projectile = temp; projectile != temp; projectile++)
+            {
+                return;
+            }
 
-                if(GetTemperature() >= overheatTemperature) 
-                { 
-                    break
-                }
-            }
-            for(var projectile; projectile = GetTemperature)
-            {
-                var projectile = CreateProjectile(forTarget);
-                AddProjectileToList(projectile, intoList);
-            }
-            
         }
 
         protected override List<Vector2Int> SelectTargets()
