@@ -1,4 +1,5 @@
-﻿using Model.Runtime.ReadOnly;
+﻿using System;
+using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace Model.Runtime.Projectiles
@@ -59,6 +60,11 @@ namespace Model.Runtime.Projectiles
         {
             HadHit = true;
             HitTile = tile;
+        }
+
+        public static implicit operator BaseProjectile(float v)
+        {
+            throw new NotImplementedException();
         }
     }
 }
