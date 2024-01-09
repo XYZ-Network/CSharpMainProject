@@ -24,6 +24,11 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
         }
 
+        public override Vector2Int GetNextStep()
+        {
+            return base.GetNextStep();
+        }
+
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
