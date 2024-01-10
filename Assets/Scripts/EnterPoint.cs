@@ -14,6 +14,7 @@ public class EnterPoint : MonoBehaviour
 
 
     // recomment
+    private float _timeScale = 1;
     
     void Start()
     {
