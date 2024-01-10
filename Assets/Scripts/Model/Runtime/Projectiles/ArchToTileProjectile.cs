@@ -23,7 +23,6 @@ namespace Model.Runtime.Projectiles
             
             Pos = Vector2.Lerp(StartPoint, _target, t);
             
-            float localHeight = 0f;
             float totalDistance = _totalDistance;
 
             // maxHeight = 60% от totalDistance
