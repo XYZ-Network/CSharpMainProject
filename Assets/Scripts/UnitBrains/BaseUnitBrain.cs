@@ -177,14 +177,20 @@ namespace UnitBrains
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
 
+        protected bool IsTargetInRange(Vector2Int targetPos)
+        {
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var diff = targetPos - unit.Pos;
+            return diff.sqrMagnitude <= attackRangeSqr;
+        }
+
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
-                var diff = possibleTarget - unit.Pos;
-                if (!(diff.sqrMagnitude < attackRangeSqr))
+                if (!IsTargetInRange(possibleTarget))
                     continue;
                 
                 result.Add(possibleTarget);
