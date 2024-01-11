@@ -8,7 +8,7 @@ using UnityEngine;
 using Utilities;
 //hello!
 //How are you??
-//i'm fine
+//i'm fine, thank you. Are you?
 namespace Controller
 {
     public class BotController

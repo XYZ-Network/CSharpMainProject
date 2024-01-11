@@ -1,15 +1,10 @@
 ﻿<Properties StartupConfiguration="{9C9760F9-0F5E-4121-6CD5-F5B2D583EB30}|">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="6ae4784f-015a-4422-be81-b3a8bb5841f6" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Controller/BotController.cs">
     <Files>
       <File FileName="Assets/Scripts/EnterPoint.cs" />
-      <File FileName="Assets/Scripts/Controller/BotController.cs" Line="9" Column="19" />
+      <File FileName="Assets/Scripts/Controller/BotController.cs" Line="11" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -25,4 +20,9 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="26d4915b-e870-477b-a0ff-853499ca1e8c" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>
