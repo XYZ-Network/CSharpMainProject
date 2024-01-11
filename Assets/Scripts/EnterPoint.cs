@@ -12,6 +12,12 @@ public class EnterPoint : MonoBehaviour
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
     
+    // Это новый однострочный комментарий
+
+    /*/ 
+     * А это многострочный комментарий
+     * Он состоит из нескольких строк
+    /*/
     void Start()
     {
         Time.timeScale = _timeScale;
@@ -22,3 +28,4 @@ public class EnterPoint : MonoBehaviour
         ServiceLocator.Register(rootController);
     }
 }
+ 
