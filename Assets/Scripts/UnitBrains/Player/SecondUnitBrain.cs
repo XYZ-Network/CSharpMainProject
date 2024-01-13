@@ -38,16 +38,28 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            var closestEnemy = Vector2Int.zero;
+            float minDistanceToBase = float.MaxValue;
+
+            foreach (var enemy in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distanceToBase = DistanceToOwnBase(enemy);
+
+                if (distanceToBase < minDistanceToBase)
+                {
+                    minDistanceToBase = distanceToBase;
+                    closestEnemy = enemy;
+                }
             }
+
+            if (minDistanceToBase != float.MaxValue)
+            {
+                result.Clear();
+                result.Add(closestEnemy);
+            }
+            
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
