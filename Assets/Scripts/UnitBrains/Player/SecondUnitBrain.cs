@@ -53,11 +53,10 @@ namespace UnitBrains.Player
                 }
             }
 
-            if (minDistanceToBase != float.MaxValue)
-            {
-                result.Clear();
+            result.Clear();
+            
+            if (minDistanceToBase < float.MaxValue)
                 result.Add(closestEnemy);
-            }
             
             return result;
         }
