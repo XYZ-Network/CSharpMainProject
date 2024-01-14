@@ -1,0 +1,31 @@
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|">
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" Line="34" Column="27" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMyFork">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="Projectiles" expanded="True">
+                      <Node name="ArchToTileProjectile.cs" selected="True" />
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e4e715b4-707a-4768-9db6-e7663e3660cd" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
