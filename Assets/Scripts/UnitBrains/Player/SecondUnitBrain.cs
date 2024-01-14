@@ -20,7 +20,7 @@ namespace UnitBrains.Player
 
             // Получаем текущую температуру и проверяем на перегрев. Если перегреты, завершаем выполнение метода return'ом
             int temperature = GetTemperature();
-            Debug.Log(temperature);
+            //Debug.Log(temperature);
 
             if (temperature >= overheatTemperature)
             {
@@ -34,7 +34,7 @@ namespace UnitBrains.Player
             for (int i = 0; i <= temperature; i++)
             {
 
-                Debug.Log("Выстрел " + i);
+                //Debug.Log("Выстрел " + i);
                 AddProjectileToList(projectile, intoList);
             }    
 
