@@ -20,7 +20,7 @@ namespace UnitBrains.Player
 
             // Получаем текущую температуру и проверяем на перегрев. Если перегреты, завершаем выполнение метода return'ом
             int temperature = GetTemperature();
-            Debug.Log(temperature);
+            //Debug.Log(temperature);
 
             if (temperature >= overheatTemperature)
             {
@@ -34,7 +34,7 @@ namespace UnitBrains.Player
             for (int i = 0; i <= temperature; i++)
             {
 
-                Debug.Log("Выстрел " + i);
+                //Debug.Log("Выстрел " + i);
                 AddProjectileToList(projectile, intoList);
             }    
 
@@ -48,16 +48,36 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
+            List<Vector2Int> resultsTarget = GetReachableTargets();
+
+            // Все действия по определению растоянию к цели следут производить,
+            // если цели присутствуют на поле
+            if (resultsTarget.Count > 0) 
+            { 
+                // Условная цель. Изначально задается с максимальными координатами.
+                Vector2Int currentTarget = new Vector2Int(int.MaxValue, int.MaxValue);
+
+                // Находим ближайший вражеский юнит и определяем его целью.
+                foreach (var resultTarget in resultsTarget)
+                {
+                    float currentTargetDistance = DistanceToOwnBase(currentTarget);
+                    float resultTargetDistance = DistanceToOwnBase(resultTarget);
+
+                    if (currentTargetDistance > resultTargetDistance)
+                    {
+                        currentTarget = resultTarget;
+                    }
+                }
+
+                // Очищаем первоначальныйрезультирующий список целей
+                resultsTarget.Clear();
+
+                // Добавляем ближайшую цель
+                resultsTarget.Add(currentTarget);
+
             }
-            return result;
-            ///////////////////////////////////////
+
+            return resultsTarget;
         }
 
         public override void Update(float deltaTime, float time)
