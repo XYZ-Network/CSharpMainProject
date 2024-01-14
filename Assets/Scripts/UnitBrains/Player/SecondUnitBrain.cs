@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -12,7 +13,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
+
+        protected void override GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             float temp = GetTemperature();
@@ -22,28 +24,45 @@ namespace UnitBrains.Player
                 return;
             }
             IncreaseTemperature();
-            
-            for(int i = 0; i <= temp; i++)
+
+            for (int i = 0; i <= temp; i++)
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
             }
 
         }
-
+        
+        public override Vector2Int GetNextStep()
+        {
+            return base.GetNextStep();
+        }
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+            
+
+            
             List<Vector2Int> result = GetReachableTargets();
+
+            int Max = int.MinValue;
+
+            foreach (Vector2Int i in result)
+            {
+                if (i > Max) Max = i;
+            }
+            result.Clear();
+            result.Add(Max);
+            return result;
+
             while (result.Count > 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
         }
+        
+
+        
 
         public override void Update(float deltaTime, float time)
         {
