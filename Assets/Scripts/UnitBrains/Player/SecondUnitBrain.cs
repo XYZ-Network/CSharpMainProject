@@ -50,31 +50,30 @@ namespace UnitBrains.Player
         {
             List<Vector2Int> resultsTarget = GetReachableTargets();
 
-            // Все действия по определению растоянию к цели следут производить,
-            // если цели присутствуют на поле
-            if (resultsTarget.Count > 0) 
-            { 
-                // Условная цель. Изначально задается с максимальными координатами.
-                Vector2Int currentTarget = new Vector2Int(int.MaxValue, int.MaxValue);
+            // Локальная переменная, содержащая ссылку на условную цель.
+            Vector2Int currentTarget = Vector2Int.zero;
+            // Локальная переменная, с значением минимального растояния.
+            float minDistance = float.MaxValue; 
 
-                // Находим ближайший вражеский юнит и определяем его целью.
-                foreach (var resultTarget in resultsTarget)
+            // Находим ближайший вражеский юнит и определяем его целью.
+            foreach (var resultTarget in resultsTarget)
+            {
+                float resultTargetDistance = DistanceToOwnBase(resultTarget);
+
+                if (resultTargetDistance < minDistance)
                 {
-                    float currentTargetDistance = DistanceToOwnBase(currentTarget);
-                    float resultTargetDistance = DistanceToOwnBase(resultTarget);
-
-                    if (currentTargetDistance > resultTargetDistance)
-                    {
-                        currentTarget = resultTarget;
-                    }
+                    currentTarget = resultTarget;
+                    minDistance = resultTargetDistance;
                 }
+            }
 
-                // Очищаем первоначальныйрезультирующий список целей
-                resultsTarget.Clear();
+            // Очищаем первоначальныйрезультирующий список целей
+            resultsTarget.Clear();
 
-                // Добавляем ближайшую цель
+            // Записываем цель в результирующий список целей, если такая была найдена.
+            if (minDistance < float.MaxValue)
+            {
                 resultsTarget.Add(currentTarget);
-
             }
 
             return resultsTarget;
