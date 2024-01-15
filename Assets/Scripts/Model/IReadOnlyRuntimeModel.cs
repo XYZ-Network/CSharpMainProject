@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace Model
 {
+
+
+    /*/
+     Мама сыну: – Петя, прекрати крутиться, а то я прибью гвоздями и вторую ногу.
+
+     /*/
     public interface IReadOnlyRuntimeModel
     {
         IReadOnlyMap RoMap { get; }
