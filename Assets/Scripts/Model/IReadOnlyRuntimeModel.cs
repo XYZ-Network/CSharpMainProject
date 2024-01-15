@@ -9,7 +9,7 @@ namespace Model
 
     /*/
      Мама сыну: – Петя, прекрати крутиться, а то я прибью гвоздями и вторую ногу.
-
+    f
      /*/
     public interface IReadOnlyRuntimeModel
     {
