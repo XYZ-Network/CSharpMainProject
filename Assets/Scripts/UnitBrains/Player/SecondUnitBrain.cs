@@ -24,25 +24,37 @@ namespace UnitBrains.Player
 
             IncreaseTemperature();
 
-            for (int i = 0;  i <= temperature; i++)
+            for (int i = 0; i <= temperature; i++)
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
-            } 
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+
             List<Vector2Int> result = GetReachableTargets();
+            Vector2Int distanceBasa = Vector2Int.zero;
+            float min = float.MaxValue;
             while (result.Count > 1)
             {
+                foreach (Vector2Int distance in result)
+                {
+                    float distanceToBase = DistanceToOwnBase(distance);
+                    if (distanceToBase < min)
+                    {
+                        distanceBasa = distance;
+                    }
+                }
+                result.Clear();
+                result.Add(distanceBasa);
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
+
+ 
+
         }
 
         public override void Update(float deltaTime, float time)
