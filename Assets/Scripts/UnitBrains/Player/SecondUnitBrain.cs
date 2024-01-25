@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
+using Model;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -13,7 +16,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private List<Vector2Int> _outOfRangeTargets = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -33,12 +37,19 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (_outOfRangeTargets.Any())
+            {
+                var target = CalcNextStepTowards(_outOfRangeTargets[_outOfRangeTargets.Count - 1]);
+                return target;
+            }
+
+            return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
+            #region Prev. version
+            /*List<Vector2Int> result = GetReachableTargets();
 
             if (result.Any())
             {
@@ -57,9 +68,51 @@ namespace UnitBrains.Player
                 result.Clear();
                 result.Add(target);
             }
-            
 
+            return result;*/
+            #endregion
+            List<Vector2Int> result = new List<Vector2Int>();
+            List<Vector2Int> allTargets = GetAllTargets().ToList();
+            List<Vector2Int> reachables = GetReachableTargets();
+
+            if(allTargets.Any())
+            {
+                Vector2Int target = GetMostWantedTarget(allTargets);
+
+                if (reachables.Contains(target))
+                {
+                    result.Add(target);
+                    return result;
+                }
+                else
+                {
+                    _outOfRangeTargets.Add(target);
+                }
+            }
+            else
+            {
+                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            }
+            
             return result;
+        }
+
+        private Vector2Int GetMostWantedTarget(List<Vector2Int> enemyUnits)
+        {
+            Vector2Int target = new Vector2Int();
+            float minDistanceToBase = float.MaxValue;
+
+            foreach (var unit in enemyUnits)
+            {
+                float currentElementDistance = DistanceToOwnBase(unit);
+                if (currentElementDistance < minDistanceToBase)
+                {
+                    minDistanceToBase = currentElementDistance;
+                    target = unit;
+                }
+            }
+
+            return target;
         }
 
         public override void Update(float deltaTime, float time)
