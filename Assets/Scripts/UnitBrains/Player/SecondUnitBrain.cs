@@ -59,12 +59,13 @@ namespace UnitBrains.Player
             foreach (var item in g)
             {
                 var a = result[item];
+                Vector2Int x = result[item];
                 float dlinna = DistanceToOwnBase(a);
                 if (dlinna < blizko)
                 {
                     blizko = dlinna;
                     result.Clear();
-                    result.Add(blizko);
+                    result.Add(x);
                 }
                 
             }
