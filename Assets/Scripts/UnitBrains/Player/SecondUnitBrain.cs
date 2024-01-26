@@ -52,7 +52,22 @@ namespace UnitBrains.Player
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
+            int[] g= new int[result.Count];
+            float blizko = float.MaxValue;
+
+
+            foreach (var item in g)
+            {
+                var a = result[item];
+                float dlinna = DistanceToOwnBase(a);
+                if (dlinna < blizko)
+                {
+                    blizko = dlinna;
+                    result.Clear();
+                    result.Add(blizko);
+                }
+                
+            }
         }
 
         public override void Update(float deltaTime, float time)
