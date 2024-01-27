@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using Model;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -12,7 +16,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -35,22 +39,41 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
-        }
+            if (outOfReachTargets.Any())
+            {
+                var target = CalcNextStepTowards(outOfReachTargets[outOfReachTargets.Count - 1]);
+                return target;
+            }
 
+            return unit.Pos;
+        }
+        List<Vector2Int> outOfReachTargets = new List<Vector2Int>();
         protected override List<Vector2Int> SelectTargets()
         {
-            
-            List<Vector2Int> result = GetReachableTargets();
+
+            List<Vector2Int> result = new List<Vector2Int>();
             float Min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
 
-            foreach (Vector2Int i in result) 
+            foreach (Vector2Int i in GetAllTargets())
             {
+
+                if (!IsTargetInRange(bestTarget))
+                {
+                    result.Add(bestTarget);
+                }
+                if(IsTargetInRange(bestTarget))
+                {
+                    outOfReachTargets.Add(bestTarget);
+                }
+                else
+                {
+                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+                }
                 float distance = DistanceToOwnBase(i);
 
-                if (distance < Min) 
-                { 
+                if (distance < Min)
+                {
                     Min = distance;
 
                     bestTarget = i;
@@ -58,7 +81,7 @@ namespace UnitBrains.Player
 
             }
             result.Clear();
-            result.Add(bestTarget);
+            if (Min < float.MaxValue) result.Add(bestTarget);
             return result;
         }
 
