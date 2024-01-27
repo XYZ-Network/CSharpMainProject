@@ -47,28 +47,23 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
-            int[] g= new int[result.Count];
+            
             float blizko = float.MaxValue;
+            Vector2Int best = Vector2Int.zero;
 
 
-            foreach (var item in g)
+            foreach (Vector2Int target in result)
             {
-                var a = result[item];
-                Vector2Int x = result[item];
-                float dlinna = DistanceToOwnBase(a);
+                float dlinna = DistanceToOwnBase(target);
                 if (dlinna < blizko)
                 {
                     blizko = dlinna;
-                    result.Clear();
-                    result.Add(x);
+                    best = target;
                 }
-                
             }
+                result.Clear();
+                result.Add(best);
+            return result;
         }
 
         public override void Update(float deltaTime, float time)
