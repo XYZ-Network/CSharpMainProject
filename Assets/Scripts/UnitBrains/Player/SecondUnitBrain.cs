@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -13,6 +14,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _unreachableTargets = new ();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -33,31 +35,44 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (SelectTargets().Any())
+                return unit.Pos;
+                
+            return CalcNextStepTowards(_unreachableTargets.First());
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
+            List<Vector2Int> result = new();
+            List<Vector2Int> allTargets = GetAllTargets().ToList();
             var closestEnemy = Vector2Int.zero;
-            float minDistanceToBase = float.MaxValue;
+            var minDistanceToBase = float.MaxValue;
 
-            foreach (var enemy in result)
+            if (allTargets.Any())
             {
-                float distanceToBase = DistanceToOwnBase(enemy);
-
-                if (distanceToBase < minDistanceToBase)
+                foreach (var enemy in allTargets)
                 {
-                    minDistanceToBase = distanceToBase;
-                    closestEnemy = enemy;
+                    float distanceToBase = DistanceToOwnBase(enemy);
+
+                    if (distanceToBase < minDistanceToBase)
+                    {
+                        minDistanceToBase = distanceToBase;
+                        closestEnemy = enemy;
+                    }
                 }
             }
+            else
+            {
+                if (IsPlayerUnitBrain)
+                    closestEnemy = runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+            }
+            
+            _unreachableTargets.Clear();
+            _unreachableTargets.Add(closestEnemy);
 
-            result.Clear();
-            
-            if (minDistanceToBase < float.MaxValue)
+            if (GetReachableTargets().Contains(closestEnemy))
                 result.Add(closestEnemy);
-            
+
             return result;
         }
 
