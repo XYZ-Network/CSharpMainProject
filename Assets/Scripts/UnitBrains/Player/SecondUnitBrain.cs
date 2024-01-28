@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -12,11 +13,11 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> outOfTargets = new List<Vector2Int>();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-
 
             // Получаем текущую температуру и проверяем на перегрев. Если перегреты, завершаем выполнение метода return'ом
             int temperature = GetTemperature();
@@ -43,12 +44,18 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (outOfTargets.Any())
+            {
+                var outOfTargetsCount = outOfTargets.Count - 1;
+                var target = CalcNextStepTowards(outOfTargets[outOfTargetsCount]);
+                return target;
+            }
+            return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> resultsTarget = GetReachableTargets();
+            List<Vector2Int> resultsTarget = new ();
 
             // Локальная переменная, содержащая ссылку на условную цель.
             Vector2Int currentTarget = Vector2Int.zero;
@@ -56,19 +63,27 @@ namespace UnitBrains.Player
             float minDistance = float.MaxValue; 
 
             // Находим ближайший вражеский юнит и определяем его целью.
-            foreach (var resultTarget in resultsTarget)
+            foreach (var resultTarget in GetAllTargets())
             {
                 float resultTargetDistance = DistanceToOwnBase(resultTarget);
+
+                if (IsTargetInRange(currentTarget))
+                {
+                    outOfTargets.Add(currentTarget);
+                }
+                else
+                {
+                    resultsTarget.Add(currentTarget);
+                    resultsTarget.Add(runtimeModel.RoMap.Bases[Model.RuntimeModel.BotPlayerId]);
+                }
 
                 if (resultTargetDistance < minDistance)
                 {
                     currentTarget = resultTarget;
                     minDistance = resultTargetDistance;
                 }
-            }
 
-            // Очищаем первоначальныйрезультирующий список целей
-            resultsTarget.Clear();
+            }
 
             // Записываем цель в результирующий список целей, если такая была найдена.
             if (minDistance < float.MaxValue)
