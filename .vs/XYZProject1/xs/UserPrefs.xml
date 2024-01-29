@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{B1FA95B3-3DAE-4D73-F23D-08C51039DA94}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Controller/BotController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/EnterPoint.cs">
     <Files>
-      <File FileName="Assets/Scripts/EnterPoint.cs" />
-      <File FileName="Assets/Scripts/Controller/BotController.cs" Line="14" Column="11" />
+      <File FileName="Assets/Scripts/EnterPoint.cs" Line="12" Column="51" />
+      <File FileName="Assets/Scripts/Controller/BotController.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
