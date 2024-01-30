@@ -18,28 +18,20 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
 
-            GetTemperature();
-            if (_temperature>=overheatTemperature) 
-            {
-                return;
-            }
-            else 
-            {
-                IncreaseTemperature();
-                
-            }
+            float temp=GetTemperature();
+            if (temp >= overheatTemperature) return;
 
-
-            int i = 1;
-            int t=(int)_temperature;
-            while (i <= t)
+            IncreaseTemperature();
+           
+                    
+            for (int i = 0; i <=temp; i++)
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
-                i++;
-            };
-           
+               
+            }
         }
+        
 
         public override Vector2Int GetNextStep()
         {
