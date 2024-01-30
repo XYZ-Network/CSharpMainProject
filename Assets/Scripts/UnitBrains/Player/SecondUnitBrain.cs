@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -16,12 +17,28 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            GetTemperature();
+            if (_temperature>=overheatTemperature) 
+            {
+                return;
+            }
+            else 
+            {
+                IncreaseTemperature();
+                
+            }
+
+
+            int i = 1;
+            int t=(int)_temperature;
+            while (i <= t)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+                i++;
+            };
+           
         }
 
         public override Vector2Int GetNextStep()
