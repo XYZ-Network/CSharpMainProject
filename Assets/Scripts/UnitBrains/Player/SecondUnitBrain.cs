@@ -44,13 +44,29 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            if (outOfTargets.Any())
+            List<Vector2Int> targets = new List<Vector2Int>();
+
+            Vector2Int positionToMove = new Vector2Int();
+
+            var targetID = IsPlayerUnitBrain ? Model.RuntimeModel.BotPlayerId : Model.RuntimeModel.PlayerId;
+            var targetHomeBase = runtimeModel.RoMap.Bases[targetID];
+
+            if (!targets.Any())
             {
-                var outOfTargetsCount = outOfTargets.Count - 1;
-                var target = CalcNextStepTowards(outOfTargets[outOfTargetsCount]);
-                return target;
+                positionToMove = targetHomeBase;
             }
-            return unit.Pos;
+
+            foreach (var target in targets)
+            {
+                if (target != null & !IsTargetInRange(target))
+                {
+                    positionToMove = target;
+                }
+            }
+
+            var result = CalcNextStepTowards(positionToMove);
+
+            return result;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -67,28 +83,31 @@ namespace UnitBrains.Player
             {
                 float resultTargetDistance = DistanceToOwnBase(resultTarget);
 
-                if (IsTargetInRange(currentTarget))
-                {
-                    outOfTargets.Add(currentTarget);
-                }
-                else
-                {
-                    resultsTarget.Add(currentTarget);
-                    resultsTarget.Add(runtimeModel.RoMap.Bases[Model.RuntimeModel.BotPlayerId]);
-                }
-
                 if (resultTargetDistance < minDistance)
                 {
                     currentTarget = resultTarget;
                     minDistance = resultTargetDistance;
                 }
 
+
             }
+
+            outOfTargets.Clear();
 
             // Записываем цель в результирующий список целей, если такая была найдена.
             if (minDistance < float.MaxValue)
             {
-                resultsTarget.Add(currentTarget);
+                outOfTargets.Add(currentTarget);
+
+                if (IsTargetInRange(currentTarget))
+                {
+                    resultsTarget.Add(currentTarget);
+                }
+
+            }
+            else if (IsPlayerUnitBrain)
+            {
+                outOfTargets.Add(runtimeModel.RoMap.Bases[Model.RuntimeModel.BotPlayerId]);
             }
 
             return resultsTarget;
