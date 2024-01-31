@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model.Runtime;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -7,8 +8,8 @@ namespace UnitBrains.Player
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
         public override string TargetUnitName => "Cobra Commando";
-        private const float OverheatTemperature = 3f;
-        private const float OverheatCooldown = 2f;
+        private const float OverheatTemperature =6f;
+        private const float OverheatCooldown = 0f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
@@ -18,10 +19,36 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            ///////////////////////////////////////    
+            ///
+           if (_temperature > 6f)
+            {
+                GetTemperature();
+            }
+
+            for (float max = overheatTemperature; GetTemperature() <= max;)
+            {
+
+                IncreaseTemperature();
+
+
+                if (_temperature > max)
+                {
+
+                    GetTemperature();
+
+
+                }
+               
+
+
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                
+                    max -= 2;
+
+                ///////////////////////////////////////
+            }
         }
 
         public override Vector2Int GetNextStep()
