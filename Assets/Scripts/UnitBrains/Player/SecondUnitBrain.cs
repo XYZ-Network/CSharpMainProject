@@ -16,7 +16,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-
+        List<Vector2Int> outOfReachTargets = new List<Vector2Int>();
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -47,7 +47,7 @@ namespace UnitBrains.Player
 
             return unit.Pos;
         }
-        List<Vector2Int> outOfReachTargets = new List<Vector2Int>();
+        
         protected override List<Vector2Int> SelectTargets()
         {
 
@@ -57,21 +57,8 @@ namespace UnitBrains.Player
 
             foreach (Vector2Int i in GetAllTargets())
             {
-
-                if (!IsTargetInRange(bestTarget))
-                {
-                    result.Add(bestTarget);
-                }
-                if(IsTargetInRange(bestTarget))
-                {
-                    outOfReachTargets.Add(bestTarget);
-                }
-                else
-                {
-                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-                }
                 float distance = DistanceToOwnBase(i);
-
+                                
                 if (distance < Min)
                 {
                     Min = distance;
@@ -80,8 +67,21 @@ namespace UnitBrains.Player
                 }
 
             }
-            result.Clear();
-            if (Min < float.MaxValue) result.Add(bestTarget);
+            //result.Clear();
+            //if (Min < float.MaxValue) result.Add(bestTarget);
+            outOfReachTargets.Clear();
+            if(Min < float.MaxValue)
+            {
+                outOfReachTargets.Add(bestTarget);
+                if(IsTargetInRange(bestTarget))
+                {
+                    result.Add(bestTarget);
+                }
+            }
+            else
+            {
+                if(IsPlayerUnitBrain) outOfReachTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            }
             return result;
         }
 
