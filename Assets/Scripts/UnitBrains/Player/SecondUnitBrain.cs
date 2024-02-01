@@ -41,8 +41,16 @@ namespace UnitBrains.Player
         {
             if (outOfReachTargets.Any())
             {
-                var target = CalcNextStepTowards(outOfReachTargets[outOfReachTargets.Count - 1]);
-                return target;
+                if (IsTargetInRange(outOfReachTargets[0]))
+                {
+                    return unit.Pos;
+                }
+                else
+                {
+                    var target = CalcNextStepTowards(outOfReachTargets[outOfReachTargets.Count - 1]);
+                    return target;
+                }
+                
             }
 
             return unit.Pos;
