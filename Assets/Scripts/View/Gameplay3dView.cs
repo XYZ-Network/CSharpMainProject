@@ -22,6 +22,11 @@ namespace View
         private readonly HashSet<IReadOnlyUnit> _existingUnits = new();
         private readonly HashSet<IReadOnlyProjectile> _existingProjectiles = new();
         
+        public static Vector3 ToWorldPosition(Vector2 cellPos, float height = 0f)
+        {
+            return new Vector3(2f * cellPos.x, 2f * height, 2f * cellPos.y);
+        }
+        
         public void Reinitialize()
         {
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
@@ -174,11 +179,6 @@ namespace View
                     _tiles.Add(tileView);
                 }
             }
-        }
-        
-        private Vector3 ToWorldPosition(Vector2 pos, float height = 0f)
-        {
-            return new Vector3(2f * pos.x, 2f * height, 2f * pos.y);
         }
         
         private void Clear()
