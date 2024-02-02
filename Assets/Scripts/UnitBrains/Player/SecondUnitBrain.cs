@@ -44,29 +44,25 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            List<Vector2Int> targets = new List<Vector2Int>();
-
             Vector2Int positionToMove = new Vector2Int();
 
-            var targetID = IsPlayerUnitBrain ? Model.RuntimeModel.BotPlayerId : Model.RuntimeModel.PlayerId;
-            var targetHomeBase = runtimeModel.RoMap.Bases[targetID];
-
-            if (!targets.Any())
+            if (outOfTargets.Any())
             {
-                positionToMove = targetHomeBase;
+                positionToMove = outOfTargets[0];
+            }
+            else
+            {
+                positionToMove = unit.Pos;
             }
 
-            foreach (var target in targets)
+            if (IsTargetInRange(positionToMove))
             {
-                if (target != null & !IsTargetInRange(target))
-                {
-                    positionToMove = target;
-                }
+                return unit.Pos;
             }
-
-            var result = CalcNextStepTowards(positionToMove);
-
-            return result;
+            else
+            {
+                return CalcNextStepTowards(positionToMove);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
