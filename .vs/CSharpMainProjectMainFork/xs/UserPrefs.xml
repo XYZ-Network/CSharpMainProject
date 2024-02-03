@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs">
     <Files>
-      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="92" Column="14" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="66" Column="52" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -28,7 +28,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="ebbde97c-6c93-4855-8d40-6ab7e472d20a" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="b86ce10b-34c8-49cd-83d2-bb9cc8542f15" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

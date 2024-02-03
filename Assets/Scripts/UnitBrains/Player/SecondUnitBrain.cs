@@ -44,7 +44,7 @@ namespace UnitBrains.Player
             Vector2Int minTarget = Vector2Int.zero;
             float min = float.MaxValue;
 
-            List<Vector2Int> result = GetAllTargets().ToList();
+            List<Vector2Int> result = new List<Vector2Int>();
 
             if (result.Count > 0) //проверяем, есть ли хотя бы одна цель и если есть - определяем ближайшую
             {
@@ -55,17 +55,21 @@ namespace UnitBrains.Player
 
                     if (DistanceToBase < min)
                     {
+                        min = DistanceToBase;
                         minTarget = target;
-
-                        if (IsTargetInRange(target)) //если цель в зоне досягаемости - добавляем в result
-                        {
-                            result.Add(minTarget);
-                        }
-
-                        outOfRangeTargets.Add(target); //если цель вне зоны досягаемости, записываем ее в список outOfRangeTargets
                     }
                 }
-                
+
+            outOfRangeTargets.Clear();
+
+            if (min < float.MaxValue)
+                {
+                    if (IsTargetInRange(minTarget))
+                    {
+                        result.Add(minTarget);
+                    }
+                    outOfRangeTargets.Add(minTarget);
+                }
 
             }
             else //добавляем в цели базу противника если целей нету в списке всех целей
@@ -81,32 +85,16 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
+            Vector2Int targetPos = outOfRangeTargets.Count > 0 ? outOfRangeTargets[0] : unit.Pos;
+
+            if (IsTargetInRange(targetPos))
             {
-                List<Vector2Int> targets = SelectTargets();
-
-                if (targets.Count > 0)
-                {
-                    foreach (Vector2Int targetPos in targets)
-                    {
-
-                        if (IsTargetInRange(targetPos))
-                        {
-                           
-                            return unit.Pos;
-                        }
-                        else
-                        {
-                            
-                            return CalcNextStepTowards(targetPos); // цель вне зоны досягаемости, вызываем метод для расчета следующего шага
-                        }
-                    }
-                }
-
-               
-                return unit.Pos;  // если целей нет, возвращаем текущую позицию юнита
+                return unit.Pos;
             }
-
-
+            else
+            {
+                return CalcNextStepTowards(targetPos);
+            }
         }
 
         public override void Update(float deltaTime, float time)
