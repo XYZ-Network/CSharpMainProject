@@ -22,7 +22,7 @@ namespace View
             _costText.text = unitConfig.Cost.ToString();
             
             if (_name != null)
-                _name.text = unitConfig.name;
+                _name.text = unitConfig.Name;
             _onClick = onClick;
         }
         
