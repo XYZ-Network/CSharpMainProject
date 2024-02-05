@@ -2,6 +2,7 @@
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -41,17 +42,35 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            float closestDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+
+            if (result.Count >= 1)
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (Vector2Int target in result)
+                {
+                    float distance = DistanceToOwnBase(target);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestTarget = target;
+                    }
+                }
+
+                Debug.Log(closestDistance);
+
+                if (result.Contains(closestTarget))
+                {
+                    result.Clear();
+                    result.Add(closestTarget);                   
+                }
             }
+
             return result;
-            ///////////////////////////////////////
         }
+
 
         public override void Update(float deltaTime, float time)
         {
