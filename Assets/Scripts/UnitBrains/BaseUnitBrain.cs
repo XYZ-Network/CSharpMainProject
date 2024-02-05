@@ -178,6 +178,13 @@ namespace UnitBrains
                 .Select(u => u.Pos)
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
+        
+        protected IEnumerable<Vector2Int> GetAllTargetsWithoutBase()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
+                .Select(u => u.Pos);
+        }
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {

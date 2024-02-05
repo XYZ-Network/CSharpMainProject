@@ -1,20 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model;
+using Model.Runtime;
 using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
+        private static int unitCounter = 0;
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
+        private const int _maxTargetsForSelection = 3;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private int _unitID;
         private List<Vector2Int> _unreachableTargets = new ();
+        
+        public SecondUnitBrain()
+        {
+            _unitID = unitCounter++;
+            Debug.Log(_unitID);
+        }
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -44,34 +56,30 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> result = new();
-            List<Vector2Int> allTargets = GetAllTargets().ToList();
-            var closestEnemy = Vector2Int.zero;
-            var minDistanceToBase = float.MaxValue;
+            List<Vector2Int> allTargetsPositions = GetAllTargetsWithoutBase().ToList();
+            
+            Vector2Int closestEnemyPosition;
 
-            if (allTargets.Any())
+            if (allTargetsPositions.Any())
             {
-                foreach (var enemy in allTargets)
-                {
-                    float distanceToBase = DistanceToOwnBase(enemy);
+                SortByDistanceToOwnBase(allTargetsPositions);
+                int enemyIndex;
 
-                    if (distanceToBase < minDistanceToBase)
-                    {
-                        minDistanceToBase = distanceToBase;
-                        closestEnemy = enemy;
-                    }
-                }
+                if (allTargetsPositions.Count > _maxTargetsForSelection)
+                    enemyIndex = (_unitID - 1) % _maxTargetsForSelection;
+                else
+                    enemyIndex = (_unitID - 1) % allTargetsPositions.Count;
+                
+                closestEnemyPosition = allTargetsPositions[enemyIndex];
             }
             else
-            {
-                if (IsPlayerUnitBrain)
-                    closestEnemy = runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
-            }
+                closestEnemyPosition = runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
             
             _unreachableTargets.Clear();
-            _unreachableTargets.Add(closestEnemy);
+            _unreachableTargets.Add(closestEnemyPosition);
 
-            if (GetReachableTargets().Contains(closestEnemy))
-                result.Add(closestEnemy);
+            if(IsTargetInRange(closestEnemyPosition))
+                result.Add(closestEnemyPosition);
 
             return result;
         }
