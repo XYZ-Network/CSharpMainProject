@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Model;
-using Model.Runtime;
 using Model.Runtime.Projectiles;
-using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -25,7 +22,6 @@ namespace UnitBrains.Player
         public SecondUnitBrain()
         {
             _unitID = unitCounter++;
-            Debug.Log(_unitID);
         }
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
