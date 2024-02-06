@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using Model;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -18,6 +20,19 @@ namespace UnitBrains.Player
         private bool _overheated;
         private List<Vector2Int> _outOfRangeTargets = new List<Vector2Int>();
 
+        private static int _unitIndexer = 0;
+        public int UnitID { get; private set; }
+        private const int MAXIMUM_TARGETS = 4;
+
+        public SecondUnitBrain()
+        {
+            if(GetAllPlayerUnits().ToList().Count == 0)
+                _unitIndexer = 0;
+            UnitID = _unitIndexer;
+            _unitIndexer++;
+        }
+
+        
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -71,13 +86,36 @@ namespace UnitBrains.Player
 
             return result;*/
             #endregion
+            #region Prev. Version
             List<Vector2Int> result = new List<Vector2Int>();
             List<Vector2Int> allTargets = GetAllTargets().ToList();
             List<Vector2Int> reachables = GetReachableTargets();
 
-            if(allTargets.Any())
+            if (allTargets.Count > 1)
             {
-                Vector2Int target = GetMostWantedTarget(allTargets);
+                allTargets.Remove(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            }
+
+            if (allTargets.Any())
+            {
+                Vector2Int target = new Vector2Int();
+                SortByDistanceToOwnBase(allTargets);
+
+                if (UnitID < MAXIMUM_TARGETS && UnitID < allTargets.Count)
+                {
+                    target = allTargets[UnitID];
+                }
+                else
+                {
+                    if (allTargets.Count <= MAXIMUM_TARGETS)
+                    {
+                        target = allTargets[allTargets.Count - 1];
+                    }
+                    else
+                    {
+                        target = allTargets[MAXIMUM_TARGETS];
+                    }
+                }
 
                 if (reachables.Contains(target))
                 {
@@ -89,12 +127,9 @@ namespace UnitBrains.Player
                     _outOfRangeTargets.Add(target);
                 }
             }
-            else
-            {
-                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-            }
-            
+
             return result;
+            #endregion
         }
 
         private Vector2Int GetMostWantedTarget(List<Vector2Int> enemyUnits)
