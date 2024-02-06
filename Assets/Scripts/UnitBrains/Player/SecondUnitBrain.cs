@@ -37,20 +37,20 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
+            List<Vector2Int> result = (List<Vector2Int>)GetAllTargets();
             int checkValue = int.MaxValue;
-            Vector2Int i = new Vector2Int(0,0);
+            Vector2Int bestTarget = new Vector2Int(0,0);
             foreach (var target in result)
             {
                 int distance = (int)DistanceToOwnBase(target);
                 if (distance < checkValue)
                 {
                     checkValue = distance;
-                    i = target;
+                    bestTarget = target;
                 }
             }
             result.Clear();
-            result.Add(i);
+            if(checkValue<float.MaxValue) result.Add(bestTarget);
             //while (result.Count > 1)
             //{
             //    result.RemoveAt(result.Count - 1);
