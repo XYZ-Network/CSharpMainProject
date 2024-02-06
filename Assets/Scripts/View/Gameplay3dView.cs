@@ -13,6 +13,7 @@ namespace View
     {
         private IReadOnlyRuntimeModel _runtimeModel;
         private Settings _settings;
+        private VFXView _vfxView;
         
         private readonly List<TileView> _tiles = new();
         private readonly Dictionary<IReadOnlyUnit, UnitView> _units = new();
@@ -22,10 +23,16 @@ namespace View
         private readonly HashSet<IReadOnlyUnit> _existingUnits = new();
         private readonly HashSet<IReadOnlyProjectile> _existingProjectiles = new();
         
+        public static Vector3 ToWorldPosition(Vector2 cellPos, float height = 0f)
+        {
+            return new Vector3(2f * cellPos.x, 2f * height, 2f * cellPos.y);
+        }
+        
         public void Reinitialize()
         {
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
             _settings = ServiceLocator.Get<Settings>();
+            _vfxView = ServiceLocator.Get<VFXView>();
             LoadPrefabsIfNeeded();
             
             Clear();
@@ -68,6 +75,7 @@ namespace View
                 var unitView = _units[unit];
                 _units.Remove(unit);
                 Destroy(unitView.gameObject);
+                _vfxView.PlayVFX(unit.Pos, VFXView.VFXType.UnitDestroyed);
             }
             
             _unitBuffer.Clear();
@@ -95,9 +103,11 @@ namespace View
             _projectileBuffer.AddRange(_projectile.Keys.Where(u => !_existingProjectiles.Contains(u)));
             foreach (var proj in _projectileBuffer)
             {
-                var unitView = _projectile[proj];
+                var projView = _projectile[proj];
                 _projectile.Remove(proj);
-                Destroy(unitView.gameObject);
+                Destroy(projView.gameObject);
+                _vfxView.PlayVFX(new Vector2Int((int)proj.Position.x, (int)proj.Position.y),
+                    VFXView.VFXType.UnitHit);
             }
 
             _projectileBuffer.Clear();
@@ -174,11 +184,6 @@ namespace View
                     _tiles.Add(tileView);
                 }
             }
-        }
-        
-        private Vector3 ToWorldPosition(Vector2 pos, float height = 0f)
-        {
-            return new Vector3(2f * pos.x, 2f * height, 2f * pos.y);
         }
         
         private void Clear()

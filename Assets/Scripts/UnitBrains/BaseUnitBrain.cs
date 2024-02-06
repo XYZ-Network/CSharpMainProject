@@ -3,6 +3,7 @@ using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
 using Unit = Model.Runtime.Unit;
@@ -13,6 +14,7 @@ namespace UnitBrains
     {
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
+        public virtual BaseUnitPath ActivePath => null;
         
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
