@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -34,7 +35,24 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            List<Vector2Int> targets = SelectTargets();
+            if (targets.Count > 0)
+            {
+                foreach (Vector2Int target in targets)
+                {
+
+                    if (IsTargetInRange(target))
+                    {
+
+                        return unit.Pos;
+                    }
+                    else
+                    {
+                        return CalcNextStepTowards(target);
+                    }
+                }
+            }
+            return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -42,10 +60,11 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = (List<Vector2Int>)GetAllTargets();
+            List<Vector2Int> unReachableTargets = new List<Vector2Int>();
+            List<Vector2Int> result = new List<Vector2Int>();
             int checkValue = int.MaxValue;
             Vector2Int bestTarget = new Vector2Int(0,0);
-            foreach (var target in result)
+            foreach (var target in GetAllTargets())
             {
                 int distance = (int)DistanceToOwnBase(target);
                 if (distance < checkValue)
@@ -53,9 +72,21 @@ namespace UnitBrains.Player
                     checkValue = distance;
                     bestTarget = target;
                 }
+                if (IsTargetInRange(target))
+                {
+                    result.Add(target);
+                }
+                else if(!IsTargetInRange(target)) 
+                {
+                    unReachableTargets.Add(target);
+                }
+                else
+                {
+                    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+                }
             }
             result.Clear();
-            if(checkValue<float.MaxValue) result.Add(bestTarget);
+            if(checkValue < int.MaxValue) result.Add(bestTarget);
             //while (result.Count > 1)
             //{
             //    result.RemoveAt(result.Count - 1);
