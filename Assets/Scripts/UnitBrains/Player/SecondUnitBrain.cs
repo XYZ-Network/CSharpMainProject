@@ -15,10 +15,16 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
         private List<Vector2Int> outOfRangeTargets = new List<Vector2Int>(); //список целей, которые вне досягаемости
+        private static int counter = 0;
+        private int unitNumber;
+        private const int constant = 4;
+      
+
+
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-
+            
             float overheatTemperature = OverheatTemperature;
             float currenttemp = GetTemperature();
 
@@ -42,12 +48,11 @@ namespace UnitBrains.Player
         {
 
             Vector2Int minTarget = Vector2Int.zero;
-            float min = float.MaxValue;
+            float min = float.MaxValue; //до foreach min = миллиард, а после min = 5;
 
             List<Vector2Int> result = new List<Vector2Int>();
 
-            if (result.Count > 0) //проверяем, есть ли хотя бы одна цель и если есть - определяем ближайшую
-            {
+
                 foreach (Vector2Int target in GetAllTargets())
                 {
 
@@ -57,10 +62,13 @@ namespace UnitBrains.Player
                     {
                         min = DistanceToBase;
                         minTarget = target;
+
                     }
+
                 }
 
-            outOfRangeTargets.Clear();
+                outOfRangeTargets.Clear();
+
 
             if (min < float.MaxValue)
                 {
@@ -71,12 +79,46 @@ namespace UnitBrains.Player
                     outOfRangeTargets.Add(minTarget);
                 }
 
-            }
+            
             else //добавляем в цели базу противника если целей нету в списке всех целей
             {
                 Vector2Int enemyBase = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-                result.Add(enemyBase);
+                outOfRangeTargets.Add(enemyBase);
+            }
+
+            outOfRangeTargets.Clear();
+
+            foreach (Vector2Int target in GetAllTargets())
+            {
+                outOfRangeTargets.Add(target);
+            }
+
+            if (outOfRangeTargets.Count == 0)
+            {
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                outOfRangeTargets.Add(enemyBase);
+            }
+
+            SortByDistanceToOwnBase(outOfRangeTargets);
+
+
+            Vector2Int targetPosition;
+            if (outOfRangeTargets.Count > 0)
+            {
+                int targetIndex = counter % outOfRangeTargets.Count;
+                targetPosition = outOfRangeTargets[targetIndex];
+            }
+            else
+            {
+
+                targetPosition = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            }
+
+
+            if (IsTargetInRange(targetPosition))
+            {
+                result.Add(targetPosition);
             }
 
             return result;
