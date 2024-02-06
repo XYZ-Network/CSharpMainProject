@@ -11,5 +11,14 @@ namespace Utilities
                 vector.y > 0 ? 1 : vector.y < 0 ? -1 : 0
             );
         }
+
+        public static Vector2Int CalcNextStepTowards(this Vector2Int fromPoint, Vector2Int endPoint)
+        {
+            var diff = endPoint - fromPoint;
+            var stepDiff = diff.SignOrZero();
+            var nextStep = fromPoint + stepDiff;
+            
+            return nextStep;
+        }
     }
 }

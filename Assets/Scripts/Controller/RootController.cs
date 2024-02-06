@@ -27,6 +27,9 @@ namespace Controller
             
             var gameplayVisual = SpawnGameplayVisual();
             ServiceLocator.Register(gameplayVisual);
+
+            var vfxView = SpawnVFXView();
+            ServiceLocator.Register(vfxView);
             
             _levelController = new(_runtimeModel, this);
             
@@ -64,6 +67,12 @@ namespace Controller
         private Gameplay3dView SpawnGameplayVisual()
         {
             var prefab = Resources.Load<Gameplay3dView>("View/Gameplay3dView");
+            return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        }
+        
+        private VFXView SpawnVFXView()
+        {
+            var prefab = Resources.Load<VFXView>("View/VFXView");
             return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
         }
     }
