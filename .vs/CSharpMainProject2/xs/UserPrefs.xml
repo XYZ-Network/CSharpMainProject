@@ -5,12 +5,12 @@
     <Files>
       <File FileName="Assets/Scripts/EnterPoint.cs" />
       <File FileName="Assets/Scripts/Controller/BotController.cs" />
-      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" Line="30" Column="1" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" />
       <File FileName="Assets/Scripts/Model/Runtime/MainBase.cs" />
       <File FileName="Assets/Scripts/Model/Runtime/Projectiles/BaseProjectile.cs" />
       <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ProjectileType.cs" />
       <File FileName="Assets/Scripts/Controller/LevelController.cs" />
-      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="38" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="22" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -25,9 +25,7 @@
                   </Node>
                 </Node>
                 <Node name="UnitBrains" expanded="True">
-                  <Node name="Player" expanded="True">
-                    <Node name="SecondUnitBrain.cs" selected="True" />
-                  </Node>
+                  <Node name="Player" expanded="True" />
                 </Node>
               </Node>
             </Node>
