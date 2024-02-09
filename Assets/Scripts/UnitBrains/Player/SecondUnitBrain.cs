@@ -12,7 +12,7 @@ namespace UnitBrains.Player
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
-        private const int _maxTargetsForSelection = 3;
+        private const int MaxTargetsForSelection = 4;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
@@ -52,27 +52,21 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> result = new();
-            List<Vector2Int> allTargetsPositions = GetAllTargetsWithoutBase().ToList();
-            
             Vector2Int closestEnemyPosition;
-
-            if (allTargetsPositions.Any())
-            {
-                SortByDistanceToOwnBase(allTargetsPositions);
-                int enemyIndex;
-
-                if (allTargetsPositions.Count > _maxTargetsForSelection)
-                    enemyIndex = (_unitID - 1) % _maxTargetsForSelection;
-                else
-                    enemyIndex = (_unitID - 1) % allTargetsPositions.Count;
-                
-                closestEnemyPosition = allTargetsPositions[enemyIndex];
-            }
-            else
-                closestEnemyPosition = runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
-            
             _unreachableTargets.Clear();
-            _unreachableTargets.Add(closestEnemyPosition);
+            
+            foreach (Vector2Int target in GetAllTargetsWithoutBase())
+            {
+                _unreachableTargets.Add(target);
+            }
+            
+            if (_unreachableTargets.Count == 0)
+                _unreachableTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            
+            SortByDistanceToOwnBase(_unreachableTargets);
+            
+            int enemyIndex = (_unitID - 1) % Mathf.Min(MaxTargetsForSelection, _unreachableTargets.Count);
+            closestEnemyPosition = _unreachableTargets[enemyIndex];
 
             if(IsTargetInRange(closestEnemyPosition))
                 result.Add(closestEnemyPosition);
