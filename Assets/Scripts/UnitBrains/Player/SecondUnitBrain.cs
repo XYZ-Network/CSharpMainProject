@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -17,16 +18,17 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
-            if (GetTemperature() >= overheatTemperature)
+            float temp = GetTemperature();
+            if (temp >= overheatTemperature)
             {
                 return;
             }
             IncreaseTemperature();
-            for (float i = 0; i < _temperature; i++)
+            for (int i = 0; i <= temp; i++)
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
-                Debug.Log(intoList.Count);
+                Debug.Log("Выстрел сработал по координатам врага = " + forTarget.ToString());
             }
             ///////////////////////////////////////
         }
@@ -42,10 +44,28 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            Debug.Log("Количество доступных таргетов = " + result.Count);
+            float minDistance = float.MaxValue;
+            Vector2Int nearestTarget = Vector2Int.zero;
+
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                Debug.Log("Враг слишком далеко, выстрелить невозможно.");
+                return result;
             }
+            foreach (var target in result)
+            {
+                float currentTargetDistance = DistanceToOwnBase(target);
+
+                if (minDistance >= currentTargetDistance)
+                {
+                    minDistance = currentTargetDistance;
+                    nearestTarget = target;
+                    Debug.Log("Расстояние от базы до ближайшего врага = " + DistanceToOwnBase(nearestTarget));
+                }
+            }
+            result.Clear();
+            result.Add(nearestTarget);
             return result;
             ///////////////////////////////////////
         }
