@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs">
     <Files>
-      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="89" Column="13" />
-      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" Line="25" Column="2" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="121" Column="44" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -17,7 +17,7 @@
                 </Node>
                 <Node name="UnitBrains" expanded="True">
                   <Node name="Player" expanded="True">
-                    <Node name="DefaultPlayerUnitBrain.cs" selected="True" />
+                    <Node name="SecondUnitBrain.cs" selected="True" />
                   </Node>
                 </Node>
               </Node>
@@ -29,7 +29,7 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="0abf20b7-9eb1-4779-8a57-859b95ad13c0" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="45c8c63c-929c-43b3-9818-5df3d9f1aa3c" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

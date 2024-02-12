@@ -16,7 +16,7 @@ namespace UnitBrains.Player
         private bool _overheated;
         private List<Vector2Int> outOfRangeTargets = new List<Vector2Int>(); //список целей, которые вне досягаемости
         private static int counter = 0;
-        private int unitNumber;
+        private int unitNumber = counter++;
         private const int constant = 4;
       
 
@@ -51,48 +51,14 @@ namespace UnitBrains.Player
             float min = float.MaxValue; //до foreach min = миллиард, а после min = 5;
 
             List<Vector2Int> result = new List<Vector2Int>();
-
+            outOfRangeTargets.Clear();
 
                 foreach (Vector2Int target in GetAllTargets())
                 {
 
-                    float DistanceToBase = DistanceToOwnBase(target);
-
-                    if (DistanceToBase < min)
-                    {
-                        min = DistanceToBase;
-                        minTarget = target;
-
-                    }
-
-                }
-
-                outOfRangeTargets.Clear();
-
-
-            if (min < float.MaxValue)
-                {
-                    if (IsTargetInRange(minTarget))
-                    {
-                        result.Add(minTarget);
-                    }
-                    outOfRangeTargets.Add(minTarget);
-                }
-
-            
-            else //добавляем в цели базу противника если целей нету в списке всех целей
-            {
-                Vector2Int enemyBase = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-                outOfRangeTargets.Add(enemyBase);
-            }
-
-            outOfRangeTargets.Clear();
-
-            foreach (Vector2Int target in GetAllTargets())
-            {
                 outOfRangeTargets.Add(target);
-            }
+
+                }
 
             if (outOfRangeTargets.Count == 0)
             {
@@ -103,19 +69,10 @@ namespace UnitBrains.Player
             SortByDistanceToOwnBase(outOfRangeTargets);
 
 
-            Vector2Int targetPosition;
-            if (outOfRangeTargets.Count > 0)
-            {
                 int targetIndex = counter % outOfRangeTargets.Count;
-                targetPosition = outOfRangeTargets[targetIndex];
-            }
-            else
-            {
-
-                targetPosition = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-            }
-
-
+                targetIndex = Mathf.Min(targetIndex, outOfRangeTargets.Count - 1);
+                Vector2Int targetPosition = outOfRangeTargets[targetIndex];
+            
             if (IsTargetInRange(targetPosition))
             {
                 result.Add(targetPosition);
