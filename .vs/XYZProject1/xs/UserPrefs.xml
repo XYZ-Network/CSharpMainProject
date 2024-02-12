@@ -1,0 +1,35 @@
+﻿<Properties StartupConfiguration="{B1FA95B3-3DAE-4D73-F23D-08C51039DA94}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Model/Runtime/MainBase.cs">
+    <Files>
+      <File FileName="Assets/Scripts/EnterPoint.cs" />
+      <File FileName="Assets/Scripts/Controller/BotController.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Model/Runtime/MainBase.cs" Line="14" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="XYZProject1" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Controller" expanded="True" />
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="Projectiles" expanded="True" />
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="62cd7f9f-ccb1-4a5d-84e1-b2e2b2ba14ae" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
