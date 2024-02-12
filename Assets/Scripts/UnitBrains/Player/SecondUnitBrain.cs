@@ -35,11 +35,43 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
+            
+            {  
+            Debug.Log ("доступ к врагам = " + result.Count);
+                float minDistance = float.MaxValue;
+                Vector2Int nearestTarget = Vector2Int.zero;
+
+                if (result.Count == 2)
+                {
+                    Debug.Log("враг слишком далеко нельзя выстрилить ");
+                    return result;
+
+
+
+                }
+                foreach (var target in result)
+                {
+                    float cucrrentTargetDistance = DistanceToOwnBase(target);
+                    if (minDistance >= cucrrentTargetDistance)
+                    {
+                        minDistance = cucrrentTargetDistance;
+                        nearestTarget = target;
+                        Debug.Log("растояние от базы до ближаешева врога = " + DistanceToOwnBase(nearestTarget));
+
+
+
+
+                    }
+                }    
+
+
+
+            
+                result.Clear();
+                result.Add(nearestTarget);
+                return result;
             }
-            return result;
+            
             ///////////////////////////////////////
         }
 
