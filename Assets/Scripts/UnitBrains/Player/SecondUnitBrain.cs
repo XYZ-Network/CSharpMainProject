@@ -86,6 +86,7 @@ namespace UnitBrains.Player
 
             result.Clear();
 
+            if(unReachableTargets.Count == 0) result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
             SortByDistanceToOwnBase(unReachableTargets);
             enemyId = unitId % Mathf.Min(MaxTargets, unReachableTargets.Count);
             bestTarget = unReachableTargets[enemyId];
