@@ -34,7 +34,7 @@ namespace Model.Runtime.Projectiles
 
 
 
-            /////////////////////////////
+            //////////////////////////////
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
