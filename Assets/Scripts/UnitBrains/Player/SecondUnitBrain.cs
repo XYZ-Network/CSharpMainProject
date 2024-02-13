@@ -83,7 +83,6 @@ namespace UnitBrains.Player
             if (IsTargetInRange(bestTaget))
             {
                 result.Add(bestTaget);
-                _outOfRangeTargets.Clear();
             }
             return result;
         }
