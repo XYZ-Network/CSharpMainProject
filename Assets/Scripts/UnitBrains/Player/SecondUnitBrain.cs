@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using Model;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
@@ -26,9 +27,6 @@ namespace UnitBrains.Player
 
         public SecondUnitBrain()
         {
-            if(GetAllPlayerUnits().ToList().Count == 0)
-                _unitIndexer = 0;
-            UnitID = _unitIndexer;
             _unitIndexer++;
         }
 
@@ -63,73 +61,31 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            #region Prev. version
-            /*List<Vector2Int> result = GetReachableTargets();
-
-            if (result.Any())
-            {
-                Vector2Int target = new Vector2Int();
-                float minDistanceToBase = float.MaxValue;
-
-                foreach (var element in result)
-                {
-                    float currentElementDistance = DistanceToOwnBase(element);
-                    if (currentElementDistance < minDistanceToBase)
-                    {
-                        minDistanceToBase = currentElementDistance;
-                        target = element;
-                    }
-                }
-                result.Clear();
-                result.Add(target);
-            }
-
-            return result;*/
-            #endregion
-            #region Prev. Version
             List<Vector2Int> result = new List<Vector2Int>();
-            List<Vector2Int> allTargets = GetAllTargets().ToList();
-            List<Vector2Int> reachables = GetReachableTargets();
 
-            if (allTargets.Count > 1)
+            _outOfRangeTargets.Clear();
+
+            foreach (var target in GetAllTargets())
             {
-                allTargets.Remove(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+                _outOfRangeTargets.Add(target);
             }
 
-            if (allTargets.Any())
+            if(_outOfRangeTargets.Count == 0)
             {
-                Vector2Int target = new Vector2Int();
-                SortByDistanceToOwnBase(allTargets);
-
-                if (UnitID < MAXIMUM_TARGETS && UnitID < allTargets.Count)
-                {
-                    target = allTargets[UnitID];
-                }
-                else
-                {
-                    if (allTargets.Count <= MAXIMUM_TARGETS)
-                    {
-                        target = allTargets[allTargets.Count - 1];
-                    }
-                    else
-                    {
-                        target = allTargets[MAXIMUM_TARGETS];
-                    }
-                }
-
-                if (reachables.Contains(target))
-                {
-                    result.Add(target);
-                    return result;
-                }
-                else
-                {
-                    _outOfRangeTargets.Add(target);
-                }
+                _outOfRangeTargets.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
             }
 
+            SortByDistanceToOwnBase(_outOfRangeTargets);
+
+            int targetNum = UnitID % MAXIMUM_TARGETS;
+            int bestTargetNum = Mathf.Min(targetNum, _outOfRangeTargets.Count - 1);
+            Vector2Int bestTaget = _outOfRangeTargets[bestTargetNum];
+            if (IsTargetInRange(bestTaget))
+            {
+                result.Add(bestTaget);
+                _outOfRangeTargets.Clear();
+            }
             return result;
-            #endregion
         }
 
         private Vector2Int GetMostWantedTarget(List<Vector2Int> enemyUnits)
