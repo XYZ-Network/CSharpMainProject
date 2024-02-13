@@ -63,7 +63,6 @@ namespace UnitBrains.Player
 
                 }
 
-                result.Add(minTarget);
                 outOfRangeTargets.Clear();
 
 
