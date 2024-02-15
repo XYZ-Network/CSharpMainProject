@@ -10,7 +10,7 @@
       <File FileName="Assets/Scripts/Model/Runtime/Projectiles/BaseProjectile.cs" />
       <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ProjectileType.cs" />
       <File FileName="Assets/Scripts/Controller/LevelController.cs" />
-      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="22" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="43" Column="41" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
