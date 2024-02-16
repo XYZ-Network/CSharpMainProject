@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,6 +14,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+
+        List<Vector2Int> _notTargetsInRange = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -30,29 +34,48 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int bestTarg = Vector2Int.zero;
+
+            foreach (Vector2Int targ in _notTargetsInRange)
+            {
+                if (IsTargetInRange(targ))
+                    bestTarg = targ;
+                else
+                    bestTarg.CalcNextStepTowards(targ);
+                    bestTarg = targ;
+            }
+            
+            return bestTarg;
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
+            List<Vector2Int> result = new List<Vector2Int>();
+            
+            foreach (Vector2Int target in GetAllTargets())
+            {
+                result.Add(target);
+            }
 
             float min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
 
             foreach (Vector2Int i in result)
-            {               
+            {
                 float distance = DistanceToOwnBase(i);
 
-                if (distance < min)
-                {
+                if (min > distance)
                     min = distance;
                     bestTarget = i;
-                }
             }
 
             result.Clear();
-            if(min < float.MaxValue) result.Add(bestTarget);
+
+            if (IsTargetInRange(bestTarget))
+                result.Add(bestTarget);
+            else
+                _notTargetsInRange.Add(bestTarget);
+
             return result;
         }
 
