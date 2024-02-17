@@ -1,4 +1,4 @@
-﻿.idea
+﻿﻿.idea
 Library
 UserSettings
 Temp
@@ -7,3 +7,5 @@ Logs
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
 CsharpMainProject.sln
+
+.vs
