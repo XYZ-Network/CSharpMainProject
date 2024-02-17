@@ -80,9 +80,13 @@ namespace UnitBrains.Player
             }
             else
             {
-                result.Add(runtimeModel.RoMap.Bases);
+                List<System.Collections.Generic.IReadOnlyList<UnityEngine.Vector2Int>> cel = new List<IReadOnlyList<Vector2Int>>();
+                
 
-                return priora;
+                
+                cel.Add(runtimeModel.RoMap.Bases);
+
+                return result;
             }
         }
 
