@@ -2,6 +2,7 @@
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
+
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
@@ -12,6 +13,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> priora = new List<Vector2Int>();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -46,24 +48,42 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            
-            float blizko = float.MaxValue;
-            Vector2Int best = Vector2Int.zero;
-
-
-            foreach (Vector2Int target in result)
+            List<Vector2Int> result=new List<Vector2Int>();
+            foreach (var target in GetAllTargets())
             {
-                float dlinna = DistanceToOwnBase(target);
-                if (dlinna < blizko)
-                {
-                    blizko = dlinna;
-                    best = target;
-                }
+                result.Add(target);
             }
+
+            if (result.Count > 0)
+            {
+
+
+
+                float blizko = float.MaxValue;
+                Vector2Int best = Vector2Int.zero;
+
+
+                foreach (Vector2Int target in result)
+                {
+                    float dlinna = DistanceToOwnBase(target);
+                    if (dlinna < blizko)
+                    {
+                        blizko = dlinna;
+                        best = target;
+                    }
+                }
                 result.Clear();
                 result.Add(best);
-            return result;
+                priora.Add(best);
+                return result;
+                
+            }
+            else
+            {
+                result.Add(runtimeModel.RoMap.Bases);
+
+                return priora;
+            }
         }
 
         public override void Update(float deltaTime, float time)
