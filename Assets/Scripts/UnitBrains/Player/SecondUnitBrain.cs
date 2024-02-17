@@ -35,21 +35,27 @@ namespace UnitBrains.Player
         {
             List<Vector2Int> result = GetReachableTargets();
 
-            var maxpos = float.MinValue;
-            var needtarget = Vector2Int.zero;
+            var maxPos = float.MaxValue;
+            var needTarget = Vector2Int.zero;
 
-            foreach (var target in result)
+            if (result.Count == 0) return result;
+
+            else
             {
-                var distance = DistanceToOwnBase(target);
-
-                if (distance >= maxpos)
+                foreach (var target in result)
                 {
-                    maxpos = distance;
-                    needtarget = target;
+                    var distance = DistanceToOwnBase(target);
+
+                    if (distance <= maxPos)
+                    {
+                        maxPos = distance;                       
+                        needTarget = target;
+                    }
                 }
             }
+
             result.Clear();
-            result.Add(needtarget);
+            result.Add(needTarget);
 
             return result;
         }
