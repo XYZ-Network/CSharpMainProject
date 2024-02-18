@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
-using Unity.VisualScripting;
 using UnityEngine;
 using Utilities;
 
@@ -34,47 +34,52 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int bestTarg = Vector2Int.zero;
+            Vector2Int target = _notTargetsInRange.Count > 0 ? _notTargetsInRange[0] : unit.Pos;
 
-            foreach (Vector2Int targ in _notTargetsInRange)
+            if (IsTargetInRange(target))
             {
-                if (IsTargetInRange(targ))
-                    bestTarg = targ;
-                else
-                    bestTarg.CalcNextStepTowards(targ);
-                    bestTarg = targ;
+                return unit.Pos;
             }
-            
-            return bestTarg;
+            else
+            {
+                return unit.Pos.CalcNextStepTowards(target);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> result = new List<Vector2Int>();
-            
-            foreach (Vector2Int target in GetAllTargets())
-            {
-                result.Add(target);
-            }
 
             float min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
 
-            foreach (Vector2Int i in result)
+            foreach (Vector2Int i in GetAllTargets())
             {
                 float distance = DistanceToOwnBase(i);
 
                 if (min > distance)
+                {
                     min = distance;
                     bestTarget = i;
+                }
             }
 
-            result.Clear();
+            _notTargetsInRange.Clear();
+            _notTargetsInRange.Add(bestTarget);
 
-            if (IsTargetInRange(bestTarget))
-                result.Add(bestTarget);
-            else
-                _notTargetsInRange.Add(bestTarget);
+            if (min < float.MaxValue)
+            {
+                if (IsTargetInRange(bestTarget))
+                {
+                    result.Add(bestTarget);
+                }
+                else
+                {
+                    int palyerID = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                    Vector2Int enemyBase = runtimeModel.RoMap.Bases[palyerID];
+                    _notTargetsInRange.Add(enemyBase);
+                }
+            }
 
             return result;
         }
