@@ -32,7 +32,7 @@ namespace Model.Runtime.Projectiles
             float maxHeight;
             float timeDependentVariable; //переменная зависящая от времени полета снаряда
             maxHeight = totalDistance * 0.6f; // 60 % от переменной (т.е. максимальная высота 60% от дальности полета снаряда)
-            timeDependentVariable = (-(t * 2 - 1) * (t * 2 - 1)); // формула позваляющая снаряду рисовать траекторию полета (т.е. перевернутной параболы)
+            timeDependentVariable = (-(t * 2 - 1) * (t * 2 - 1)+1); // формула позваляющая снаряду рисовать траекторию полета (т.е. перевернутной параболы)
             localHeight = maxHeight * timeDependentVariable; 
 
 
