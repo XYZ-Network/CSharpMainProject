@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
+using Utilities;
 using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
@@ -14,7 +16,9 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        List<Vector2Int> targetsOutOfRange = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -37,12 +41,25 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int currentTarget = targetsOutOfRange.Count > 0 ? targetsOutOfRange[0] : unit.Pos;
+
+            if (IsTargetInRange(currentTarget))
+            {
+                return unit.Pos;
+            } else
+            {
+                return unit.Pos.CalcNextStepTowards(currentTarget);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            foreach (Vector2Int i in GetAllTargets())
+            {
+                result.Add(i);
+            }
 
             float closestDistance = float.MaxValue;
             Vector2Int closestTarget = Vector2Int.zero;
@@ -59,13 +76,19 @@ namespace UnitBrains.Player
                     }
                 }
 
-                Debug.Log(closestDistance);
+                targetsOutOfRange.Clear();
+                targetsOutOfRange.Add(closestTarget);
 
-                if (result.Contains(closestTarget))
+                if (IsTargetInRange(closestTarget))
                 {
                     result.Clear();
-                    result.Add(closestTarget);                   
-                }
+                    result.Add(closestTarget);                  
+                } else
+                {
+                    int playerId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                    Vector2Int enemyBase = runtimeModel.RoMap.Bases[playerId];
+                    targetsOutOfRange.Add(enemyBase);
+                }   
             }
 
             return result;
