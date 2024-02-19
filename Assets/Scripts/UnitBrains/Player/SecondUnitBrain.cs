@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -31,16 +33,31 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            var maxPos = float.MaxValue;
+            var needTarget = Vector2Int.zero;
+
+            if (result.Count == 0) return result;
+
+            else
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (var target in result)
+                {
+                    var distance = DistanceToOwnBase(target);
+
+                    if (distance <= maxPos)
+                    {
+                        maxPos = distance;                       
+                        needTarget = target;
+                    }
+                }
             }
+
+            result.Clear();
+            result.Add(needTarget);
+
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
