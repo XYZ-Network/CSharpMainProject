@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ActionGameFramework.Helpers;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -29,7 +30,11 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            
+            float maxHeight = 0.6f * totalDistance; //60% от дистанции
+            float partBallisticsFormula = t * 2 - 1; //Вынес повторяющиеся части формулы баллистики t * 2 - 1
 
+            localHeight = maxHeight * (-partBallisticsFormula * partBallisticsFormula + 1); //Расчет формулы баллистики
 
             ///////////////////////////////////////
             // End of the code to insert
