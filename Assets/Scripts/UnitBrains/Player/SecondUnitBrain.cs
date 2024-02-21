@@ -57,7 +57,8 @@ namespace UnitBrains.Player
                 }
                 else
                 {
-                    return CalcNextStepTowards(unReachableTargets[0]);
+                    return base.GetNextStep();
+                    //return CalcNextStepTowards(unReachableTargets[0]);
                 }
             }
 
