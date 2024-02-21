@@ -60,6 +60,7 @@ namespace UnitBrains.Player
                     return CalcNextStepTowards(unReachableTargets[0]);
                 }
             }
+
             return unit.Pos;
         }
 
@@ -68,45 +69,33 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = new List<Vector2Int>();
-            //int checkValue = int.MaxValue;              
+            List<Vector2Int> result = new List<Vector2Int>();              
             Vector2Int bestTarget = new Vector2Int(0,0);
             int enemyId = 0;
+
             unReachableTargets.Clear();
+
             foreach (var target in GetAllTargets())
             {
                 unReachableTargets.Add(target);
-                //int distance = (int)DistanceToOwnBase(target);
-                //if (distance < checkValue)
-                //{
-                //    checkValue = distance;
-                //    bestTarget = target;
-                //}
             }            
 
             result.Clear();
 
-            if(unReachableTargets.Count == 0) result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            if (unReachableTargets.Count == 0)
+            {
+                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            }
+
             SortByDistanceToOwnBase(unReachableTargets);
             enemyId = unitId % Mathf.Min(MaxTargets, unReachableTargets.Count);
             bestTarget = unReachableTargets[enemyId];
-            if (IsTargetInRange(bestTarget)) result.Add(bestTarget);
-            //if (checkValue < int.MaxValue)
-            //{
-            //    unReachableTargets.Add(bestTarget);
-            //    if (IsTargetInRange(bestTarget)) result.Add(bestTarget);
-            //}
-            //else
-            //{
-            //    result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-            //}
 
-            //result.Clear();
-            //if(checkValue < int.MaxValue) result.Add(bestTarget);
-            //while (result.Count > 1)
-            //{
-            //    result.RemoveAt(result.Count - 1);
-            //}
+            if (IsTargetInRange(bestTarget))
+            {
+                result.Add(bestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }
