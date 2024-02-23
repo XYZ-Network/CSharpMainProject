@@ -8,6 +8,7 @@ using Utilities;
 
 public class EnterPoint : MonoBehaviour
 {
+// hello Coment
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
