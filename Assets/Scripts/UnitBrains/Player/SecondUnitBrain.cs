@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -19,8 +20,16 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)//Не перегрелось ли оружие?
+            { 
+                return; //Выход из метода, если перегрелось
+            }
+            for (int i = 0; i <= _temperature; i++)//совершает выстрелов на 1 больше, чем "температура" т.е. даже при 0 один выстрел будет
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();//Увеличивает нагрев после выстрела
             ///////////////////////////////////////
         }
 
