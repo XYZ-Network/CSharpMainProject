@@ -56,39 +56,34 @@ namespace UnitBrains.Player
         {
             List<Vector2Int> result = new List<Vector2Int>();
 
-            foreach (Vector2Int i in GetAllTargets())
-            {
-                result.Add(i);
-            }
-
             float closestDistance = float.MaxValue;
             Vector2Int closestTarget = Vector2Int.zero;
 
-            if (result.Count >= 1)
+            foreach (Vector2Int target in result)
             {
-                foreach (Vector2Int target in result)
+                float distance = DistanceToOwnBase(target);
+                if (distance < closestDistance)
                 {
-                    float distance = DistanceToOwnBase(target);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestTarget = target;
-                    }
+                    closestDistance = distance;
+                    closestTarget = target;
                 }
+            }
 
-                targetsOutOfRange.Clear();
+            targetsOutOfRange.Clear();
+
+            if (closestDistance < float.MaxValue)
+            {
                 targetsOutOfRange.Add(closestTarget);
-
                 if (IsTargetInRange(closestTarget))
                 {
-                    result.Clear();
                     result.Add(closestTarget);                  
-                } else
-                {
-                    int playerId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
-                    Vector2Int enemyBase = runtimeModel.RoMap.Bases[playerId];
-                    targetsOutOfRange.Add(enemyBase);
-                }   
+                } 
+            } 
+            else
+            {
+                int playerId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[playerId];
+                targetsOutOfRange.Add(enemyBase);
             }
 
             return result;
