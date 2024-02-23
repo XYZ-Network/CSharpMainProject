@@ -6,6 +6,8 @@ using Model.Config;
 using UnityEngine;
 using Utilities;
 
+// Hello
+
 public class EnterPoint : MonoBehaviour
 {
     [SerializeField] private Settings _settings;
