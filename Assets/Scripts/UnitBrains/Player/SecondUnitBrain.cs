@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -40,14 +41,28 @@ namespace UnitBrains.Player
         }
         public override Vector2Int GetNextStep()
         {
+
+            if (priora.Count > 0) 
+            {
+
+                foreach (var gggg in priora)
+                {
+
+
+                }
+
+            }
+            else
+            {
+                CalcNextStepTowards(priora);
+            }
+
             return base.GetNextStep();
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+            
             List<Vector2Int> result=new List<Vector2Int>();
             foreach (var target in GetAllTargets())
             {
@@ -72,21 +87,30 @@ namespace UnitBrains.Player
                         best = target;
                     }
                 }
-                result.Clear();
-                result.Add(best);
-                priora.Add(best);
+               priora.Clear();
+                if (blizko < float.MaxValue)
+                {
+                    priora.Add(best);
+                    if(IsTargetInRange(best)) result.Add(best);
+                }
+                else
+                {
+
+                }
                 return result;
                 
             }
             else
             {
-                List<System.Collections.Generic.IReadOnlyList<UnityEngine.Vector2Int>> cel = new List<IReadOnlyList<Vector2Int>>();
                 
 
-                
-                cel.Add(runtimeModel.RoMap.Bases);
 
-                return result;
+
+                priora.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+
+
+
+                return priora;
             }
         }
 
