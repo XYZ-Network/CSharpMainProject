@@ -71,7 +71,8 @@ namespace Assets.Scripts.UnitBrains.Player
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
             _prevAction = BehemothPreviousAction.Move;
-            return CalcNextStepTowards(target);
+            /*return CalcNextStepTowards(target);*/
+            return base.GetNextStep();
         }
     }
 }

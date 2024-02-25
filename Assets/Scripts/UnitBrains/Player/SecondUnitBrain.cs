@@ -52,8 +52,9 @@ namespace UnitBrains.Player
         {
             if (_outOfRangeTargets.Any())
             {
-                var target = CalcNextStepTowards(_outOfRangeTargets[_outOfRangeTargets.Count - 1]);
-                return target;
+                /*var target = CalcNextStepTowards(_outOfRangeTargets[_outOfRangeTargets.Count - 1]);
+                return target;*/
+                return base.GetNextStep();
             }
 
             return unit.Pos;
