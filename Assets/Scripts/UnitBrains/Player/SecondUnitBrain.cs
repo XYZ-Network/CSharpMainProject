@@ -14,6 +14,9 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private static int _counter = 0;
+        private int _unitIndexer;
+        private const int _maxTargets = 4;
 
         List<Vector2Int> _notTargetsInRange = new List<Vector2Int>();
 
@@ -49,6 +52,7 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> result = new List<Vector2Int>();
+            _notTargetsInRange.Clear();
 
             float min = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
@@ -60,25 +64,31 @@ namespace UnitBrains.Player
                 if (distance < min)
                 {
                     min = distance;
-                    bestTarget = i;
+                    _notTargetsInRange.Add(i);
                 }
             }
 
-            _notTargetsInRange.Clear();
-            _notTargetsInRange.Add(bestTarget);
-
             if (min < float.MaxValue)
             {
-                if (IsTargetInRange(bestTarget))
+                Vector2Int targ = Vector2Int.zero;
+                SortByDistanceToOwnBase(_notTargetsInRange);
+
+                for (_counter = 0; _counter < _maxTargets; _counter++)
                 {
-                    result.Add(bestTarget);
+                    _unitIndexer = _counter % _notTargetsInRange.Count;
+                    targ = _notTargetsInRange[_unitIndexer];
                 }
-                else
-                {
-                    int palyerID = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
-                    Vector2Int enemyBase = runtimeModel.RoMap.Bases[palyerID];
-                    _notTargetsInRange.Add(enemyBase);
-                }
+                    if (IsTargetInRange(targ))
+                    {
+                        result.Add(targ);
+                    }
+                    else
+                    {
+                        int palyerID = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                        Vector2Int enemyBase = runtimeModel.RoMap.Bases[palyerID];
+                        _notTargetsInRange.Add(enemyBase);
+                    }
+
             }
 
             return result;
@@ -87,9 +97,9 @@ namespace UnitBrains.Player
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -101,7 +111,7 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
+            if (_overheated) return (int)OverheatTemperature;
             else return (int)_temperature;
         }
 
