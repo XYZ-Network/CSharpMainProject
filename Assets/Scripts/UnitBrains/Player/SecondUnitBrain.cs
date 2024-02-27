@@ -42,22 +42,21 @@ namespace UnitBrains.Player
         public override Vector2Int GetNextStep()
         {
 
-            if (priora.Count > 0) 
+            if (priora.Count > 0)
+
             {
 
-                foreach (var gggg in priora)
-                {
-
-
-                }
-
+                Vector2Int target = priora[0];
+                return target;
             }
+
             else
-            {
-                CalcNextStepTowards(priora);
-            }
 
-            return base.GetNextStep();
+            {
+
+                Vector2Int target = unit.Pos;
+                return target;
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
