@@ -18,24 +18,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
     
     public override Vector2Int GetNextStep()
     {
-        Vector2Int nextTargetPosition = base.GetNextStep();
-
-        if (nextTargetPosition == unit.Pos)
-        {
-            if (_lastState == EUnitState.Moving)
-                _modeHasChanged = true;
-            
-            _lastState = EUnitState.Attacking;
-        }
-        else
-        {
-            if (_lastState == EUnitState.Attacking)
-                _modeHasChanged = true;
-            
-            _lastState = EUnitState.Moving;
-        }
-        
-        return _modeHasChanged ? unit.Pos : nextTargetPosition;
+        return _modeHasChanged ? unit.Pos : base.GetNextStep();
     }
 
     protected override List<Vector2Int> SelectTargets()
@@ -62,6 +45,31 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
             }
         }
         
+        ChangeUnitState();
         base.Update(deltaTime, time);
     }
+    
+    private void ChangeUnitState()
+    {
+        Vector2Int nextTargetPosition = base.GetNextStep();
+
+        if (nextTargetPosition == unit.Pos)
+        {
+            CheckModForChanges(EUnitState.Attacking);
+            _lastState = EUnitState.Attacking;
+        }
+        else
+        {
+            CheckModForChanges(EUnitState.Moving);
+            _lastState = EUnitState.Moving;
+        }
+    }
+    
+    private void CheckModForChanges(EUnitState newState)
+    {
+        if (_lastState != newState)
+            _modeHasChanged = true;
+    }
+    
+    
 }
