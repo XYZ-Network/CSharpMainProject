@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Model;
 using Model.Runtime;
 using Model.Runtime.Projectiles;
 using UnityEngine;
@@ -8,13 +9,24 @@ namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
+        public int UnitId { get; private set; }
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature =4f;
         private const float OverheatCooldown = 0f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+
+        private List<Vector2Int> TargetsOutOfRange = new List<Vector2Int>();
+        private static int UnitIndex = 0;
+        private const int MaxTargets = 4;
+        public SecondUnitBrain()
+        {
+            UnitId = UnitIndex++;
+            Debug.Log($"Unit number: {UnitId}");
+        }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -29,51 +41,62 @@ namespace UnitBrains.Player
 
 
             for (float strel = 1f; strel <= temperat; strel += 1f)
-            {
-               
+            {              
                     var projectile = CreateProjectile(forTarget);
                     AddProjectileToList(projectile, intoList);
-
             }
 
             IncreaseTemperature();
         }
 
-        public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
-        }
+     
 
         protected override List<Vector2Int> SelectTargets()
-        {          
-            List<Vector2Int> result = GetReachableTargets();
+        {
+            List<Vector2Int> result = new List<Vector2Int>();
+            Vector2Int TargetPosition;
 
-            float min= float.MaxValue;
-            Vector2Int near = Vector2Int.zero;
+            TargetsOutOfRange.Clear();
 
-
-            if (result.Count == 0)
+            foreach (Vector2Int target in GetAllTargets())
             {
-                return result;
+                TargetsOutOfRange.Add(target);
             }
-            foreach (Vector2Int i in result)
+
+            if (TargetsOutOfRange.Count == 0)
             {
-                float Distance = DistanceToOwnBase(i);
-
-
-                if (Distance < min) 
+                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
+                TargetsOutOfRange.Add(enemyBase);
+            }
+            else
+            {
+                SortByDistanceToOwnBase(TargetsOutOfRange);
+                int TargetIndex = UnitId % MaxTargets;
+                if (TargetIndex > (TargetsOutOfRange.Count - 1))
                 {
-                    min = Distance;
-                    near = i;
+                    TargetPosition = TargetsOutOfRange[0];
                 }
-               
+                else
+                {
+                    if (TargetIndex == 0)
+                    {
+                        TargetPosition = TargetsOutOfRange[TargetIndex];
+                    }
+                    else
+                    {
+                        TargetPosition = TargetsOutOfRange[TargetIndex - 1];
+                    }
 
+                }
+
+                if (IsTargetInRange(TargetPosition))
+                    result.Add(TargetPosition);
             }
 
-            result.Clear();
-            result.Add(near);
             return result;
-           
+
+
         }
 
         public override void Update(float deltaTime, float time)
