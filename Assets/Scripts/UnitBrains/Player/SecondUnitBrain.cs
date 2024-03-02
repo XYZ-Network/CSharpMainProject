@@ -58,25 +58,21 @@ namespace UnitBrains.Player
                 {
                     maxPos = distance;
                     needTarget = target;
-                    targets.Add(needTarget);
+                    targets.Add(needTarget);                    
+                }
+            }
 
-                    if (IsTargetInRange(needTarget))
-                    {
-                        result.Add(needTarget);
-                        targets.Clear();
-                    }
-                    
-                }
-                else
-                {
-                    if (!IsTargetInRange(target))
-                    {
-                        enemyBase = runtimeModel.RoMap.Bases[
-                        IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-                        targets.Add(enemyBase);
-                    }
-                }
-            }   
+            if (IsTargetInRange(needTarget))
+            {
+                result.Add(needTarget);
+                targets.Clear();
+            }
+            else
+            {
+                enemyBase = runtimeModel.RoMap.Bases[
+                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                targets.Add(enemyBase);
+            }
 
             return result;
         }
