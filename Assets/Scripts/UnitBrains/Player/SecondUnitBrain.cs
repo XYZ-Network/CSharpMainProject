@@ -12,39 +12,33 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private int _shotsFired = 0;
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            if (_overheated)
+            int currentTemperature = GetTemperature();
+
+            if (!_overheated)
             {
-                return;
+                IncreaseTemperature();
+
+                for (int i = 0; i < _shotsFired + 1; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
             }
 
-            IncreaseTemperature();
+            _shotsFired++;
 
-            if (_temperature >= OverheatTemperature)
+            if (_shotsFired >= 3)
             {
                 _overheated = true;
-                _cooldownTime = Time.time + OverheatCooldown;
-            }
-
-            for (int i = 0; i < Mathf.FloorToInt(_temperature); i++)
-            
-            {
-                var projectile = CreateProjectile(forTarget);
-                AddProjectileToList(projectile, intoList);
-            }
-
-        }
-
-        private void Update()
-        {
-            if (_overheated && Time.time >= _cooldownTime)
-            {
-                _overheated = false;
-                _temperature  = 0f;
+                _cooldownTime = OverheatCooldown;
+                _shotsFired = 0;
             }
         }
+
 
         public override Vector2Int GetNextStep()
         {
@@ -68,9 +62,9 @@ namespace UnitBrains.Player
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
-                _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+            {
+                _cooldownTime += deltaTime;
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -82,8 +76,10 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
-            else return (int)_temperature;
+            if (_overheated)
+                return (int)OverheatTemperature;
+            else
+                return (int)_temperature;
         }
 
         private void IncreaseTemperature()
@@ -93,3 +89,5 @@ namespace UnitBrains.Player
         }
     }
 }
+
+
