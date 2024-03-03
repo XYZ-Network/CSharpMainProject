@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
@@ -15,12 +16,19 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        List<Vector2Int> unreachableTargets = new List<Vector2Int>();
+        private static int _unitsCounter = 0;
+        public int UnitID {  get; private set; }
+        List<Vector2Int> allTargets = new();
+
+        public SecondUnitBrain()
+        {
+            UnitID = _unitsCounter++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
+            
             float temp = GetTemperature();
             if (temp >= overheatTemperature)
             {
@@ -31,24 +39,20 @@ namespace UnitBrains.Player
             {
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
-                Debug.Log("ВЫСТРЕЛ");
-                //Debug.Log("Выстрел сработал по координатам врага = " + forTarget.ToString());
             }
-            ///////////////////////////////////////
+            
         }
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int target = unreachableTargets.Count > 0 ? unreachableTargets[0] : unit.Pos;
+            Vector2Int target = allTargets.Count > 0 ? allTargets[0] : unit.Pos;
 
             if (IsTargetInRange(target))
             {
-                Debug.Log($"GetNextStep /// Таргет в пределах досигаемости");
                 return unit.Pos;
             }
             else
             {
-                Debug.Log($"GetNextStep /// Нужно двигаться к следующей цели");
                 return unit.Pos.CalcNextStepTowards(target);
             }      
         }
@@ -56,41 +60,51 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets() 
         {
             List<Vector2Int> result = new();
-            float minDistance = float.MaxValue;
             Vector2Int nearestTarget = Vector2Int.zero;
             Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
+            allTargets.Clear();
+            result.Clear();
+
             foreach (var target in GetAllTargets())
             {
-                float distanceToCurrentTarget = DistanceToOwnBase(target);
-
-                if (minDistance >= distanceToCurrentTarget)
+                if (target != enemyBase)
                 {
-                    minDistance = distanceToCurrentTarget;
-                    nearestTarget = target;
-
-                    if (IsTargetInRange(nearestTarget))
-                    {
-                        result.Add(nearestTarget);
-                        unreachableTargets.Clear();
-                        Debug.Log("SelectTargets /// Таргет на расстоянии выстрела.");
-                    }
-                    else
-                    {
-                        unreachableTargets.Add(nearestTarget);
-                        Debug.Log("SelectTargets /// Таргет слишком далеко.");
-                    }
-                }
-                else
-                {
-                    if (!IsTargetInRange(nearestTarget)) 
-                    { 
-                        unreachableTargets.Add(enemyBase);
-                        Debug.Log("База противника добавлена в таргет");
-                    }
+                    allTargets.Add(target);
                 }
             }
 
+            if (allTargets.Count == 0)
+            {
+                allTargets.Add(enemyBase);
+
+                if (IsTargetInRange(enemyBase))
+                {
+                    result.Add(enemyBase);
+                }
+                return result;
+            }
+
+            SortByDistanceToOwnBase(allTargets);
+            int targetID = UnitID % allTargets.Count;
+
+            if (allTargets.Count == 1)
+            {
+                nearestTarget = allTargets[0];
+            }
+            else
+            {
+                if (allTargets[targetID] == null)
+                    while (allTargets[targetID] == null)
+                        targetID--;
+                else
+                    nearestTarget = allTargets[targetID];
+            }
+
+            if (IsTargetInRange(nearestTarget))
+            {
+                result.Add(nearestTarget);
+            }
             return result;
         }
 
