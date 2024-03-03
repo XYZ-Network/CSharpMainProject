@@ -16,7 +16,6 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
                 ///////////////////////////////////////
-                Debug.Log(GetTemperature()<OverheatTemperature);
                 IncreaseTemperature();
                 ///////////////////////////////////////
                 for(int i=0; i< GetTemperature() && GetTemperature() < OverheatTemperature ; i++)
@@ -36,12 +35,26 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
+
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+            Debug.Log(result);
+            float max = float.MaxValue;
+            Vector2Int nearest = Vector2Int.zero;
             while (result.Count > 1)
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (var i in result)
+                {
+                    float j = DistanceToOwnBase(i);
+
+                    if (j < max)
+                    {
+                        max = j;
+                        nearest= i;
+                    }
+                }
+                result.Clear();
+                result.Add(nearest);
             }
             return result;
             ///////////////////////////////////////
