@@ -13,7 +13,7 @@ public class EnterPoint : MonoBehaviour
     private float _timeScale = 1;
     //ןנטגוע, חהוסü בûכ ÿ
     /*/
-    ûûûû
+    ûûûû bye
     ןאנאלןאלןאלןאל
     /*/
     void Start()
