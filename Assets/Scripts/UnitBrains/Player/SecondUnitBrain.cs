@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,7 +15,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        List<Vector2Int> targets = new();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -26,21 +30,51 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            var position = targets.Count > 0 ? targets[0] : unit.Pos;
+
+            if (IsTargetInRange(position))
+            {
+                return unit.Pos;
+            }
+            else
+            {
+                return unit.Pos.CalcNextStepTowards(position);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new();
+
+            var maxPos = float.MaxValue;
+            var needTarget = Vector2Int.zero;
+            var enemyBase = Vector2Int.zero;
+
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                var distance = DistanceToOwnBase(target);
+
+                if (distance < maxPos)
+                {
+                    maxPos = distance;
+                    needTarget = target;
+                    targets.Add(needTarget);                    
+                }
             }
+
+            if (IsTargetInRange(needTarget))
+            {
+                result.Add(needTarget);
+                targets.Clear();
+            }
+            else
+            {
+                enemyBase = runtimeModel.RoMap.Bases[
+                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                targets.Add(enemyBase);
+            }
+
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
