@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Fork\\CSharpMainProjectMyFork\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|d:\\fork\\csharpmainprojectmyfork\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|D:\\Fork\\CSharpMainProjectMyFork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|d:\\fork\\csharpmainprojectmyfork\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|D:\\Fork\\CSharpMainProjectMyFork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -46,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -138,7 +138,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "BotController.cs",
               "DocumentMoniker": "D:\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\BotController.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
@@ -151,15 +151,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "EnterPoint.cs",
               "DocumentMoniker": "D:\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
               "ToolTip": "D:\\Fork\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-05T14:36:53.585Z"
+              "WhenOpened": "2024-03-05T14:36:53.585Z",
+              "EditorCaption": ""
             }
           ]
         }
