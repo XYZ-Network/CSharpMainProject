@@ -43,13 +43,29 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = GetReachableTargets(); // лист с координатами потенциальных целей
+            float minDistance=float.MaxValue;                // поле для перебора и нахождения ближайшей цели
+            Vector2Int firstTarget = Vector2Int.zero;        // координаты ближайшей цели
+
+            foreach (Vector2Int target in result)            // перебор целей для нахождения ближайшей
             {
-                result.RemoveAt(result.Count - 1);
+                float targetDistance = DistanceToOwnBase(target);
+
+                if (targetDistance < minDistance)
+                {
+                    firstTarget = target;
+                    minDistance = targetDistance;
+                }
             }
-            return result;
-            ///////////////////////////////////////
+            if (firstTarget != Vector2Int.zero)              // если цель была найдена, очищаем список и добавляем в него цель
+            {
+                result.Clear();
+                result.Add(firstTarget);
+                return result;
+            }
+            else { return result; }                          // дописал этот кусок т.к. была ошибка: "не все пути возвращают значение"
+
+           ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
