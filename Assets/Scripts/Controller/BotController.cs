@@ -11,6 +11,7 @@ using Utilities;
 //i'm fine
 // what is your name?
 // where are you from?
+//I'm Slava, from Sochi
 namespace Controller
 {
     public class BotController
