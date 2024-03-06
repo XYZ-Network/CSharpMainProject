@@ -19,7 +19,7 @@ namespace UnitBrains.Pathfinding
 
         public void CalculateEstimate(int targetX, int targetY)
         {
-            Estimate = Math.Abs(coordinates.x - targetX) + Math.Abs(coordinates.y - targetY);
+            Estimate = (Math.Abs(coordinates.x - targetX) + Math.Abs(coordinates.y - targetY)) * 10;
         }
 
         public void CalculateValue(bool isDiagonal)
