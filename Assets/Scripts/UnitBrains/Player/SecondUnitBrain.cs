@@ -17,6 +17,11 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
 
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return; //Выход из метода, если уровень перегрева равен или выше допустимого
+            }
+
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////   
@@ -25,11 +30,6 @@ namespace UnitBrains.Player
                 var projectile = CreateProjectile(forTarget);
 
                 AddProjectileToList(projectile, intoList);
-            }
-
-            if (GetTemperature() >= overheatTemperature)
-            {
-                return; //Выход из метода, если уровень перегрева равен или выше допустимого
             }
 
             IncreaseTemperature(); //Увеличение уровня перегрева при выстреле
