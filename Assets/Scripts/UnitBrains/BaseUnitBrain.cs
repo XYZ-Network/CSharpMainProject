@@ -15,7 +15,7 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true; //принадлежит ли текущий unit игроку
         public virtual BaseUnitPath ActivePath => _activePath; //активный путь, по которому идет юнит
-        
+
         protected Unit unit { get; private set; } //ссылка на unit, которому принадлежит unit brain 
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>(); //все данные по текущей игройо сессии
         private BaseUnitPath _activePath = null; //свойство, которое возвращает знаечение приватного поля

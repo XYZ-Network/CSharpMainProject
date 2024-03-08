@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Nodes 
+public class Nodes
 {
    public Vector2Int Position;
 
@@ -11,7 +11,7 @@ public class Nodes
 
     public Nodes Parent;
 
-    public Nodes(Vector2Int position)
+    public Nodes(Vector2Int position) 
     {
         Position = position;
     }

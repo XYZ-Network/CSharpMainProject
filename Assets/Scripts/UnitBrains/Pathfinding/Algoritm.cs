@@ -29,9 +29,19 @@ public class Algoritm : BaseUnitPath
         List<Nodes> openList = new List<Nodes> { startNode };
         List<Nodes> clodesList = new List<Nodes>();
 
+        Nodes currentNode = null;
+
         while (openList.Count > 0)
         {
-            Nodes currentNode = openList[0];
+            if (openList.Count > 0)
+                currentNode = openList[0];
+            else
+            {
+                path = new Vector2Int[] { new Vector2Int(startPoint.x, startPoint.y) };
+                return;
+            }
+
+
             Debug.Log("Current node position: " + currentNode.Position);
             Debug.Log(endPoint);
 
@@ -46,30 +56,6 @@ public class Algoritm : BaseUnitPath
             clodesList.Add(currentNode);
             Debug.Log("Added node to closed list: " + currentNode.Position);
 
-            if (currentNode.Position == endPoint)
-            {
-                if (!IsValid(endPoint.x, endPoint.y))
-                {
-                    Debug.Log("Конечная точка непроходима " + endPoint.x + endPoint.y);
-                    continue;
-                }
-                else
-                {
-                    // Если конечная точка проходима, завершаем алгоритм и возвращаем путь
-                    Debug.Log("Конечная точка проходима " + endPoint.x + endPoint.y);
-                    List<Nodes> path = new List<Nodes>();
-                    while (currentNode != null)
-                    {
-                        path.Add(currentNode);
-                        Debug.Log("Создали путь " + currentNode);
-                        currentNode = currentNode.Parent;
-                    }
-
-                    path.Reverse();
-                    Debug.Log("вернули путь" + currentNode);
-                    return;
-                }
-            }
 
             iterationCount++;
 
@@ -82,6 +68,14 @@ public class Algoritm : BaseUnitPath
             {
                 int newX = currentNode.Position.x + dx[i];
                 int newY = currentNode.Position.y + dy[i];
+
+                if (newX == targetNode.Position.x && newY == targetNode.Position.y)
+                {
+
+                    path = FindPath(currentNode);
+                    return;
+
+                }
 
                 if (IsValid(newX, newY))
                 {
@@ -108,10 +102,31 @@ public class Algoritm : BaseUnitPath
             }
         }
 
+        path = FindPath(currentNode);
+    }
+
+    private Vector2Int[] FindPath(Nodes currentNode)
+    {
+        List<Nodes> path = new List<Nodes>();
+
+        while (currentNode != null)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.Parent;
+        }
+
+        path.Reverse();
+        List<Vector2Int> Path = new List<Vector2Int>();
+        foreach (var node in path)
+        {
+            Path.Add(new Vector2Int(node.Position.x, node.Position.y));
+        }
+
+        return Path.ToArray();
     }
 
 
-    private bool IsValid(int x, int y)
+        private bool IsValid(int x, int y)
     {
         bool containsX = x >= 0 && x < runtimeModel.RoMap.Width;
         bool containsY = y >= 0 && y < runtimeModel.RoMap.Height;
