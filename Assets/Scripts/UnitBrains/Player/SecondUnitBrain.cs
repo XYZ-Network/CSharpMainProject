@@ -15,7 +15,15 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        List<Vector2Int> unreachableTargets = new List<Vector2Int>();
+        private static int _unitsCounter = 0;
+        private const int _maxTargets = 4;
+        public int UnitID {  get; private set; }
+        List<Vector2Int> allTargets = new();
+
+        public SecondUnitBrain()
+        {
+            UnitID = _unitsCounter++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -36,45 +44,39 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int target = unreachableTargets.Count > 0 ? unreachableTargets[0] : unit.Pos;
-            //В переменную присваиваем значение, в зависимости от наличия таргетов в списке.
+            Vector2Int target = allTargets.Count > 0 ? allTargets[0] : unit.Pos;
 
             return IsTargetInRange(target) ? unit.Pos : unit.Pos.CalcNextStepTowards(target);
-            // Если можем дотянуться до таргета, то возвращаем позицию юнита. В противном случае возвращаем позицию следующего шага к таргету.
         }
 
         protected override List<Vector2Int> SelectTargets() 
         {
             List<Vector2Int> result = new();
-            float minDistance = float.MaxValue;
-            Vector2Int nearestTarget = Vector2Int.zero;
             Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            allTargets.Clear();
 
-            foreach (var target in GetAllTargets()) //Проходим циклом по вообще всем таргетам
+            foreach (var target in GetAllTargets())
             {
-                float distanceToCurrentTarget = DistanceToOwnBase(target); // Высносим в переменную расстояние от таргета до базы
-
-                if (minDistance > distanceToCurrentTarget) // Если переменная для рассчетов больше, чем расстояние от таргета до базы
+                if (target != enemyBase)
                 {
-                    minDistance = distanceToCurrentTarget; // То присваиваем в эту переменную значение расстояния от таргета до базы
-                    nearestTarget = target; // В переменную ближайшего таргета присваиваем координаты текущего таргета
+                    allTargets.Add(target);
                 }
             }
 
-            unreachableTargets.Clear(); // Убираем из списка возможные остатки с прошлых проходок
-
-            if (minDistance < float.MaxValue) // Сравниваем изменилась ли переменная с момента её инициализции.
-                // Если изминилась, значит таргеты в GetAllTargets() были
+            if (allTargets.Count == 0) 
             {
-                unreachableTargets.Add(nearestTarget); // Добавляем ближайший таргет в список далёких таргетов
-                if (IsTargetInRange(nearestTarget)) // если можем до него дотянуться, то добавляем в резалт
-                {
-                    result.Add(nearestTarget);
-                }
+                allTargets.Add(enemyBase);
             }
-            else // Если не изменилась, значит таргетов кроме базы нет.
+
+            SortByDistanceToOwnBase(allTargets);
+
+            int targetId = UnitID % _maxTargets;
+            int targetNum = Mathf.Min(targetId, allTargets.Count - 1);
+            Vector2Int betsTarget = allTargets[targetNum];
+
+            if (IsTargetInRange(betsTarget))
             {
-                unreachableTargets.Add(enemyBase); // Добавляем базу в список unreachableTargets
+                result.Add(betsTarget);
             }
 
             return result; // Возвращаем результат. Он может быть либо пустым, либо с таргетом(не с базой) 
