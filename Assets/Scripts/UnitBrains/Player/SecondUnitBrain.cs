@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Model;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
+using Utilities;
 
 
 namespace UnitBrains.Player
@@ -13,6 +15,10 @@ namespace UnitBrains.Player
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
+        private float constantin_crizovnikov_velikiy = 3f;
+        private float kolithestvo_celey = 0;
+        private static List<float> chet =new List<float>();
+        private float chert = 0; 
         private bool _overheated;
         private List<Vector2Int> priora = new List<Vector2Int>();
         
@@ -41,76 +47,71 @@ namespace UnitBrains.Player
         }
         public override Vector2Int GetNextStep()
         {
+            Vector2Int target = Vector2Int.zero;
+
 
             if (priora.Count > 0)
 
             {
 
-                Vector2Int target = priora[0];
-                return target;
+                target = priora[0];
             }
 
             else
 
             {
 
-                Vector2Int target = unit.Pos;
-                return target;
+                target = unit.Pos;
+               
             }
+            if (IsTargetInRange(target)) return unit.Pos;
+            else return unit.Pos.CalcNextStepTowards(target);
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            
-            List<Vector2Int> result=new List<Vector2Int>();
-            foreach (var target in GetAllTargets())
+
+
+
+            List<Vector2Int> result = new List<Vector2Int>();
+            float blizko = float.MaxValue;
+            Vector2Int best = Vector2Int.zero;
+            foreach (Vector2Int target in GetAllTargets())
             {
-                result.Add(target);
+                float dlinna = DistanceToOwnBase(target);
+                if (dlinna > blizko)
+                {
+                    blizko = dlinna;
+                    best = target;
+
+                }
+                kolithestvo_celey++;
+
             }
-
-            if (result.Count > 0)
+            priora.Clear();
+            if (blizko < float.MaxValue)
             {
 
-
-
-                float blizko = float.MaxValue;
-                Vector2Int best = Vector2Int.zero;
-
-
-                foreach (Vector2Int target in result)
+                priora.Add(best);
+                if (IsTargetInRange(best)) result.Add(best);
+                for (int i = 0;i<kolithestvo_celey;i++)
                 {
-                    float dlinna = DistanceToOwnBase(target);
-                    if (dlinna < blizko)
-                    {
-                        blizko = dlinna;
-                        best = target;
-                    }
-                }
-               priora.Clear();
-                if (blizko < float.MaxValue)
-                {
-                    priora.Add(best);
-                    if(IsTargetInRange(best)) result.Add(best);
-                }
-                else
-                {
+                    chert =blizko;
 
-                }
-                return result;
+                    chet.Add(chert);
                 
+                }
+               
             }
             else
             {
-                
-
-
-
                 priora.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
 
-
-
-                return priora;
             }
+            SortByDistanceToOwnBase(priora);
+            priora.Clear();
+            
+            return result;
         }
 
         public override void Update(float deltaTime, float time)
