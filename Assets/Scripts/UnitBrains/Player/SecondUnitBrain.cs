@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +16,53 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+
+        List<Vector2Int> unReachableTargets = new List<Vector2Int>();
+
+        private static int idValue = 0; // 
+        private const int MaxTargets = 4; // максимум целей для умного выбора
+        private int unitId;
+        
+        public SecondUnitBrain() // добавляем конструктор
+        {
+            unitId = idValue++;
+        }
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            /////////////////////////////////////// 
+            if (overheatTemperature <= GetTemperature()) return;
+
+            IncreaseTemperature();
+
+            for (int i = 0; i < GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (unReachableTargets.Count > 0)
+            {
+                if (IsTargetInRange(unReachableTargets[0]))
+                {
+                    return unit.Pos;
+                }
+                else
+                {
+                    return base.GetNextStep();
+                    //return CalcNextStepTowards(unReachableTargets[0]);
+                }
+            }
+
+            return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,11 +70,33 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>();              
+            Vector2Int bestTarget = new Vector2Int(0,0);
+            int enemyId = 0;
+
+            unReachableTargets.Clear();
+
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                unReachableTargets.Add(target);
+            }            
+
+            result.Clear();
+
+            if (unReachableTargets.Count == 0)
+            {
+                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
             }
+
+            SortByDistanceToOwnBase(unReachableTargets);
+            enemyId = unitId % Mathf.Min(MaxTargets, unReachableTargets.Count);
+            bestTarget = unReachableTargets[enemyId];
+
+            if (IsTargetInRange(bestTarget))
+            {
+                result.Add(bestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }

@@ -12,7 +12,7 @@ namespace Model.Config
         [SerializeField] private int _maxHealth;
         [SerializeField] private float _brainUpdateDelay = 0.25f;
         [SerializeField] private float _moveDelay = 0.25f;
-        [SerializeField] private float _attackDelay = 0.75f;
+        [SerializeField] private float _attackDelay = 0.15f;
         [SerializeField] private float _attackRange = 3.5f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
