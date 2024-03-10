@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,18 +16,33 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            //
 
+            if (GetTemperature() >= overheatTemperature)
+            {
+                    return;
+            }
+            
+            IncreaseTemperature();
+            
+            int r = GetTemperature();
+            
+            for (int i = 0; i < r; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            
+        }
+            
+     
+         
         public override Vector2Int GetNextStep()
         {
             return base.GetNextStep();
