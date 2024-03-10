@@ -4,6 +4,7 @@ namespace Model.Runtime.Projectiles
 {
     public class ArchToTileProjectile : BaseProjectile
     {
+        private const float HeightToDistanceRatio = 0.6f;
         private const float ProjectileSpeed = 7f;
         private readonly Vector2Int _target;
         private readonly float _timeToTarget;
@@ -25,16 +26,10 @@ namespace Model.Runtime.Projectiles
             
             float localHeight = 0f;
             float totalDistance = _totalDistance;
+            float maxHeight = _totalDistance * HeightToDistanceRatio;
 
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
+            localHeight = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
 
-
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
-            
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);

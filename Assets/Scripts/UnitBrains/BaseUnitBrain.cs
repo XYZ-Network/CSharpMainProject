@@ -39,7 +39,8 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            //_activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new CustomUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -132,6 +133,12 @@ namespace UnitBrains
         {
             return runtimeModel.RoUnits
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain);
+        }
+
+        protected IEnumerable<IReadOnlyUnit> GetAllPlayerUnits()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit == IsPlayerUnitBrain);
         }
 
         protected IEnumerable<Vector2Int> GetAllTargets()
