@@ -10,6 +10,8 @@ namespace UnitBrains.Pathfinding
         private readonly int _maxPathLength = 100;
         private Vector2Int[] _directions;
         private bool _isTargetReached;
+        private bool _isEnemyEncountered;
+        private Node _nextToBotUnit;
         
         
         public SmartUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) 
@@ -47,7 +49,7 @@ namespace UnitBrains.Pathfinding
                 openList.Remove(currentNode);
                 closedList.Add(currentNode);
                 
-                
+                // Если смогли достичь базы - строим до неё путь.
                 if (_isTargetReached)
                 {
                     path = BuildPath(currentNode);
@@ -56,8 +58,16 @@ namespace UnitBrains.Pathfinding
                 
                 CheckNeighborTiles(currentNode, targetNode, openList, closedList);
             }
+
+            // Если не смогли достичь базы - строим путь до первого встречного врага.
+            if (_isEnemyEncountered)
+            {
+                path = BuildPath(_nextToBotUnit);
+                return;
+            }
             
-            path = closedList.Select(node => node.Pos).ToArray();
+            // Если все пути движения заблокированы другими юнитами - возвращаем текущую позицию юнита.
+            path = new []{startNode.Pos};
         }
         
         
@@ -83,7 +93,22 @@ namespace UnitBrains.Pathfinding
                     
                     openList.Add(newNode);
                 }
+                
+                if (CheckEncounterWithEnemy(newTilePos) && !_isEnemyEncountered)
+                {
+                    _isEnemyEncountered = true;
+                    _nextToBotUnit = currentNode;
+                }
             }
+        }
+        
+        
+        private bool CheckEncounterWithEnemy(Vector2Int newPos)
+        {
+            var botUnitPositions = runtimeModel.RoBotUnits.Select(u => u.Pos)
+                                                                         .Where(u => u == newPos);
+
+            return botUnitPositions.Any();
         }
         
         
