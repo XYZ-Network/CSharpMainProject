@@ -1,0 +1,54 @@
+﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Pathfinding/Algoritm.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="76" Column="32" />
+      <File FileName="Assets/Scripts/UnitBrains/BaseUnitBrain.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/Nodes.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/Algoritm.cs" Line="112" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/BaseUnitPath.cs" />
+      <File FileName="Assets/Scripts/Model/IReadOnlyRuntimeModel.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/DebugPathOutput.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/DummyUnitPath.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMainFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="Unit.cs" selected="True" />
+                  </Node>
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Pathfinding" expanded="True" />
+                  <Node name="Player" expanded="True" />
+                </Node>
+                <Node name="Utilities" expanded="True" />
+                <Node name="View" expanded="True" />
+              </Node>
+              <Node name="UnityTechnologies" expanded="True">
+                <Node name="TowerDefenseTemplate" expanded="True">
+                  <Node name="Scripts" expanded="True">
+                    <Node name="TowerDefense" expanded="True">
+                      <Node name="Agents" expanded="True" />
+                      <Node name="Nodes" expanded="True" />
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="59d8bb82-cf70-499f-9303-89448354163d" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
