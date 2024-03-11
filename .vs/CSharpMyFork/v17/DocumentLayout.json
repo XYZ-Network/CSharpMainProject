@@ -3,7 +3,11 @@
   "WorkspaceRootPath": "C:\\Unity projects\\fork\\CSharpMyFork\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F9288B7C-85F4-74C9-13D8-C603D20E6A8F}|Root.csproj|c:\\unity projects\\fork\\csharpmyfork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F9288B7C-85F4-74C9-13D8-C603D20E6A8F}|Root.csproj|c:\\unity projects\\fork\\csharpmyfork\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9288B7C-85F4-74C9-13D8-C603D20E6A8F}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9288B7C-85F4-74C9-13D8-C603D20E6A8F}|Root.csproj|C:\\Unity projects\\fork\\CSharpMyFork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F9288B7C-85F4-74C9-13D8-C603D20E6A8F}|Root.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -23,6 +27,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "C:\\Unity projects\\fork\\CSharpMyFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "C:\\Unity projects\\fork\\CSharpMyFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T17:21:17.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "EnterPoint.cs",
               "DocumentMoniker": "C:\\Unity projects\\fork\\CSharpMyFork\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
@@ -30,8 +47,7 @@
               "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-11T16:42:39.248Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-11T16:42:39.248Z"
             }
           ]
         }
