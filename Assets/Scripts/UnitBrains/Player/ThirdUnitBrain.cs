@@ -3,47 +3,67 @@ using System.Collections;
 using System.Collections.Generic;
 using UnitBrains.Pathfinding;
 using UnitBrains.Player;
+using Unity.VisualScripting;
 using UnityEngine;
+
+public enum UnitState
+{
+    Move,
+    Attack
+}
 
 public class ThirdUnitBrain : DefaultPlayerUnitBrain
 {
-    bool canAttack = false;
-    private BaseUnitPath _activePath = null;
-
     public override string TargetUnitName => "Ironclad Behemoth";
 
-    protected override List<Vector2Int> SelectTargets()
+    private float _timer = 1f;
+    private UnitState _unitState = UnitState.Move;
+    private bool _isStateChange;
+
+    public override Vector2Int GetNextStep()
     {
-        var result = new List<Vector2Int>();
-        if (canAttack)
+        Vector2Int position = base.GetNextStep();
+
+        if (position == unit.Pos)
         {
-            result = GetReachableTargets();
-            while (result.Count > 1)
-                result.RemoveAt(result.Count - 1);
+            if (_unitState == UnitState.Move)
+                _isStateChange = true;
+
+            _unitState = UnitState.Attack;
         }
-        return result;
+        else
+        {
+            if (_unitState == UnitState.Attack)
+                _isStateChange = true;
+
+            _unitState = UnitState.Move;
+        }
+        return _isStateChange ? unit.Pos : position;
     }
 
     public override void Update(float deltaTime, float time)
     {
+        if (_isStateChange)
+        {
+            _timer -= Time.time;
+
+            if (_timer < 0)
+            {
+                _timer = 1f;
+                _isStateChange = false;
+            }
+        }
         base.Update(deltaTime, time);
     }
 
-    public override Vector2Int GetNextStep()
+    protected override List<Vector2Int> SelectTargets()
     {
-        if (HasTargetsInRange())
-        {
-            canAttack = true;
+        if (_isStateChange)
+            return new List<Vector2Int>();
 
-            return unit.Pos;
-        }
-      
-        canAttack = false;
+        if(_unitState == UnitState.Attack)
+            return base.SelectTargets();
 
-        var target = runtimeModel.RoMap.Bases[
-            IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-
-        _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-        return _activePath.GetNextStepFrom(unit.Pos);
+        return new List<Vector2Int>();
     }
 }
