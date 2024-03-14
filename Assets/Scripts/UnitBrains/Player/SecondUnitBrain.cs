@@ -34,31 +34,78 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            List<Vector2Int> targets = SelectTargets();
+            if (targets.Count > 0)
+            {
+                Vector2Int targetPosition = targets[0];
+
+                if (!targets.Contains(targetPosition))
+                {
+                    return CalcNextStepTowards(targetPosition);
+                }
+                else
+                {
+                    return base.GetNextStep();
+                }
+    
         }
+            return base.GetNextStep();
+    }
+
+        protected List<Vector2Int> GetAllTargets()
+        {
+            List<Vector2Int> allTargets = new List<Vector2Int>();
+
+            return allTargets;
+        }
+
 
         protected override List<Vector2Int> SelectTargets()
         {
 
-            List<Vector2Int> result = GetReachableTargets();
-            float minDistance = float.MaxValue;
-            Vector2Int closestTarget = Vector2Int.zero;
-
-            foreach (Vector2Int target in result)
+            List<Vector2Int> result = GetAllTargets();
+            if (result.Count > 0)
             {
-                var distance = DistanceToOwnBase(target);
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    closestTarget = target;
-                }
-            }
+                List<Vector2Int> outOfRangeTargets = new List<Vector2Int>();
 
-            result.Clear();
-            if (minDistance <float.MaxValue) result.Add(closestTarget); 
-            return result;
-            
+                float minDistance = float.MaxValue;
+                Vector2Int closestTarget = Vector2Int.zero;
+
+                foreach (Vector2Int target in result)
+                {
+                    var distance = DistanceToOwnBase(target);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        closestTarget = target;
+                    }
+
+                    else
+                    {
+                        outOfRangeTargets.Add(target);
+                    }
+                }
+
+                result.Clear();
+                if (minDistance < float.MaxValue) result.Add(closestTarget);
+                return result;
+            }
+            else
+            {
+                int enemyPlayerID = IsPlayerUnitBrain ? runtimeModel.BotPlayerId : runtimeModel.PlayerID;
+                List<Base> enemyBases = runtimeModel.RoMap.Bases[enemyPlayerID];
+
+                if (enemyBases.Count > 0)
+                {
+                    result.Add(enemyBases[0].position);
+                }
+
+                return result;
+            }
         }
+
+       
+
 
         public override void Update(float deltaTime, float time)
         {
