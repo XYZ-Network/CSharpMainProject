@@ -2,6 +2,7 @@
 using Model.Runtime.Projectiles;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -20,7 +21,7 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             int currentTemperature = GetTemperature();
-            
+
             if (currentTemperature >= overheatTemperature)
             {
                 return;
@@ -49,10 +50,25 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            float minDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                if (DistanceToOwnBase(target) < minDistance)
+                {
+                    minDistance = DistanceToOwnBase(target);
+                    closestTarget = target;
+                }
             }
+
+            if (minDistance != float.MaxValue)
+            {
+                result.Clear();
+                result.Add(closestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }
