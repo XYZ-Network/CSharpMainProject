@@ -1,0 +1,27 @@
+﻿<Properties StartupConfiguration="{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/EnterPoint.cs">
+    <Files>
+      <File FileName="Assets/Scripts/EnterPoint.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMyFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="EnterPoint.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="70b23d28-a23f-48b0-8c90-2c0006484dde" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
