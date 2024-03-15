@@ -15,9 +15,8 @@ namespace UnitBrains.Player
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
-        private float constantin_crizovnikov_velikiy = 3f;
-        private float kolithestvo_celey = 0;
-        private static List<float> chet =new List<float>();
+        private const float constantin = 3f;
+        private static int chet = 0;
         private float chert = 0; 
         private bool _overheated;
         private List<Vector2Int> priora = new List<Vector2Int>();
@@ -74,43 +73,24 @@ namespace UnitBrains.Player
 
 
             List<Vector2Int> result = new List<Vector2Int>();
-            float blizko = float.MaxValue;
-            Vector2Int best = Vector2Int.zero;
+            priora.Clear();
             foreach (Vector2Int target in GetAllTargets())
             {
-                float dlinna = DistanceToOwnBase(target);
-                if (dlinna > blizko)
-                {
-                    blizko = dlinna;
-                    best = target;
 
-                }
-                kolithestvo_celey++;
-
-            }
-            priora.Clear();
-            if (blizko < float.MaxValue)
-            {
-
-                priora.Add(best);
-                if (IsTargetInRange(best)) result.Add(best);
-                for (int i = 0;i<kolithestvo_celey;i++)
-                {
-                    chert =blizko;
-
-                    chet.Add(chert);
                 
-                }
-               
+                priora.Add(target);
+                
+
             }
-            else
+            if (priora.Count == 0)
             {
                 priora.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-
             }
             SortByDistanceToOwnBase(priora);
-            priora.Clear();
-            
+            for (chet=0;chet<constantin;chet++)
+            {
+               Vector2Int n = priora[chet];
+            }
             return result;
         }
 
