@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "B:\\Unity Projects\\CSharpMainProjectMyFork\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|b:\\unity projects\\csharpmainprojectmyfork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|b:\\unity projects\\csharpmainprojectmyfork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|b:\\unity projects\\csharpmainprojectmyfork\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -14,11 +22,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "EnterPoint.cs",
+              "DocumentMoniker": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
+              "ToolTip": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T15:07:51.226Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "SecondUnitBrain.cs",
+              "DocumentMoniker": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAqwB4AAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T14:51:50.06Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "ArchToTileProjectile.cs",
               "DocumentMoniker": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
