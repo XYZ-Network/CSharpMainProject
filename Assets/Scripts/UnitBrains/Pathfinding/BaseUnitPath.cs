@@ -35,7 +35,8 @@ namespace UnitBrains.Pathfinding
                 found = cell == unitPos;
             }
 
-            Debug.LogError($"Unit {unitPos} is not on the path");
+            //Debug.LogError($"Unit {unitPos} is not on the path");
+            Debug.Log($"Unit {unitPos} cant find next step. Something is blocking his path.");
             return unitPos;
         }
 
