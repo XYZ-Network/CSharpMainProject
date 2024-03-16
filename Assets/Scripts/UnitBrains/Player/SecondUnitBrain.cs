@@ -77,8 +77,12 @@ namespace UnitBrains.Player
             foreach (Vector2Int target in GetAllTargets())
             {
 
-                
-                priora.Add(target);
+             while (chert < constantin)
+                {
+                  priora.Add(target);
+                    chert++;
+                }   
+               
                 
 
             }
@@ -87,10 +91,7 @@ namespace UnitBrains.Player
                 priora.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
             }
             SortByDistanceToOwnBase(priora);
-            for (chet=0;chet<constantin;chet++)
-            {
-               Vector2Int n = priora[chet];
-            }
+           
             return result;
         }
 
