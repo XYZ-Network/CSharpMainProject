@@ -7,11 +7,11 @@
       "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|b:\\unity projects\\csharpmainprojectmyfork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|B:\\Unity Projects\\CSharpMainProjectMyFork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|b:\\unity projects\\csharpmainprojectmyfork\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|B:\\Unity Projects\\CSharpMainProjectMyFork\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -34,8 +34,7 @@
               "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-15T15:07:51.226Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-15T15:07:51.226Z"
             },
             {
               "$type": "Document",
@@ -45,7 +44,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "ToolTip": "B:\\Unity Projects\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAqwB4AAAAjAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAqwB0AAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-15T14:51:50.06Z",
               "EditorCaption": ""
@@ -60,8 +59,7 @@
               "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
               "ViewState": "AQIAAAkAAAAAAAAAAAAiwCQAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-03T16:22:18.385Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-03T16:22:18.385Z"
             }
           ]
         }
