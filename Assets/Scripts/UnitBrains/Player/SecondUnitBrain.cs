@@ -15,9 +15,9 @@ namespace UnitBrains.Player
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
-        private const float constantin = 3f;
+        private const int max = 3;
         private static int chet = 0;
-        private float chert = 0; 
+        private int unitId = 0; 
         private bool _overheated;
         private List<Vector2Int> priora = new List<Vector2Int>();
         
@@ -77,21 +77,18 @@ namespace UnitBrains.Player
             foreach (Vector2Int target in GetAllTargets())
             {
 
-             while (chert < constantin)
-                {
-                  priora.Add(target);
-                    chert++;
-                }   
-               
-                
 
+                priora.Add(target);
             }
             if (priora.Count == 0)
             {
                 priora.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
             }
             SortByDistanceToOwnBase(priora);
-           
+            int targetnum = unitId % max;
+            int bestTargetNum = Mathf.Max(targetnum, priora.Count - 1);
+            Vector2Int bestTarget = priora[bestTargetNum];
+            if (IsTargetInRange(bestTarget)) result.Add(bestTarget);
             return result;
         }
 
