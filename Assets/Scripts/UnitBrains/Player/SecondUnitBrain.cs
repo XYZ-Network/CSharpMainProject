@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -16,12 +16,22 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+            ////////////////////////////////////////
+            float temp=GetTemperature();
+
+            if (temp>=OverheatTemperature)
+            {
+                return;
+            }
+
+            for(int i=0; i<=temp; i++)
+            {
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            }
+
+            IncreaseTemperature();
+            //////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
@@ -35,10 +45,25 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            float MinDistance = float.MaxValue;
+            Vector2Int nearTarget = Vector2Int.zero;
+
+            if(result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
+            
+            foreach(var target in result)
+            {
+                float CurrentTargetDistance = DistanceToOwnBase(target);
+                if(MinDistance >= CurrentTargetDistance)
+                {
+                    MinDistance = CurrentTargetDistance;
+                    nearTarget = target;
+                } 
+            }
+            result.Clear();
+            result.Add(nearTarget);
             return result;
             ///////////////////////////////////////
         }
