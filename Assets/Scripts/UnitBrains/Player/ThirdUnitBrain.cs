@@ -1,4 +1,5 @@
 using Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnitBrains.Pathfinding;
@@ -18,7 +19,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
 
     private float _timer = 1f;
     private UnitState _unitState = UnitState.Move;
-    private bool _isStateChange;
+    private bool _isStateChange = true;
 
     public override Vector2Int GetNextStep()
     {
@@ -27,16 +28,20 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
         if (position == unit.Pos)
         {
             if (_unitState == UnitState.Move)
+            {
                 _isStateChange = true;
+            }
 
             _unitState = UnitState.Attack;
         }
         else
         {
             if (_unitState == UnitState.Attack)
+            {
                 _isStateChange = true;
-
+            }
             _unitState = UnitState.Move;
+
         }
         return _isStateChange ? unit.Pos : position;
     }
@@ -45,10 +50,11 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
     {
         if (_isStateChange)
         {
-            _timer -= Time.time;
+            _timer -= Time.deltaTime * 10;
 
-            if (_timer < 0)
+            if (_timer <= 0)
             {
+                Console.Clear();
                 _timer = 1f;
                 _isStateChange = false;
             }
