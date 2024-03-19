@@ -19,8 +19,22 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+
+            IncreaseTemperature();
+
+            
+            for (int a = 0; a < GetTemperature(); a++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+
+
             ///////////////////////////////////////
         }
 
@@ -35,9 +49,31 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+            Vector2Int Target = Vector2Int.zero;
+
+            //Макс. значение расстояния
+            float minDistance = float.MaxValue;
+            ///////////////////////////
+
+            // Растояние от цели до базы
+            foreach (Vector2Int target in result)
+            {
+                float Distance = DistanceToOwnBase(target);
+                if (Distance < minDistance)
+                {
+                    minDistance = Distance;
+                    Target = target;
+                }
+            }
+            ////////////////////////////
+
             while (result.Count > 1)
             {
                 result.RemoveAt(result.Count - 1);
+                //очистка стписка и добавление ближайшей цели
+                result.Clear();
+                result.Add(Target);
+                /////////////////////////////////////////////
             }
             return result;
             ///////////////////////////////////////
