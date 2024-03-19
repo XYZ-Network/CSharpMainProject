@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "C:\\Unity projects\\fork\\CSharpMyFork1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|c:\\unity projects\\fork\\csharpmyfork1\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|C:\\Unity projects\\fork\\CSharpMyFork1\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|solutionrelative:assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|c:\\unity projects\\fork\\csharpmyfork1\\assets\\scripts\\controller\\levelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|solutionrelative:assets\\scripts\\controller\\levelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|C:\\Unity projects\\fork\\CSharpMyFork1\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6467029E-8981-6B00-D916-7DECD1B5C4D9}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,11 +22,36 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LevelController.cs",
+              "DocumentMoniker": "C:\\Unity projects\\fork\\CSharpMyFork1\\Assets\\Scripts\\Controller\\LevelController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\LevelController.cs",
+              "ToolTip": "C:\\Unity projects\\fork\\CSharpMyFork1\\Assets\\Scripts\\Controller\\LevelController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\LevelController.cs",
+              "ViewState": "AQIAAGQAAAAAAAAAAIBJwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-19T11:08:04.165Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "C:\\Unity projects\\fork\\CSharpMyFork1\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "C:\\Unity projects\\fork\\CSharpMyFork1\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AQIAADsAAAAAAAAAAAAIwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-19T11:07:33.567Z"
             },
             {
               "$type": "Document",
@@ -28,7 +61,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
               "ToolTip": "C:\\Unity projects\\fork\\CSharpMyFork1\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
               "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
-              "ViewState": "AQIAABMAAAAAAAAAAAAgwCIAAAAAAAAA",
+              "ViewState": "AQIAABEAAAAAAAAAAAAQwCAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-14T18:54:21.526Z",
               "EditorCaption": ""
