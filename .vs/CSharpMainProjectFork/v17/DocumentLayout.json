@@ -1,0 +1,94 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|z:\\programs\\fork\\csharpmainprojectfork\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|z:\\programs\\fork\\csharpmainprojectfork\\assets\\scripts\\controller\\iplayerunitchoosinglistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\iplayerunitchoosinglistener.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|Z:\\Programs\\Fork\\CSharpMainProjectFork\\assets\\scripts\\controller\\levelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\levelcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|Z:\\Programs\\Fork\\CSharpMainProjectFork\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{191E11C8-4C5C-0347-24EB-E4D3D15E7A2F}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EnterPoint.cs",
+              "DocumentMoniker": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
+              "ToolTip": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-25T16:59:01.261Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IPlayerUnitChoosingListener.cs",
+              "DocumentMoniker": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\IPlayerUnitChoosingListener.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\IPlayerUnitChoosingListener.cs",
+              "ToolTip": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\IPlayerUnitChoosingListener.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\IPlayerUnitChoosingListener.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-25T16:56:32.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LevelController.cs",
+              "DocumentMoniker": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\LevelController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\LevelController.cs",
+              "ToolTip": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\LevelController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\LevelController.cs",
+              "ViewState": "AQIAAEkAAAAAAAAAAADwv1oAAABrAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-25T16:51:44.755Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "Z:\\Programs\\Fork\\CSharpMainProjectFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-25T16:03:04.167Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
