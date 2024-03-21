@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
@@ -6,7 +7,7 @@ using Utilities;
 
 namespace Model.Runtime
 {
-    public class PlayerUnitCoordinator
+    public class PlayerUnitCoordinator : IDisposable
     {
         private static PlayerUnitCoordinator _instance;
         
@@ -59,13 +60,9 @@ namespace Model.Runtime
         private void UpdateRecommendedTarget(List<IReadOnlyUnit> botUnits)
         {
             if (_enemiesOnPlayerHalf)
-            {
                 _unitSorter.SortByDistanceToBase(botUnits, EBaseType.PlayerBase);
-            }
             else
-            {
                 _unitSorter.SortByHealth(botUnits);
-            }
             
             RecommendedTarget = botUnits.First().Pos;
         }
@@ -109,6 +106,11 @@ namespace Model.Runtime
             int pointsToBorder = (botBaseY - playerBaseY) / 2;
 
             return botBaseY - botPos.y > pointsToBorder;
+        }
+
+        public void Dispose()
+        {
+            _timeUtil.RemoveFixedUpdateAction(UpdateRecommendations);
         }
     }
 }

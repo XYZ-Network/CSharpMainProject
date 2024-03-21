@@ -43,26 +43,22 @@ namespace Utilities
         
         private float DistanceToBase(IReadOnlyUnit unit)
         {
+            int baseID = 0;
+            
             switch (_baseType)
             {
                 case EBaseType.PlayerBase:
-                {
-                    return Vector2Int.Distance(unit.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
-                }
+                    baseID = RuntimeModel.PlayerId;
+                    break;
                 case EBaseType.BotBase:
-                {
-                    return Vector2Int.Distance(unit.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-                }
+                    baseID = RuntimeModel.PlayerId;
+                    break;
                 case EBaseType.OwnBase:
-                {
-                    if (unit.Config.IsPlayerUnit)
-                        return Vector2Int.Distance(unit.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
-                    
-                    return Vector2Int.Distance(unit.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
-                }
+                    baseID = unit.Config.IsPlayerUnit ?  RuntimeModel.PlayerId :  RuntimeModel.BotPlayerId;
+                    break;
             }
             
-            throw new ArgumentException("Unknown base type: " + _baseType);
+            return Vector2Int.Distance(unit.Pos, _runtimeModel.RoMap.Bases[baseID]);
         }
         
         

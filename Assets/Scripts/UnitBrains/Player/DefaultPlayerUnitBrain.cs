@@ -14,6 +14,8 @@ namespace UnitBrains.Player
         {
             var recommendedTarget = PlayerUnitCoordinator.GetInstance().RecommendedTarget;
             var recommendedPoint = PlayerUnitCoordinator.GetInstance().RecommendedPoint;
+            
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedPoint);
 
             if (RecommendedTargetNearby(recommendedTarget))
             {
@@ -21,10 +23,6 @@ namespace UnitBrains.Player
                     return unit.Pos;
                 
                 _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedTarget);
-            }
-            else
-            {
-                _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedPoint);
             }
             
             return _activePath.GetNextStepFrom(unit.Pos);
