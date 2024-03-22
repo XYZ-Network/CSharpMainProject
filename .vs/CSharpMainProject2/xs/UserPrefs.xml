@@ -1,16 +1,17 @@
 ﻿<Properties StartupConfiguration="{9C9760F9-0F5E-4121-6CD5-F5B2D583EB30}|">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="9d436b3b-03aa-40bf-a640-11b474588093" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs">
     <Files>
-      <File FileName="Assets/Scripts/EnterPoint.cs" Line="25" Column="1" />
-      <File FileName="Assets/Scripts/Controller/BotController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" Line="36" Column="2" />
-      <File FileName="Assets/Scripts/Model/Runtime/MainBase.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/BaseProjectile.cs" Line="36" Column="67" />
-      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ProjectileType.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Controller/LevelController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="53" Column="1" />
+      <File FileName="Assets/Scripts/EnterPoint.cs" />
+      <File FileName="Assets/Scripts/Controller/BotController.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/MainBase.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/BaseProjectile.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ProjectileType.cs" />
+      <File FileName="Assets/Scripts/Controller/LevelController.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="30" Column="29" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -32,18 +33,9 @@
           </Node>
         </State>
       </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
-      </Pad>
-      <Pad Id="MonoDevelop.UnitTesting.TestPad">
-        <State name="__root__">
-          <Node name="Unity" selected="True" />
-        </State>
-      </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="26d4915b-e870-477b-a0ff-853499ca1e8c" />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
