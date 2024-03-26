@@ -16,7 +16,7 @@ namespace Model.Runtime
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
         public bool IsDead => Health <= 0;
-        public BaseUnitPath ActivePath => _brain?.ActivePath;
+        public BaseUnitPath ActivePath => _brain?.ActivePath; 
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
@@ -34,7 +34,7 @@ namespace Model.Runtime
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>(); //получаем RuntimeModel через ServiceLocator
         }
 
         public void Update(float deltaTime, float time)
@@ -70,9 +70,9 @@ namespace Model.Runtime
             return true;
         }
 
-        private void Move()
+        private void Move() 
         {
-            var targetPos = _brain.GetNextStep();
+            var targetPos = _brain.GetNextStep(); //когда юнит ходит, он спрашивает у Brain куда идти 
             var delta = targetPos - Pos;
             if (delta.sqrMagnitude > 2)
             {
