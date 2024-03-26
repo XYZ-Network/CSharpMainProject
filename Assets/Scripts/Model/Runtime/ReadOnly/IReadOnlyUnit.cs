@@ -7,7 +7,7 @@ namespace Model.Runtime.ReadOnly
     public interface IReadOnlyUnit
     {
         public UnitConfig Config { get; }
-        public Vector2Int Pos { get; }
+        public Vector2Int Pos { get; } //позиция юнита
         public int Health { get; }
         public BaseUnitPath ActivePath { get; }
     }

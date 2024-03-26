@@ -34,7 +34,7 @@ namespace Model.Runtime
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>(); //получаем RuntimeModel через ServiceLocator
         }
 
         public void Update(float deltaTime, float time)

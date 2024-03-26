@@ -1,37 +1,40 @@
-using System;
-using UnityEngine;
+//using System;
+//using UnityEngine;
 
-public class Nodes
-{
-   public Vector2Int Position;
+//public class Nodes
+//{
+//    public Vector2Int Position;
 
-    public int Cost = 10;
-    public int Estimate;
-    public int Value;
+//    public int Cost = 10;
+//    public int Estimate;
+//    public int Value;
 
-    public Nodes Parent;
+//    public Nodes Parent;
 
-    public Nodes(Vector2Int position) 
-    {
-        Position = position;
-    }
+//    public Nodes(Vector2Int position)
+//    {
+//        Position = position;
+//    }
 
+//    public override bool Equals(object obj)
+//    {
+//        return obj is Nodes node &&
+//               Position == node.Position;
+//    }
 
-    public void CalculateEstimate(int targetX, int targetY)
-    {
-       Estimate = Math.Abs(Position.x - targetX) + Math.Abs(Position.y - targetY);
-    }
+//    public override int GetHashCode()
+//    {
+//        return HashCode.Combine(Position);
+//    }
 
-    public void CalculateValue()
-    {
-        Value = Cost + Estimate;
-    }
+//    public void CalculateEstimate(Nodes targetPosition)
+//    {
+//        Estimate = Math.Abs(Position.x - targetPosition.Position.x) + Math.Abs(Position.y - targetPosition.Position.y);
+//    }
 
-    public override bool Equals(object? obj)
-    {
-        if (obj is not Nodes node)
-            return false;
+//    public void CalculateValue()
+//    {
+//        Value = Cost + Estimate;
+//    }
 
-        return Position.x == node.Position.x && Position.y == node.Position.y;
-    }
-}
+//}

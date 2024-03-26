@@ -1,136 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
 using Model;
-using UnitBrains.Pathfinding;
 using UnityEngine;
-using Unit = Model.Runtime.Unit;
 
-public class Algoritm : BaseUnitPath
+namespace UnitBrains.Pathfinding
 {
-
-    private int[] dx = { -1, 0, 1, 0 };
-    private int[] dy = { 0, 1, 0, -1 };
-    public int calc;
-
-    // Максимальное количество итераций перед считанием, что алгоритм застрял
-    private const int MaxIterations = 1000;
-    private int iterationCount = 0;
-
-    public Algoritm(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint)
-        : base(runtimeModel, startPoint, endPoint)
+    public class Algoritm : BaseUnitPath
     {
-    }
+        private int[] dx = { -1, 0, 1, 0 };
+        private int[] dy = { 0, 1, 0, -1 };
 
-    protected override void Calculate()
-    {
-        Nodes startNode = new Nodes(startPoint);
-        Nodes targetNode = new Nodes(endPoint);
-
-        List<Nodes> openList = new List<Nodes> { startNode };
-        List<Nodes> clodesList = new List<Nodes>();
-
-        Nodes currentNode = null;
-
-        while (openList.Count > 0)
+        public Algoritm(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(
+            runtimeModel, startPoint, endPoint)
         {
-            if (openList.Count > 0)
-                currentNode = openList[0];
-            else
-            {
-                path = new Vector2Int[] { new Vector2Int(startPoint.x, startPoint.y) };
-                return;
-            }
-
-
-            Debug.Log("Current node position: " + currentNode.Position);
-            Debug.Log(endPoint);
-
-            foreach (var node in openList)
-            {
-                if (node.Value < currentNode.Value)
-                    currentNode = node;
-            }
-
-            openList.Remove(currentNode);
-            Debug.Log("Removed from open list: " + currentNode.Position);
-            clodesList.Add(currentNode);
-            Debug.Log("Added node to closed list: " + currentNode.Position);
-
-
-            iterationCount++;
-
-            if (iterationCount > MaxIterations)
-            {
-                throw new Exception("Pathfinding algorithm is stuck.");
-            }
-
-            for (int i = 0; i < dx.Length; i++)
-            {
-                int newX = currentNode.Position.x + dx[i];
-                int newY = currentNode.Position.y + dy[i];
-
-                if (newX == targetNode.Position.x && newY == targetNode.Position.y)
-                {
-
-                    path = FindPath(currentNode);
-                    return;
-
-                }
-
-                if (IsValid(newX, newY))
-                {
-                    Debug.Log("Tile at (" + newX + ", " + newY + ") is walkable.");
-
-                    Nodes neighbor = new Nodes(new Vector2Int(newX, newY));
-
-                    if (clodesList.Contains(neighbor))
-                        continue;
-
-                    neighbor.Parent = currentNode;
-                    neighbor.CalculateEstimate(endPoint.x, endPoint.y);
-                    neighbor.CalculateValue();
-
-                    openList.Add(neighbor);
-                    Debug.Log("Added neighbor node to open list: " + neighbor.Position);
-                }
-                else
-                {
-                    Nodes neighborclose = new Nodes(new Vector2Int(newX, newY));
-                    clodesList.Add(neighborclose);
-                    Debug.Log("Tile at (" + newX + ", " + newY + ") is not walkable.");
-                }
-            }
         }
 
-        path = FindPath(currentNode);
-    }
-
-    private Vector2Int[] FindPath(Nodes currentNode)
-    {
-        List<Nodes> path = new List<Nodes>();
-
-        while (currentNode != null)
+        protected override void Calculate()
         {
-            path.Add(currentNode);
-            currentNode = currentNode.Parent;
+            path = FindPath().ToArray(); //записываем результат метода в путь, но массивом
+
+            if (path == null)
+                path = new Vector2Int[] { StartPoint }; //если путь вернул null, то записываем как путь просто стартовую точку юнита
         }
 
-        path.Reverse();
-        List<Vector2Int> Path = new List<Vector2Int>();
-        foreach (var node in path)
+        public List<Vector2Int> FindPath()
         {
-            Path.Add(new Vector2Int(node.Position.x, node.Position.y));
-        }
+            Node startNode = new Node(startPoint); //задаем как стартовую ноду позицию нашего юнита
+            Node targetNode = new Node(endPoint); //задаем как ноду цели - позицию юнита врага
 
-        return Path.ToArray();
+            List<Node> openList = new List<Node> { startNode }; // сюда добавляются все вершины, в которые можно пойти
+            List<Node> closedList = new List<Node>(); // сюда добавляются все вершины, по которым уже прошли, они в вычислениях не участвуют
+
+            while (openList.Count > 0) //цикл будет работать, пока список openList не станет пустым
+            {
+                Node currentNode = openList[0]; //устанавливаем текущую ноду как стартовую точку = первую ноду в списке OpenList
+
+                foreach (var node in openList) //проходимся по всему списку, чтобы найти ноды с наименьшей стоимостью 
+                {
+                    if (node.Value < currentNode.Value) //условие поиска наименьшей стоимости среди всех в OpenList
+                        currentNode = node; //если  находим, то присваиваем ее как текущую
+                }
+
+                openList.Remove(currentNode); //как только нашли ноду - удаляем ее из OpenList
+                closedList.Add(currentNode); //добавляем ее в ClosedList, тем самым обозначив, что ее больше не смотрим
+
+                if (currentNode.Position.x == targetNode.Position.x && currentNode.Position.y == targetNode.Position.y) //проверяем, добрались ли мы до цели
+                {
+                    List<Vector2Int> path = new List<Vector2Int>(); //если да, то начинаем формировать путь из нод
+                    while (currentNode != null) 
+                    {
+                        path.Add(currentNode.Position); //формируем список, добавляя координаты каждого узла, пока он не станет null
+                        currentNode = currentNode.Parent; //записываем родителя для того, чтобы потом двигаться по пути в обратную сторону
+                    }
+
+                    path.Reverse(); //делаем реверс пути, чтобы рассчитать путь от врага до нас
+                    return path; //возвращаем путь
+                } //если нет, то продолжаем поиск
+
+                for (int i = 0; i < dx.Length; i++) //проходимся циклом по соседним клеткам
+                {
+                    Vector2Int newPos = new Vector2Int(currentNode.Position.x + dx[i], currentNode.Position.y + dy[i]); //соседние клетки записываем в newpos
+
+                    if (!runtimeModel.IsTileWalkable(newPos) && endPoint != newPos) //проверяем доступность соседней клетки или что соседняя клетка не равна цели
+                        continue; //если клетка не доступна или является целью - то прерываем текущую итерацию цикла
+
+                    Node neighbor = new Node(newPos); //если доступна, то формируем ее в соседа
+                     
+                    if (closedList.Contains(neighbor)) //проверяем, нет ли такой уже в списке закрытых
+                        continue; //если есть, то прерываем текущую итерацию цикла
+
+                    neighbor.Parent = currentNode; //если нет, то записываем текущую в парент 
+                    neighbor.CalculateEstimate(targetNode.Position.x, targetNode.Position.y); //рассчитываем путь 
+                    neighbor.CalculateValue(); //рассчитываем значение
+
+                    openList.Add(neighbor); // после всех проверок и расчетов, добавляем соседа в openlist 
+                }
+            }
+
+            return null; //если путь не найден, то возвращаем налл
+        }
     }
 
-
-        private bool IsValid(int x, int y)
+    public class Node
     {
-        bool containsX = x >= 0 && x < runtimeModel.RoMap.Width;
-        bool containsY = y >= 0 && y < runtimeModel.RoMap.Height;
-        return containsX && containsY && (runtimeModel.IsTileWalkable(new Vector2Int(x, y)));
+        public Vector2Int Position;
+        public int Cost;
+        public int Estimate;
+        public int Value;
+        public Node Parent;
 
+        public Node(Vector2Int position)
+        {
+            Position = position;
+        }
+
+        public void CalculateEstimate(int targetX, int targetY)
+        {
+            Estimate = Mathf.Abs(Position.x - targetX) + Mathf.Abs(Position.y - targetY);
+        }
+
+        public void CalculateValue()
+        {
+            Value = Cost + Estimate;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is not Node node)
+                return false;
+
+            return Position.Equals(node.Position);
+        }
     }
 }
