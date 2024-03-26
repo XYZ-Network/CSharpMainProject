@@ -50,10 +50,11 @@
      <Compile Include="Assets\Scripts\View\UnitView.cs" />
      <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyUnit.cs" />
      <Compile Include="Assets\Scripts\UnitBrains\BaseUnitBrain.cs" />
-     <Compile Include="Assets\Scripts\Model\Runtime\PlayerUnitCoordinator.cs" />
      <Compile Include="Assets\Scripts\Utilities\CameraPositioning.cs" />
      <Compile Include="Assets\Scripts\View\ChooseUnitView.cs" />
      <Compile Include="Assets\Scripts\View\UnitCardView.cs" />
+     <Compile Include="Assets\Scripts\UnitBrains\Enemy\BotUnitCoordinator.cs" />
+     <Compile Include="Assets\Scripts\UnitBrains\Player\PlayerUnitCoordinator.cs" />
      <Compile Include="Assets\Scripts\UnitBrains\Player\DefaultPlayerUnitBrain.cs" />
      <Compile Include="Assets\Scripts\View\LevelFinishedView.cs" />
      <Compile Include="Assets\Scripts\View\Gameplay3dView.cs" />
@@ -78,6 +79,7 @@
      <Compile Include="Assets\Scripts\Controller\LevelController.cs" />
      <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyProjectile.cs" />
      <Compile Include="Assets\Scripts\UnitBrains\Enemy\DefaultEnemyUnitBrain.cs" />
+     <Compile Include="Assets\Scripts\UnitBrains\IUnitCoordinator.cs" />
      <Compile Include="Assets\Scripts\View\ProjectileView.cs" />
      <Compile Include="Assets\Scripts\View\StartMenuView.cs" />
      <Compile Include="Assets\Scripts\Model\RuntimeModel.cs" />

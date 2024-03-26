@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Model.Runtime;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 
@@ -12,8 +11,8 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            var recommendedTarget = PlayerUnitCoordinator.GetInstance().RecommendedTarget;
-            var recommendedPoint = PlayerUnitCoordinator.GetInstance().RecommendedPoint;
+            var recommendedTarget = Coordinator.RecommendedTarget;
+            var recommendedPoint = Coordinator.RecommendedPoint;
             
             _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedPoint);
 
@@ -32,7 +31,7 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             var result = GetReachableTargets();
-            var recommendedTarget = PlayerUnitCoordinator.GetInstance().RecommendedTarget;
+            var recommendedTarget = Coordinator.RecommendedTarget;
             
             if (result.Contains(recommendedTarget))
                 return new List<Vector2Int>() { recommendedTarget };

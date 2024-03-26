@@ -2,40 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using Model.Runtime.ReadOnly;
+using UnitBrains;
 using UnityEngine;
 using Utilities;
 
 namespace Model.Runtime
 {
-    public class PlayerUnitCoordinator : IDisposable
+    public class PlayerUnitCoordinator : IReadOnlyUnitCoordinator, IDisposable
     {
-        private static PlayerUnitCoordinator _instance;
-        
         public Vector2Int RecommendedTarget { get; private set; }
         public Vector2Int RecommendedPoint { get; private set; }
         private IReadOnlyRuntimeModel _runtimeModel;
         private TimeUtil _timeUtil;
         private UnitSorter _unitSorter;
-        private float _playerAttackRange;
+        private float _unitAttackRange;
         private bool _enemiesOnPlayerHalf;
 
-        private PlayerUnitCoordinator()
+        public PlayerUnitCoordinator()
         {
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
             _unitSorter = new UnitSorter();
-            _playerAttackRange = _runtimeModel.RoPlayerUnits.First().Config.AttackRange;
             
             _timeUtil.AddFixedUpdateAction(UpdateRecommendations);
-        }
-
-        
-        public static PlayerUnitCoordinator GetInstance()
-        {
-            if (_instance == null)
-                _instance = new PlayerUnitCoordinator();
-            
-            return _instance;
         }
 
         
@@ -68,7 +57,7 @@ namespace Model.Runtime
         }
         
         
-        public void UpdateRecommendedPoint(List<IReadOnlyUnit> botUnits)
+        private void UpdateRecommendedPoint(List<IReadOnlyUnit> botUnits)
         {
             if (_enemiesOnPlayerHalf)
             {
@@ -77,13 +66,25 @@ namespace Model.Runtime
             else
             {
                 _unitSorter.SortByDistanceToBase(botUnits, EBaseType.PlayerBase);
+                _unitAttackRange = GetUnitAttackRange();
                 int x = botUnits.First().Pos.x;
-                int y = botUnits.First().Pos.y - Mathf.FloorToInt(_playerAttackRange);
+                int y = botUnits.First().Pos.y - Mathf.FloorToInt(_unitAttackRange);
                 RecommendedPoint = new Vector2Int(x, y);
             }
         }
 
+        
+        private float GetUnitAttackRange()
+        {
+            var playerUnits = _runtimeModel.RoPlayerUnits.ToList();
+            
+            if (playerUnits.Any())
+                return playerUnits.First().Config.AttackRange;
 
+            return 1f;
+        }
+
+        
         private void CheckBorder()
         {
             foreach (var unit in _runtimeModel.RoBotUnits)
@@ -108,6 +109,7 @@ namespace Model.Runtime
             return botBaseY - botPos.y > pointsToBorder;
         }
 
+        
         public void Dispose()
         {
             _timeUtil.RemoveFixedUpdateAction(UpdateRecommendations);
