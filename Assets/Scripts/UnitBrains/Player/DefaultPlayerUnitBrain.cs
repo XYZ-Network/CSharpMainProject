@@ -1,25 +1,50 @@
 ﻿using System.Collections.Generic;
-using Model;
-using Model.Runtime.Projectiles;
+using UnitBrains.Pathfinding;
 using UnityEngine;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
-        protected float DistanceToOwnBase(Vector2Int fromPos) =>
-            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        private BaseUnitPath _activePath;
+        private int _attackRangeMultiplier = 2;
 
-        protected void SortByDistanceToOwnBase(List<Vector2Int> list)
+        public override Vector2Int GetNextStep()
         {
-            list.Sort(CompareByDistanceToOwnBase);
+            var recommendedTarget = Coordinator.RecommendedTarget;
+            var recommendedPoint = Coordinator.RecommendedPoint;
+            
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedPoint);
+
+            if (RecommendedTargetNearby(recommendedTarget))
+            {
+                if (IsTargetInRange(recommendedTarget))
+                    return unit.Pos;
+                
+                _activePath = new SmartUnitPath(runtimeModel, unit.Pos, recommendedTarget);
+            }
+            
+            return _activePath.GetNextStepFrom(unit.Pos);
+        }
+
+        
+        protected override List<Vector2Int> SelectTargets()
+        {
+            var result = GetReachableTargets();
+            var recommendedTarget = Coordinator.RecommendedTarget;
+            
+            if (result.Contains(recommendedTarget))
+                return new List<Vector2Int>() { recommendedTarget };
+
+            return new List<Vector2Int>();
         }
         
-        private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
+        
+        private bool RecommendedTargetNearby(Vector2Int recomendedTargetPos)
         {
-            var distanceA = DistanceToOwnBase(a);
-            var distanceB = DistanceToOwnBase(b);
-            return distanceA.CompareTo(distanceB);
+            var attackRangeSqr =  _attackRangeMultiplier * (unit.Config.AttackRange * unit.Config.AttackRange);
+            var diff = recomendedTargetPos - unit.Pos;
+            return diff.sqrMagnitude <= attackRangeSqr;
         }
     }
 }
