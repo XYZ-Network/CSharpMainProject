@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
-using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -44,9 +42,7 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int target = allTargets.Count > 0 ? allTargets[0] : unit.Pos;
-
-            return IsTargetInRange(target) ? unit.Pos : unit.Pos.CalcNextStepTowards(target);
+            return base.GetNextStep();
         }
 
         protected override List<Vector2Int> SelectTargets() 

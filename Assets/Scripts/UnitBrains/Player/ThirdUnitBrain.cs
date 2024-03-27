@@ -1,10 +1,6 @@
-using Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnitBrains.Pathfinding;
 using UnitBrains.Player;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum UnitState
@@ -43,7 +39,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
             _unitState = UnitState.Move;
 
         }
-        return _isStateChange ? unit.Pos : position;
+        return base.GetNextStep();
     }
 
     public override void Update(float deltaTime, float time)
