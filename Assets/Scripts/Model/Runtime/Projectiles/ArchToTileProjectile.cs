@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Model.Runtime.Projectiles
 {
@@ -29,12 +30,16 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
-
+            
+            float maxHeight = totalDistance * 0.6f;
+            float ratioStartTimeToTimeToTargetSquaredMinusOne = t * 2 - 1;
+            // Честно, не знаю, как назвать более "Говоряще" эту переменную, если не tempValue
+            localHeight = maxHeight * (-ratioStartTimeToTimeToTargetSquaredMinusOne * ratioStartTimeToTimeToTargetSquaredMinusOne + 1);
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
