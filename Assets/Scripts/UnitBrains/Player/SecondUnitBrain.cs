@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -12,16 +13,31 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private static int _unitsCounter = 0;
+        private const int _maxTargets = 4;
+        public int UnitID {  get; private set; }
+        List<Vector2Int> allTargets = new();
+
+        public SecondUnitBrain()
+        {
+            UnitID = _unitsCounter++;
+        }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float temp = GetTemperature();
+            if (temp >= overheatTemperature)
+            {
+                return;
+            }
+            IncreaseTemperature();
+            for (int i = 0; i <= temp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+                Debug.Log("ВЫСТРЕЛ");
+            }
         }
 
         public override Vector2Int GetNextStep()
@@ -29,18 +45,37 @@ namespace UnitBrains.Player
             return base.GetNextStep();
         }
 
-        protected override List<Vector2Int> SelectTargets()
+        protected override List<Vector2Int> SelectTargets() 
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new();
+            Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            allTargets.Clear();
+
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                if (target != enemyBase)
+                {
+                    allTargets.Add(target);
+                }
             }
-            return result;
-            ///////////////////////////////////////
+
+            if (allTargets.Count == 0) 
+            {
+                allTargets.Add(enemyBase);
+            }
+
+            SortByDistanceToOwnBase(allTargets);
+
+            int targetId = UnitID % _maxTargets;
+            int targetNum = Mathf.Min(targetId, allTargets.Count - 1);
+            Vector2Int betsTarget = allTargets[targetNum];
+
+            if (IsTargetInRange(betsTarget))
+            {
+                result.Add(betsTarget);
+            }
+
+            return result; // Возвращаем результат. Он может быть либо пустым, либо с таргетом(не с базой) 
         }
 
         public override void Update(float deltaTime, float time)
