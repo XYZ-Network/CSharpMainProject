@@ -12,15 +12,30 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////   
+
+            var temperature = GetTemperature();
+
+            if (temperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            for (int i = 0; i < temperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
+
             ///////////////////////////////////////
         }
 
@@ -34,11 +49,32 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
+         
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+             
+            
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
+
+            Vector2Int closestTarget = Vector2Int.zero;
+            float minimalDistance = float.MaxValue;
+
+            foreach (var target in result)
+            {
+                float TargetDistance = DistanceToOwnBase(target);
+
+
+                if (minimalDistance >= TargetDistance)
+                {
+                    minimalDistance = TargetDistance;
+                    closestTarget = target;
+                }
+
+            }
+            result.Clear();
+            result.Add(closestTarget);
             return result;
             ///////////////////////////////////////
         }
