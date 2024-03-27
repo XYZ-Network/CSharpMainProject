@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,36 +16,79 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        List<Vector2Int> targetsOutOfRange = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            float currentTemperature = GetTemperature();
+
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            IncreaseTemperature();
+
+            for (int i = 0; i <= currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int currentTarget = targetsOutOfRange.Count > 0 ? targetsOutOfRange[0] : unit.Pos;
+
+            if (IsTargetInRange(currentTarget))
+            {
+                return unit.Pos;
+            } else
+            {
+                return unit.Pos.CalcNextStepTowards(currentTarget);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            float closestDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+
+            foreach (Vector2Int target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestTarget = target;
+                }
             }
+
+            targetsOutOfRange.Clear();
+
+            if (closestDistance < float.MaxValue)
+            {
+                targetsOutOfRange.Add(closestTarget);
+                if (IsTargetInRange(closestTarget))
+                {
+                    result.Add(closestTarget);                  
+                } 
+            } 
+            else
+            {
+                int playerId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[playerId];
+                targetsOutOfRange.Add(enemyBase);
+            }
+
             return result;
-            ///////////////////////////////////////
         }
+
 
         public override void Update(float deltaTime, float time)
         {
