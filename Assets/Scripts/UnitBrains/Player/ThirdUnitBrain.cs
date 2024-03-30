@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,50 +12,45 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
 
     private const float TransitionDuration = 1f;
     private float transitionStartTime = 0f;
-    private bool Ataka1=false;
-    private bool Ataka2=false;
+    private bool ShootingMod=false;
+    private bool transittionMod=false;
+    private bool hasTarget = false;
 
-
-    public void IroncladBehemoth()
+    public override Vector2Int GetNextStep()
     {
-        Console.WriteLine("Ironclad Behemoth");
-        return; 
+        if (ShootingMod || transittionMod)
+            return unit.Pos;
+        return base.GetNextStep();
     }
-    public void spornoe_nazvanie()
+    protected override List<Vector2Int> SelectTarget()
     {
-        if (Ataka1)
-        {
-            if (Ataka1 != Ataka2)
-            {
-                while (TransitionDuration> transitionStartTime)
-                {
-                    transitionStartTime= transitionStartTime+0.01f;
-                }
-            }
-            Console.WriteLine("ÀÒÀÊÓÞ");
-
-            Ataka2 = Ataka1;
-           
-        }
-        else
-        {
-            if (Ataka1 != Ataka2)
-            {
-                while (TransitionDuration > transitionStartTime)
-                {
-                    transitionStartTime = transitionStartTime + 0.01f;
-                }
-            }
-            Console.WriteLine("åäó");
-
-            Ataka2 = Ataka1;
-        }
-
-
+        var result =base.SelectTargets();
+        hasTarget=result.Count > 0;
+        if (!ShootingMod|| transittionMod)
+            result.Clear();
+        return result;
     }
+    public override void Update(float deltaTime, float time)
+    {
+        base.Update( deltaTime, time);
+        if (ShootingMod && !hasTarget && !transittionMod||
+            !ShootingMod && hasTarget && !transittionMod)
+        {
+            transittionMod = true;
+            transitionStartTime =time;
+        }
+        if (transittionMod && time - transitionStartTime>=TransitionDuration)
+        {
+            ShootingMod = !ShootingMod;
+            transittionMod = false;
+        }
+    }
+
+
+}
 
 
    
 
   
-}
+
