@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|d:\\\u0448\u0442\u0443\u043A\u0438 \u0434\u043B\u044F \u043A\u0443\u0440\u0441\u0430\\\u0432\u0438\u043B\u043A\u0430\\csharpmainproject\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|D:\\\u0448\u0442\u0443\u043A\u0438 \u0434\u043B\u044F \u043A\u0443\u0440\u0441\u0430\\\u0432\u0438\u043B\u043A\u0430\\CSharpMainProject\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -28,7 +28,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
               "ToolTip": "D:\\\u0448\u0442\u0443\u043A\u0438 \u0434\u043B\u044F \u043A\u0443\u0440\u0441\u0430\\\u0432\u0438\u043B\u043A\u0430\\CSharpMainProject\\Assets\\Scripts\\Controller\\BotController.cs",
               "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAARAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAASAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-01T19:30:56.166Z",
               "EditorCaption": ""
@@ -43,8 +43,7 @@
               "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-31T17:47:09.075Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-31T17:47:09.075Z"
             }
           ]
         }
