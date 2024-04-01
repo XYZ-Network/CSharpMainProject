@@ -22,12 +22,13 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
             return unit.Pos;
         return base.GetNextStep();
     }
-    protected override List<Vector2Int> SelectTarget()
+    protected  List<Vector2Int> SelectTarget()
     {
-        var result =base.SelectTargets();
-        hasTarget=result.Count > 0;
-        if (!ShootingMod|| transittionMod)
+        var result = base.SelectTargets();
+        hasTarget = result.Count > 0;
+        if (!ShootingMod || transittionMod)
             result.Clear();
+
         return result;
     }
     public override void Update(float deltaTime, float time)
