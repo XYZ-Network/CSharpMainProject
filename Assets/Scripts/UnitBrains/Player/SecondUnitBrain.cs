@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GluonGui.Dialog;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ namespace UnitBrains.Player
             ///// Homework 1.3 (1st block, 3rd module)
             float overheatTemperature = OverheatTemperature;
             float temp = GetTemperature();
-            if (GetTemperature() >= overheatTemperature)
+            if (temp >= overheatTemperature)
             {
                 return;
             }
@@ -43,13 +44,31 @@ namespace UnitBrains.Player
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            
+            List<Vector2Int> result = GetReachableTargets(); //объявили список, содержащий тип данных "координаты" и присвоили ему значение = метод GetReachableTargets
+            Vector2Int nearEnemy = Vector2Int.zero; //ввели переменную nearEnemy и присвоили ей значение = нулевым координатам вектора Vector2Int
+            float minDistance = float.MaxValue; ///ввели новую переменную minDistance и в качестве критерия перебора использовали MaxValue
+            foreach (var target in result) //производим действия с каждым элементом target внутри списка result 
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target); //вводим переменную "distance", равную методу(расстояние от цели до своей базы), ориентированному на элемент target
+                if (distance < minDistance) minDistance = distance; // перебираем все значения distance, пока не найдем самое большое и приравниваем значение к нему                   
+                {                    
+                    nearEnemy = target; //в случае, если найдено минимальное расстояние, назначаем ближайшего врага целью для атаки                
+                }
+                //Debug.Log("расстояние от базы до ближайшей цели = " + DistanceToOwnBase(target)); //используем сообщение для проверки расстояния от базы до ближайшей цели
+            } 
+            while (result.Count > 1) //пока кол-во элементов в списке > 1
+            {
+                result.RemoveAt(result.Count - 1);  //выполняется очистка списка 
             }
-            return result;
+            // в случае, если ближайшая цель найдена:
+            if (minDistance != float.MaxValue)
+            {
+                result.Clear(); //очищаем список result
+                result.Add(nearEnemy); //добавляем в него ближайшую цель
+            }                       
+            return result; ///затем возвращаем список result
+
             ///////////////////////////////////////
         }
 
