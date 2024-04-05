@@ -26,7 +26,7 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+   
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;

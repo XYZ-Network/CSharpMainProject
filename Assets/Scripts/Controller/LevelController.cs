@@ -2,6 +2,7 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 using View;
@@ -99,6 +100,7 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
+
         }
     }
 }
