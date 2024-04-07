@@ -12,6 +12,12 @@ public class EnterPoint : MonoBehaviour
     
     private RootController _rootController;
     
+    // Баревдзествуйте
+    /*/
+     * ппруру3р3
+    /*/
+
+
     void Start()
     {
         _settings.LoadUnits();
