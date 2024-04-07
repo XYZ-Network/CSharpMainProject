@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442d25cd843b9e445a866a4cfce6e74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthBar: {fileID: 178258570018206233}
 --- !u!114 &3664015912038799981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,9 +60,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 1
+  _name: Ironclad Behemoth
   _icon: {fileID: 21300000, guid: ed0ebd9a5a7925f4892864c78333b9f4, type: 3}
   _cost: 200
   _maxHealth: 400
+  _brainUpdateDelay: 0.25
+  _moveDelay: 0.25
+  _attackDelay: 0.75
+  _attackRange: 3.5
+  _shotsPerTarget: 1
+  _targetsInVolley: 1
+  _projectileType: 0
+  _damage: 15
 --- !u!1 &526913648782850647
 GameObject:
   m_ObjectHideFlags: 0
@@ -14541,7 +14552,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6380766622729195802}
-  - component: {fileID: 7429146450580724637}
+  - component: {fileID: 178258570018206233}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -14566,19 +14577,18 @@ Transform:
   - {fileID: 1598524957392450484}
   m_Father: {fileID: 1187209766516946272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7429146450580724637
+--- !u!114 &178258570018206233
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2612264944020321383}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5440fde571ec4db4a719f37df8e972f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a6f15134b144430b18b1bae57ce3fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageableBehaviour: {fileID: 0}
   healthBar: {fileID: 3876785315896870307}
   backgroundBar: {fileID: 1598524957392450484}
   showWhenFull: 0

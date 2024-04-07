@@ -2,6 +2,7 @@
 using Controller;
 using Model;
 using Model.Config;
+using TMPro;
 using UnityEngine;
 using Utilities;
 
@@ -11,6 +12,8 @@ namespace View
     {
         [SerializeField] private RectTransform _root;
         [SerializeField] private RectTransform _unitListParent;
+        [SerializeField] private TextMeshProUGUI _levelText;
+        [SerializeField] private TextMeshProUGUI _balanceText;
         [SerializeField] private UnitCardView _unitCardPrefab;
 
         private IReadOnlyRuntimeModel _model;
@@ -26,6 +29,12 @@ namespace View
             var visible = _model.Stage == RuntimeModel.GameStage.ChooseUnit;
             if (visible != _root.gameObject.activeSelf)
                 _root.gameObject.SetActive(visible);
+
+            if (visible)
+            {
+                _balanceText.text = $"Balance: {_model.RoMoney[RuntimeModel.PlayerId]}";
+                _levelText.text = $"Level: {_model.Level}";
+            }
         }
 
         private void SetupCards(Settings settings)

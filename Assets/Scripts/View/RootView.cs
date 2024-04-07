@@ -27,6 +27,8 @@ namespace View
             
             _levelFinishedView.gameObject.SetActive(true);
         }
+        
+        public void HideLevelFinished() => _levelFinishedView.gameObject.SetActive(false);
 
         public void ShowStartMenu()
         {
@@ -40,5 +42,7 @@ namespace View
             
             _startMenuView.gameObject.SetActive(true);
         }
+        
+        public void HideStartMenu() => _startMenuView.gameObject.SetActive(false);
     }
 }

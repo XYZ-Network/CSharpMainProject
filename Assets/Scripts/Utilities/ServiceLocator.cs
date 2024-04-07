@@ -22,6 +22,11 @@ namespace Utilities
             _services.Remove(typeof(T));
         }
         
+        public static bool Contains<T>()
+        {
+            return _services.ContainsKey(typeof(T));
+        }
+        
         public static T Get<T>()
         {
             return (T) _services[typeof(T)];

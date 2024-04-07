@@ -1,4 +1,6 @@
-﻿namespace Model.Runtime
+﻿using Model.Runtime.ReadOnly;
+
+namespace Model.Runtime
 {
     public class MainBase : IReadOnlyBase
     {
@@ -7,6 +9,11 @@
         public MainBase(int health)
         {
             Health = health;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            Health -= damage;
         }
     }
 }

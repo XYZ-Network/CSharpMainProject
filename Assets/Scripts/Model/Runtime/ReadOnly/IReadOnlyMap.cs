@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Model.Runtime
+namespace Model.Runtime.ReadOnly
 {
     public interface IReadOnlyMap
     {

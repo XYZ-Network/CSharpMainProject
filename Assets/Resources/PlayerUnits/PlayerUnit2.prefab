@@ -14510,7 +14510,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.30601686, y: 0.30601686, z: 0.30601686}
+  m_LocalScale: {x: 0.6060169, y: 0.6060169, z: 0.6060169}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5384339558767282558}
@@ -24323,6 +24323,7 @@ GameObject:
   - component: {fileID: 3519054601885149883}
   - component: {fileID: 386171954720946930}
   - component: {fileID: 6788588721598865268}
+  - component: {fileID: 1963013773103935339}
   m_Layer: 11
   m_Name: PlayerUnit2
   m_TagString: Untagged
@@ -24340,7 +24341,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.61, y: 0, z: 1.8447783}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1540735480831473973}
@@ -24359,6 +24360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442d25cd843b9e445a866a4cfce6e74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthBar: {fileID: 6508540872539520193}
+  _debugPathOutput: {fileID: 1963013773103935339}
 --- !u!114 &6788588721598865268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24371,9 +24374,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 1
+  _name: Cobra Commando
   _icon: {fileID: 21300000, guid: 78c155133c506b2439bb6772e099d703, type: 3}
   _cost: 70
   _maxHealth: 100
+  _brainUpdateDelay: 0.25
+  _moveDelay: 0.25
+  _attackDelay: 0.75
+  _attackRange: 3.5
+  _projectileType: 0
+  _damage: 15
+--- !u!114 &1963013773103935339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6168324980205769227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3d2c131c92340d1b6e987a53847d8f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellHighlightPrefab: {fileID: 4141273912711956317, guid: 6b7b54fba8ef4704396fc9f540ee8aa2,
+    type: 3}
+  maxHighlights: 5
 --- !u!1 &6539454795392824391
 GameObject:
   m_ObjectHideFlags: 0
@@ -39136,7 +39162,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5971255969578217029}
-  - component: {fileID: 3417828976043135760}
+  - component: {fileID: 6508540872539520193}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -39153,7 +39179,7 @@ Transform:
   m_GameObject: {fileID: 8881290329800031377}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.325, z: 0}
   m_LocalScale: {x: 1.4, y: 0.18134862, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -39161,19 +39187,18 @@ Transform:
   - {fileID: 2064739041927120330}
   m_Father: {fileID: 3519054601885149883}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3417828976043135760
+--- !u!114 &6508540872539520193
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8881290329800031377}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5440fde571ec4db4a719f37df8e972f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a6f15134b144430b18b1bae57ce3fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageableBehaviour: {fileID: 0}
   healthBar: {fileID: 5946666893939595611}
   backgroundBar: {fileID: 2064739041927120330}
   showWhenFull: 0

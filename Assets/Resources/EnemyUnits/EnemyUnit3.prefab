@@ -14695,7 +14695,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 686360531215499201}
-  - component: {fileID: 4559658992068428826}
+  - component: {fileID: 5028701117762795974}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -14720,19 +14720,18 @@ Transform:
   - {fileID: 4169444957373770747}
   m_Father: {fileID: 6511167530628987571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4559658992068428826
+--- !u!114 &5028701117762795974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2412687467946314305}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5440fde571ec4db4a719f37df8e972f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a6f15134b144430b18b1bae57ce3fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageableBehaviour: {fileID: 0}
   healthBar: {fileID: 2073570588748324256}
   backgroundBar: {fileID: 4169444957373770747}
   showWhenFull: 0
@@ -14922,6 +14921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442d25cd843b9e445a866a4cfce6e74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthBar: {fileID: 5028701117762795974}
 --- !u!114 &-7662043030532595305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14934,9 +14934,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 0
+  _name: EnemyUnit3
   _icon: {fileID: 0}
   _cost: 300
   _maxHealth: 600
+  _brainUpdateDelay: 0.25
+  _moveDelay: 0.25
+  _attackDelay: 0.75
+  _attackRange: 3.5
+  _shotsPerTarget: 1
+  _targetsInVolley: 1
+  _projectileType: 0
+  _damage: 15
 --- !u!1 &3858759757731351241
 GameObject:
   m_ObjectHideFlags: 0

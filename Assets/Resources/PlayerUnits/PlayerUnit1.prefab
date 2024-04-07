@@ -56,8 +56,8 @@ Transform:
   m_GameObject: {fileID: 2256961442291898652}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7240203206643851002}
@@ -75,7 +75,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2164547814630831696}
-  - component: {fileID: 7062716950527824320}
+  - component: {fileID: 8923541754904775323}
   m_Layer: 0
   m_Name: HealthBar
   m_TagString: Untagged
@@ -100,19 +100,18 @@ Transform:
   - {fileID: 2109660901170310679}
   m_Father: {fileID: 4923415631061152142}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7062716950527824320
+--- !u!114 &8923541754904775323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2946903579993533704}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5440fde571ec4db4a719f37df8e972f0, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a6f15134b144430b18b1bae57ce3fc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageableBehaviour: {fileID: 0}
   healthBar: {fileID: 311215951133221209}
   backgroundBar: {fileID: 2109660901170310679}
   showWhenFull: 0
@@ -10287,7 +10286,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5.43, y: 0, z: 1.8447783}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6926235722254671292}
@@ -10306,6 +10305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442d25cd843b9e445a866a4cfce6e74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthBar: {fileID: 8923541754904775323}
 --- !u!114 &6781493616917666738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10318,9 +10318,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e322a584d28f2a443a12d1d2385e2dd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlayerUnit: 1
+  _name: Sky Serpent
   _icon: {fileID: 21300000, guid: 2ada01d04785e904ead4bf50b5430bb7, type: 3}
   _cost: 30
   _maxHealth: 30
+  _brainUpdateDelay: 0.25
+  _moveDelay: 0.25
+  _attackDelay: 0.75
+  _attackRange: 3.5
+  _shotsPerTarget: 1
+  _targetsInVolley: 1
+  _projectileType: 0
+  _damage: 15
 --- !u!1 &5898980875654718684
 GameObject:
   m_ObjectHideFlags: 0

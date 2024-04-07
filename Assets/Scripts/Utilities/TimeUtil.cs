@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Utilities
@@ -33,6 +35,17 @@ namespace Utilities
         public void RemoveFixedUpdateAction(Action<float> action)
         {
             _fixedUpdateAction -= action;
+        }
+
+        public void RunDelayed(float delay, Action action)
+        {
+            StartCoroutine(DelayCoroutine(delay, action));
+        }
+
+        private IEnumerator DelayCoroutine(float delay, Action action)
+        {
+            yield return new WaitForSeconds(delay);
+            action?.Invoke();
         }
         
         private void Update()
