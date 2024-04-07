@@ -6,9 +6,9 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
-//How are you?
-//i'm fine
+// hello
+// How are you?
+// i'm fine
 namespace Controller
 {
     public class BotController
@@ -60,15 +60,16 @@ namespace Controller
             if (_sortedUnits[0].Cost > moneyLeft)
                 return;
 
+            var equalShare = moneyLeft / _sortedUnits.Count;
             for (int i = _sortedUnits.Count - 1; i >= 0; i--)
             {
-                moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
-                var unitBudget = moneyLeft / (i + 1);
+                var unitBudget = equalShare;
                 var unit = _sortedUnits[i];
                 while (unit.Cost <= unitBudget && unit.Cost < moneyLeft)
                 {
                     _onBotUnitChosen?.Invoke(unit);
                     unitBudget -= unit.Cost;
+                    moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
                 }
             }
         }
