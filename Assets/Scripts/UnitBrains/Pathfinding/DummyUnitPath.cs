@@ -5,10 +5,11 @@ using Utilities;
 
 namespace UnitBrains.Pathfinding
 {
-    public class DummyUnitPath : BaseUnitPath
+    #region DummyUnitPath
+    /*public class DummyUnitPath : BaseUnitPath
     {
         private const int MaxLength = 100;
-        
+
         public DummyUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
         {
         }
@@ -30,7 +31,7 @@ namespace UnitBrains.Pathfinding
 
             path = result.ToArray();
         }
-        
+
         private Vector2Int CalcNextStepTowards(Vector2Int fromPos, Vector2Int toPos)
         {
             var diff = toPos - fromPos;
@@ -45,7 +46,7 @@ namespace UnitBrains.Pathfinding
                 var partStep0 = fromPos + new Vector2Int(stepDiff.x, 0);
                 if (runtimeModel.IsTileWalkable(partStep0))
                     return partStep0;
-                
+
                 var partStep1 = fromPos + new Vector2Int(0, stepDiff.y);
                 if (runtimeModel.IsTileWalkable(partStep1))
                     return partStep1;
@@ -55,19 +56,21 @@ namespace UnitBrains.Pathfinding
             var shiftedStep0 = fromPos + (sideStep0 + stepDiff).SignOrZero();
             if (runtimeModel.IsTileWalkable(shiftedStep0))
                 return shiftedStep0;
-            
+
             var sideStep1 = fromPos + new Vector2Int(-stepDiff.y, stepDiff.x);
             var shiftedStep1 = fromPos + (sideStep1 + stepDiff).SignOrZero();
             if (runtimeModel.IsTileWalkable(shiftedStep1))
                 return shiftedStep1;
-            
+
             if (runtimeModel.IsTileWalkable(sideStep0))
                 return sideStep0;
-            
+
             if (runtimeModel.IsTileWalkable(sideStep1))
                 return sideStep1;
-            
+
             return fromPos;
         }
-    }
+    }*/
+
+#endregion
 }
