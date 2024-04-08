@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -12,17 +13,42 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            
+                for (GetTemperature(); GetTemperature() < overheatTemperature; IncreaseTemperature()) {
+                    if (GetTemperature() == 1)
+                    {
+                        var projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                     
+                    }
+                    if (GetTemperature() == 2)
+                    {
+                        var projectile1 = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile1, intoList);
+                        var projectile2 = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile2, intoList);
+                  
+                    }
+                    if (GetTemperature() == 3)
+                    {
+                        var projectile3 = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile3, intoList);
+                        var projectile4 = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile4, intoList);
+                        var projectile5 = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile5, intoList);
+                      
+                    }
+               
+                }
+
+
+
+                }
 
         public override Vector2Int GetNextStep()
         {
