@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using View;
 
@@ -32,8 +33,23 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            while (true)
+            {
+                for (int i = 0; i < Path.GetPath().ToList().Count; i++)
+                {
+                    CreateHighlight(Path.GetPath().ToList()[i]);
+                    yield return new WaitForSeconds(0.3f);
+                    if (i >= maxHighlights - 1)
+                    {
+                        DestroyHighlight(0);
+                    }
+                }
+                while (allHighlights.Count > 0)
+                {
+                    yield return new WaitForSeconds(0.3f);
+                    DestroyHighlight(0);
+                }
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)
