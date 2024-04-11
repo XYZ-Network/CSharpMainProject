@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,18 +16,40 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            //
+            
+            int r = GetTemperature();
 
+            if (r >= overheatTemperature)
+
+            {
+
+                return;
+
+            }
+
+            IncreaseTemperature();
+
+            for (int i = 0; i <= r; i++)
+
+            {
+
+                var projectile = CreateProjectile(forTarget);
+
+                AddProjectileToList(projectile, intoList);
+
+            }
+
+        }
+            
+     
+         
         public override Vector2Int GetNextStep()
         {
             return base.GetNextStep();
@@ -31,16 +57,25 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
+
             // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            Vector2Int Target = Vector2Int.zero;
+            float maxDistance = float.MaxValue;
+            foreach (Vector2Int target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float Distance = DistanceToOwnBase(target);
+                if (Distance < maxDistance)
+                {
+                    maxDistance = Distance;
+                    Target = target;
+                }
             }
+            result.Clear();
+
+            if (maxDistance < float.MaxValue) result.Add(Target);
+
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
