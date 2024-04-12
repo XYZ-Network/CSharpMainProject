@@ -1,0 +1,60 @@
+﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/UnitBrainProvider.cs">
+    <Files>
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/Nodes.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Pathfinding/Algoritm.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="13" Column="31" />
+      <File FileName="Assets/Scripts/Model/Runtime/ReadOnly/IReadOnlyUnit.cs" Line="10" Column="38" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="38" Column="39" />
+      <File FileName="Assets/Scripts/UnitBrains/BaseUnitBrain.cs" Line="137" Column="58" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" Line="31" Column="67" />
+      <File FileName="Assets/Scripts/UnitBrains/UnitsCoordinator.cs" Line="75" Column="37" />
+      <File FileName="Assets/Scripts/UnitBrains/UnitBrainProvider.cs" Line="43" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMainFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="ReadOnly" expanded="True" />
+                  </Node>
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Pathfinding" expanded="True" />
+                  <Node name="Player" expanded="True" />
+                  <Node name="UnitBrainProvider.cs" selected="True" />
+                </Node>
+                <Node name="Utilities" expanded="True" />
+                <Node name="View" expanded="True" />
+              </Node>
+              <Node name="UnityTechnologies" expanded="True">
+                <Node name="TowerDefenseTemplate" expanded="True">
+                  <Node name="Scripts" expanded="True">
+                    <Node name="Core" expanded="True">
+                      <Node name="Utilities" expanded="True" />
+                    </Node>
+                    <Node name="TowerDefense" expanded="True">
+                      <Node name="Agents" expanded="True" />
+                      <Node name="Nodes" expanded="True" />
+                      <Node name="Towers" expanded="True" />
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e34b0893-a4c6-43f7-a188-1fae5cacf8f8" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
