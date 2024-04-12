@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +15,40 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _listOfNonReachableTargets = new List<Vector2Int>();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////
+            
+            if (GetTemperature() >= overheatTemperature)
+                return;
+            
+            for (int i = 0; i <= GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
+            
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int target = Vector2Int.zero;
+            if (_listOfNonReachableTargets.Any())
+                target = _listOfNonReachableTargets[0];
+            else
+                target = unit.Pos;
+
+            if (IsTargetInRange(target))
+                return unit.Pos;
+            else
+                return unit.Pos.CalcNextStepTowards(target);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,13 +56,42 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> resultList = new List<Vector2Int>();
+            Vector2Int target = GetNearesTarget(GetAllTargets().ToList());
+            _listOfNonReachableTargets.Clear();
+
+            if (target.magnitude != 0)
             {
-                result.RemoveAt(result.Count - 1);
+                _listOfNonReachableTargets.Add(target);
+                if (IsTargetInRange(target))
+                    resultList.Add(target);
             }
-            return result;
+            else
+            {
+                resultList.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+            }
+            return resultList;
             ///////////////////////////////////////
+        }
+        private Vector2Int GetNearesTarget (List<Vector2Int> enemyUnits)
+        {
+            Vector2Int nearestPositionOfEnemy = Vector2Int.zero;
+            float minDistanceToEnemy = float.MaxValue;
+
+            foreach (Vector2Int enemyPosition in enemyUnits)
+            {
+                float distanceToCurrentEnemy = DistanceToOwnBase(enemyPosition);
+                if (distanceToCurrentEnemy < minDistanceToEnemy)
+                {
+                    minDistanceToEnemy = distanceToCurrentEnemy;
+                    nearestPositionOfEnemy = enemyPosition;
+                }
+            }
+
+            if (minDistanceToEnemy < float.MaxValue)
+                return nearestPositionOfEnemy;
+            else
+                return Vector2Int.zero;
         }
 
         public override void Update(float deltaTime, float time)
