@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using ActionGameFramework.Projectiles;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 namespace UnitBrains.Player
 {
@@ -12,17 +16,29 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            else
+            {
+                for (int i = 0; i <= GetTemperature(); i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+                IncreaseTemperature();
+
+            }
+          
+            
+            }
+
+
 
         public override Vector2Int GetNextStep()
         {
@@ -34,14 +50,30 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = GetReachableTargets();// получает список достижимых целей
+            float min = float.MaxValue;
+            Vector2Int nearest = Vector2Int.zero; 
+
+            if (result.Count > 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
-            return result;
-            ///////////////////////////////////////
-        }
+                foreach (var target in result)
+                {
+                    if (min > DistanceToOwnBase(target))
+                {
+                    min = DistanceToOwnBase(target);
+                    nearest = target;
+                }
+                
+                }
+            
+
+                    result.Clear(); // убираем лишнее
+                    result.Add(nearest);//добавляет в итоге ближайшего
+                    return result; // возвращает последнюю цель
+
+                 }
 
         public override void Update(float deltaTime, float time)
         {
