@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Model;
 using Model.Runtime.Projectiles;
@@ -20,8 +22,17 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
 
+        //!1a. Создай статическое поле, равное 0 для выдачи номеров - это счетчик.
+        static int counter = -1;
+        //!1b.Создай поле с номером юнита.
+        int UnitID = counter++;
+        
+        //!1c. Создай константу - поле, по которому будет рассматриваться максимум целей для умного выбора. Присвой полю значение 3.
+        int MaxUnitsInAttack = 3;
+        //2b. Записываем самую опасную цель в эту коллекцию. Если цель в зоне досягаемости, то добавляем в result.
         //2a.Создаем новое поле для хранения целей, к которым нужно идти, но которые вне зоны досягаемости.
         public List<Vector2Int> NoReachableTargets = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
 
@@ -51,38 +62,29 @@ namespace UnitBrains.Player
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         protected override List<Vector2Int> SelectTargets()
         {
+            int NumberOffTargetAtack = new int;
             //1. Вместо достижимых целей получи все с помощью метода GetAllTargets().
-            var AllTargets = GetAllTargets();
-
-            
-
-            //2b. Записываем самую опасную цель в эту коллекцию. Если цель в зоне досягаемости, то добавляем в result.
+            //var AllTargets = GetAllTargets();
+            List<Vector2Int> AllTargets = new List<Vector2Int>();
+            counter = 0;
             List<Vector2Int> result = new List<Vector2Int>();
             float max = float.MaxValue;
             var nearest = new Vector2Int();
             result.Clear();
-            foreach (var target in AllTargets)
+            foreach (var target in GetAllTargets())
             {
-                if (DistanceToOwnBase(target) < max)
-                {
-                    max = DistanceToOwnBase(target);
-                    nearest = target;
-                }
+                AllTargets.Add(target);
             }
-            if (IsTargetInRange(nearest))
+            //!2c. Производим сортировку целей по дистанции. Для этого вызовем метод сортировки
+            SortByDistanceToOwnBase(AllTargets);
+            //!2d. Рассчитаем номер текущего юнита и определим, цель под каким номером следует бить.
+            NumberOffTargetAtack = UnitID;
+            while(NumberOffTargetAtack > 3)
             {
-                result.Clear();
-                result.Add(nearest);
-                ///Debug.Log("есть соперник в зоне поражения");
+                NumberOffTargetAtack-=3;
             }
-            else
-            {
-                NoReachableTargets.Clear();
-                NoReachableTargets.Add(nearest);
-                ///Debug.Log("есть соперник НЕ в зоне поражения");
-            }
-
-
+            result.Clear();
+            result.Add(AllTargets[NumberOffTargetAtack]);
             //3. Если целей нет, добавляем в цели базу противника.
             int TargetNoZero = 0;
             foreach (var target in AllTargets) { TargetNoZero++;}
@@ -91,7 +93,7 @@ namespace UnitBrains.Player
             {
                 result.Clear();
                 result.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
-                ///Debug.Log("Осталось 1 БАЗА");
+               
             }
             return result;
         }
@@ -101,6 +103,7 @@ namespace UnitBrains.Player
         
         public override void Update(float deltaTime, float time)
         {
+            Debug.Log($"Мой айди-{UnitID}");
             if (_overheated)
             {
                 _cooldownTime += Time.deltaTime;
@@ -125,5 +128,6 @@ namespace UnitBrains.Player
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
         }
+        
     }
 }
