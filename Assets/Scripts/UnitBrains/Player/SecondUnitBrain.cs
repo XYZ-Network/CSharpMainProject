@@ -32,7 +32,7 @@ namespace UnitBrains.Player
         //2b. Записываем самую опасную цель в эту коллекцию. Если цель в зоне досягаемости, то добавляем в result.
         //2a.Создаем новое поле для хранения целей, к которым нужно идти, но которые вне зоны досягаемости.
         public List<Vector2Int> NoReachableTargets = new List<Vector2Int>();
-
+        public Vector2Int MostDangerTarget = new Vector2Int();
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
 
@@ -49,12 +49,9 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int Target = new Vector2Int();
-            Debug.Log(SelectTargets().Count);
-
-            if (SelectTargets().Count > 0) { Target = SelectTargets()[0]; return unit.Pos; }
-            else { return unit.Pos.CalcNextStepTowards(NoReachableTargets[0]); }
-
+            if (SelectTargets().Count != 0) { return unit.Pos; }
+            else { return unit.Pos.CalcNextStepTowards(MostDangerTarget); }
+            
         }
         
         
@@ -62,39 +59,28 @@ namespace UnitBrains.Player
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         protected override List<Vector2Int> SelectTargets()
         {
-            int NumberOffTargetAtack = new int;
+            int NumberOffTargetAtack = new int();
             //1. Вместо достижимых целей получи все с помощью метода GetAllTargets().
             //var AllTargets = GetAllTargets();
             List<Vector2Int> AllTargets = new List<Vector2Int>();
             counter = 0;
             List<Vector2Int> result = new List<Vector2Int>();
-            float max = float.MaxValue;
-            var nearest = new Vector2Int();
             result.Clear();
             foreach (var target in GetAllTargets())
             {
                 AllTargets.Add(target);
-            }
+            }     
             //!2c. Производим сортировку целей по дистанции. Для этого вызовем метод сортировки
             SortByDistanceToOwnBase(AllTargets);
-            //!2d. Рассчитаем номер текущего юнита и определим, цель под каким номером следует бить.
-            NumberOffTargetAtack = UnitID;
-            while(NumberOffTargetAtack > 3)
-            {
-                NumberOffTargetAtack-=3;
-            }
-            result.Clear();
-            result.Add(AllTargets[NumberOffTargetAtack]);
-            //3. Если целей нет, добавляем в цели базу противника.
-            int TargetNoZero = 0;
-            foreach (var target in AllTargets) { TargetNoZero++;}
+            
+            MostDangerTarget = AllTargets[0];
+            ////!2d. Рассчитаем номер текущего юнита и определим, цель под каким номером следует бить.
+            //NumberOffTargetAtack = UnitID;
+            //while(NumberOffTargetAtack > MaxUnitsInAttack){NumberOffTargetAtack-=MaxUnitsInAttack;}
+            //if (NumberOffTargetAtack >= AllTargets.Count) { NumberOffTargetAtack = AllTargets.Count-1; }
 
-            if (TargetNoZero==0)
-            {
-                result.Clear();
-                result.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
-               
-            }
+            result.Clear();
+            if (IsTargetInRange(MostDangerTarget)) {   result.Add(MostDangerTarget); }            
             return result;
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
