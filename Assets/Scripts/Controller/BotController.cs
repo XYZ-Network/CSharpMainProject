@@ -31,6 +31,10 @@ namespace Controller
             _updateCoroutine = _timeUtil.StartCoroutine(UpdateCoroutine());
         }
 
+        // hello, it's me!
+        // OlesyaWo, did you recognize my hand?
+        // pepega ^-^
+        
         public void Stop()
         {
             _timeUtil.StopCoroutine(_updateCoroutine);

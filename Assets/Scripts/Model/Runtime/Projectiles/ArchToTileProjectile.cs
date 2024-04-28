@@ -13,7 +13,7 @@ namespace Model.Runtime.Projectiles
         {
             _target = target;
             _totalDistance = Vector2.Distance(StartPoint, _target);
-            _timeToTarget = _totalDistance / ProjectileSpeed;
+            _timeToTarget = _totalDistance / ProjectileSpeed; 
         }
 
         protected override void UpdateImpl(float deltaTime, float time)
@@ -29,6 +29,9 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            float maxHeight = totalDistance * 0.6f;
+            float x = t * 2 - 1;
+            localHeight = maxHeight * (-x * x + 1);
 
 
             ///////////////////////////////////////
