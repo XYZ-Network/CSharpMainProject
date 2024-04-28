@@ -19,8 +19,15 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            
+            var currentTemperature = GetTemperature();
+            if (currentTemperature >= overheatTemperature) return;
+            
+            for (int i = 0; i <= currentTemperature; i++) {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
@@ -34,12 +41,26 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
+            List<Vector2Int> reachableTargets = GetReachableTargets();
+
+            if (reachableTargets.Count == 0) {
+                return reachableTargets;
             }
-            return result;
+            
+            var closestValue = float.MaxValue;
+            Vector2Int closestTarget = new Vector2Int(int.MinValue, int.MinValue);
+            foreach (var target in reachableTargets) {
+                var targetDistance = DistanceToOwnBase(target);
+                if (targetDistance < closestValue) {
+                    closestValue = targetDistance;
+                    closestTarget = target;
+                }
+            }
+            if (closestValue != float.MaxValue) {
+                reachableTargets.Clear();
+                reachableTargets.Add(closestTarget);
+            }
+            return reachableTargets;
             ///////////////////////////////////////
         }
 
