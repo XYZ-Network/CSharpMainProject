@@ -1,0 +1,42 @@
+﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Model/Config/UnitConfig.cs">
+    <Files>
+      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" Line="15" Column="51" />
+      <File FileName="Assets/Scripts/Controller/RootController.cs" />
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="15" Column="22" />
+      <File FileName="Buff.cs" Line="5" Column="58" />
+      <File FileName="BuffSystem.cs" Line="33" Column="31" />
+      <File FileName="Assets/Scripts/Model/Config/UnitConfig.cs" Line="14" Column="45" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMainFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Controller" expanded="True" />
+                <Node name="Model" expanded="True">
+                  <Node name="Config" expanded="True">
+                    <Node name="UnitConfig.cs" selected="True" />
+                  </Node>
+                  <Node name="Runtime" expanded="True" />
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Player" expanded="True" />
+                </Node>
+                <Node name="Utilities" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="e1971fa0-217d-4915-b198-2b2d9ec9380e" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
