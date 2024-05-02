@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Controller;
 using UnityEngine;
+using Utilities;
 
 namespace View
 {
-    public class VFXView : MonoBehaviour
+    public class VFXView : MonoBehaviour, IDisposable
     {
         public enum VFXType
         {
@@ -24,6 +26,7 @@ namespace View
 
         [SerializeField] private float _vfxHeight = 1f;
         [SerializeField] private VFXConfig[] _vfxConfigs;
+        private StatusEffectsController _statusEffectsController;
         
         private readonly Dictionary<VFXType, VFXConfig> _vfxConfigsByType = new();
         private readonly Dictionary<VFXType, Stack<GameObject>> _vfxPool = new();
@@ -44,6 +47,9 @@ namespace View
             {
                 _vfxConfigsByType[vfxConfig.Type] = vfxConfig;
             }
+
+            _statusEffectsController = ServiceLocator.Get<StatusEffectsController>();
+            _statusEffectsController.BuffApplied += PlayVFX;
         }
 
         private GameObject SetupInstanceAt(VFXType type, Vector2Int cell)
@@ -103,6 +109,11 @@ namespace View
                 ps.Stop();
                 ps.Clear();
             }
+        }
+        
+        public void Dispose()
+        {
+            _statusEffectsController.BuffApplied -= PlayVFX;
         }
     }
 }

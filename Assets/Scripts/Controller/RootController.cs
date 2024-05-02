@@ -11,6 +11,7 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly StatusEffectsController _statusEffectsController;
         
         private RootView _rootView;
 
@@ -27,11 +28,14 @@ namespace Controller
             
             var gameplayVisual = SpawnGameplayVisual();
             ServiceLocator.Register(gameplayVisual);
-
-            var vfxView = SpawnVFXView();
-            ServiceLocator.Register(vfxView);
             
             _levelController = new(_runtimeModel, this);
+            
+            _statusEffectsController = new(_runtimeModel, _levelController);
+            ServiceLocator.Register(_statusEffectsController);
+            
+            var vfxView = SpawnVFXView();
+            ServiceLocator.Register(vfxView);
             
             _rootView.ShowStartMenu();
         }

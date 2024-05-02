@@ -27,19 +27,23 @@ namespace UnitBrains.Player
         public override Vector2Int GetNextStep()
         {
             return base.GetNextStep();
+            //return unit.Pos;
+
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
+            return base.SelectTargets();
+            
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
+            // List<Vector2Int> result = GetReachableTargets();
+            // while (result.Count > 1)
+            // {
+            //     result.RemoveAt(result.Count - 1);
+            // }
+            // return result;
             ///////////////////////////////////////
         }
 
