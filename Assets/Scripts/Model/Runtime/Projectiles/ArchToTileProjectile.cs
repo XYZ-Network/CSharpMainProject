@@ -25,16 +25,11 @@ namespace Model.Runtime.Projectiles
             
             float localHeight = 0f;
             float totalDistance = _totalDistance;
+            float maxHeight = 0.6f * totalDistance;
+            float tScaled = t * 2 - 1;
 
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
+            localHeight = maxHeight * (-(tScaled) * (tScaled) + 1);
 
-
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
-            
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
