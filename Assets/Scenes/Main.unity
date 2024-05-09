@@ -157,12 +157,13 @@ MonoBehaviour:
     _mapHeight: 24
     _mapMinDensity: 0.2
     _mapMaxDensity: 0.7
-    _baseLevelMoney: 100
+    _baseLevelMoney: 70
     _levelMoneyIncrement: 70
     _botMoneyAdvantagePerLevel: 15
     _botMoneyAdvantageLevelShift: -3
     _mainBaseMaxHp: 100
   _targetCanvas: {fileID: 599804442}
+  _timeScale: 0.3
 --- !u!4 &317197435
 Transform:
   m_ObjectHideFlags: 0
