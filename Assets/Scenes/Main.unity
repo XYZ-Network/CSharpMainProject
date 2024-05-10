@@ -163,6 +163,7 @@ MonoBehaviour:
     _botMoneyAdvantageLevelShift: -3
     _mainBaseMaxHp: 100
   _targetCanvas: {fileID: 599804442}
+  _timeScale: 5
 --- !u!4 &317197435
 Transform:
   m_ObjectHideFlags: 0
