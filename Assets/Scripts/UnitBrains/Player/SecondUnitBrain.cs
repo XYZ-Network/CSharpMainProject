@@ -53,9 +53,9 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep ()
             {
-            if (SelectTargets().Count != 0) { return unit.Pos; }
-            else { return unit.Pos.CalcNextStepTowards(MostDangerTarget); }
-
+            Vector2Int target = NonReacheableTargets.Count > 0 ? NoReachableTargets[0] : unit.Pos;
+            return IsTargetInRange(target) ? unit.Pos : CalcNextStepStopTowards(target);
+            
             }
 
 
@@ -63,33 +63,35 @@ namespace UnitBrains.Player
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         protected override List<Vector2Int> SelectTargets ()
             {
-            int NumberOffTargetAtack = new int();
-            //1. Вместо достижимых целей получи все с помощью метода GetAllTargets().
-            //var AllTargets = GetAllTargets();
-            List<Vector2Int> AllTargets = new List<Vector2Int>();
-            counter = 0;
+
             List<Vector2Int> result = new List<Vector2Int>();
-            result.Clear();
-            foreach (var target in GetAllTargets())
+            float minDistance = float.MaxValue;
+            Vector2Int bestTarget = Vector2Int.zero;
+
+            foreach (var target in GeytAllTargets())
                 {
-                AllTargets.Add(target);
+                var distance = DistanceToOwnBase(target);
+                if (distance < minDistance)
+                    {
+                    minDistance = distance;
+                    bestTarget = target;
+                    }
                 }
-            //!2c. Производим сортировку целей по дистанции. Для этого вызовем метод сортировки
-            SortByDistanceToOwnBase(AllTargets);
 
-            MostDangerTarget = AllTargets[0];
-            ////!2d. Рассчитаем номер текущего юнита и определим, цель под каким номером следует бить.
-            //NumberOffTargetAtack = UnitID;
-            //while(NumberOffTargetAtack > MaxUnitsInAttack){NumberOffTargetAtack-=MaxUnitsInAttack;}
-            //if (NumberOffTargetAtack >= AllTargets.Count) { NumberOffTargetAtack = AllTargets.Count-1; }
+            NoReachableTargets.Clear();
 
-            result.Clear();
-            if (IsTargetInRange(MostDangerTarget)) { result.Add(MostDangerTarget); }
+            if (minDistance < float.MaxValue)
+                {
+                NoReachableTargets.Add(bestTarget);
+                if (IsTargetInRange(bestTarget)) result.Add(bestTarget);
+                }
+            else
+                {
+                NoReachableTargets.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                }
             return result;
-            }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
         public override void Update ( float deltaTime, float time )
             {
