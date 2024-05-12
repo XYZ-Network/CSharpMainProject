@@ -13,12 +13,12 @@ namespace UnitBrains
     public abstract class BaseUnitBrain
     {
         public virtual string TargetUnitName => string.Empty;
-        public virtual bool IsPlayerUnitBrain => true;
-        public virtual BaseUnitPath ActivePath => _activePath;
-        
-        protected Unit unit { get; private set; }
-        protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+        public virtual bool IsPlayerUnitBrain => true; //принадлежит ли текущий unit игроку
+        public virtual BaseUnitPath ActivePath => _activePath; //активный путь, по которому идет юнит
+
+        protected Unit unit { get; private set; } //ссылка на unit, которому принадлежит unit brain 
+        protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>(); //все данные по текущей игройо сессии
+        private BaseUnitPath _activePath = null; //свойство, которое возвращает знаечение приватного поля
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -31,16 +31,16 @@ namespace UnitBrains
             new (-0.15f, -0.15f),
         };
 
-        public virtual Vector2Int GetNextStep()
+        public virtual Vector2Int GetNextStep()  //по умолчанию
         {
-            if (HasTargetsInRange())
-                return unit.Pos;
+            if (HasTargetsInRange()) //есть ли текущие цели, которые можно атаковать 
+                return unit.Pos; //если цели есть, значит идти не надр и юнит стоит на месте 
 
             var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]; //если целей нету - выбираем базу
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            _activePath = new Algoritm(runtimeModel, unit.Pos, target); //прокладываем путь - DummyUnitPath
+            return _activePath.GetNextStepFrom(unit.Pos); //в него передается текущая позиция юнита и он возвращает куда идти
         }
 
         public List<BaseProjectile> GetProjectiles()

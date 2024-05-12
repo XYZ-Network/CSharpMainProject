@@ -6,22 +6,30 @@ namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
-        public override string TargetUnitName => "Cobra Commando";
+        public override string TargetUnitName => "Cobra Commando"; //задаем имя unit brain 
         private const float OverheatTemperature = 3f;
+        public float GetOverheatTemperature()
+        {
+            return OverheatTemperature;
+        }
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        public bool IsDoubleShotActive { get; set; }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            if (IsDoubleShotActive)
+            {
+                var secondProjectile = CreateProjectile(forTarget);
+                AddProjectileToList(secondProjectile, intoList);
+            }
+
         }
 
         public override Vector2Int GetNextStep()
@@ -31,16 +39,30 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+
+            Vector2Int basa = Vector2Int.zero;
+            float min = float.MaxValue;
+
             List<Vector2Int> result = GetReachableTargets();
+
             while (result.Count > 1)
             {
+                foreach (var target in result)
+                {
+                  float DistanceToBase =  DistanceToOwnBase(target);
+
+                    if (DistanceToBase < min)
+                    {
+                        basa = target;
+                    }
+
+                }
+                result.Clear();
+                result.Add(basa);
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
+
         }
 
         public override void Update(float deltaTime, float time)
@@ -68,6 +90,16 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+        }
+
+        public void ActivateDoubleShot()
+        {
+            IsDoubleShotActive = true;
+        }
+
+        public void DeactivateDoubleShot()
+        {
+            IsDoubleShotActive = false;
         }
     }
 }

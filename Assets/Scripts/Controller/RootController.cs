@@ -34,6 +34,8 @@ namespace Controller
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();
+
+            ServiceLocator.Register<BuffSystem>(new BuffSystem());
         }
 
         public void RestartGame()
