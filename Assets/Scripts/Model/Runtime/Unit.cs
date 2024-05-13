@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AssemblyCSharp.Assets.Scripts;
+using AssemblyCSharp.Assets.Scripts.Controller;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -15,8 +17,9 @@ namespace Model.Runtime
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
+        public UnitsCoordinator UnitsCoordinator { get; set; }
         public bool IsDead => Health <= 0;
-        public BaseUnitPath ActivePath => _brain?.ActivePath;
+        public BaseUnitPath ActivePath => _brain?.ActivePath; 
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
@@ -26,19 +29,25 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        MoveSpeedBuff speedBuff = new MoveSpeedBuff(1.2f);
+        AttackSpeedBuff attackSpeed = new AttackSpeedBuff(1.2f);
+
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitsCoordinator unitsCoordinator)
         {
             Config = config;
             Pos = startPos;
+            UnitsCoordinator = unitsCoordinator;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>(); //получаем RuntimeModel через ServiceLocator
         }
 
         public void Update(float deltaTime, float time)
         {
+
             if (IsDead)
                 return;
             
@@ -50,13 +59,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                AddBuff(speedBuff);
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                AddBuff(attackSpeed);
             }
         }
 
@@ -70,9 +79,9 @@ namespace Model.Runtime
             return true;
         }
 
-        private void Move()
+        private void Move() 
         {
-            var targetPos = _brain.GetNextStep();
+            var targetPos = _brain.GetNextStep(); //когда юнит ходит, он спрашивает у Brain куда идти 
             var delta = targetPos - Pos;
             if (delta.sqrMagnitude > 2)
             {
@@ -98,5 +107,27 @@ namespace Model.Runtime
         {
             Health -= projectileDamage;
         }
+
+        public void UpdateNextMoveTime(float moveSpeedMultiplier)
+        {
+          
+            _nextMoveTime = Time.time + Config.MoveDelay * moveSpeedMultiplier;
+        }
+
+        public void UpdateNextAttackTime(float attackSpeedMultiplier)
+        {
+
+            _nextAttackTime = Time.time + Config.MoveDelay * attackSpeedMultiplier;
+        }
+
+        public void AddBuff(IBuff<Unit> buff)
+        {
+            if (buff.CanApply(this))
+            {
+                buff.Apply(this);
+            }
+        }
+
+        
     }
 }

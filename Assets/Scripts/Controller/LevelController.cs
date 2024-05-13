@@ -38,6 +38,8 @@ namespace Controller
             
             _rootView.HideLevelFinished();
 
+            
+
             Random.InitState(level);
             SetInitialMoney();
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
@@ -53,26 +55,31 @@ namespace Controller
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
         {
+            UnitsCoordinator playerCoordinator = new UnitsCoordinator();
+            
+
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
             
-            SpawnUnit(RuntimeModel.PlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.PlayerId, unitConfig, playerCoordinator);
             TryStartSimulation();
         }
 
         private void OnBotUnitChosen(UnitConfig unitConfig)
         {
-            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
+            UnitsCoordinator botCoordinator = new UnitsCoordinator();
+
+            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig, botCoordinator);
             TryStartSimulation();
         }
 
-        private void SpawnUnit(int forPlayer, UnitConfig config)
+        private void SpawnUnit(int forPlayer, UnitConfig config, UnitsCoordinator unitCoordinator)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, unitCoordinator);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

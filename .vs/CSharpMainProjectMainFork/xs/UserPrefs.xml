@@ -1,0 +1,40 @@
+﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/DoubleShotBuff.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Controller/IBuff.cs" Line="9" Column="2" />
+      <File FileName="Assets/Scripts/Controller/Buff.cs" Line="16" Column="6" />
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="60" Column="38" />
+      <File FileName="Assets/Scripts/Controller/MoveSpeedBuff.cs" Line="21" Column="6" />
+      <File FileName="Assets/Scripts/AttackSpeedBuff.cs" Line="25" Column="56" />
+      <File FileName="Assets/Scripts/DoubleShotBuff.cs" Line="18" Column="44" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMainFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Controller" expanded="True">
+                  <Node name="Buff.cs" selected="True" />
+                </Node>
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True" />
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Player" expanded="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="5f74998c-63eb-4e56-9d20-3072fa75c93c" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
