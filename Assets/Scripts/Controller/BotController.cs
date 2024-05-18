@@ -9,6 +9,9 @@ using Utilities;
 //hello
 //How are you?
 //i'm fine
+//where you from
+//Ufa
+//Cool
 namespace Controller
 {
     public class BotController
