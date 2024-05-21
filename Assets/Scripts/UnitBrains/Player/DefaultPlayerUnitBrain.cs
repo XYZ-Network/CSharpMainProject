@@ -21,5 +21,9 @@ namespace UnitBrains.Player
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
         }
+
+
+
+
     }
 }

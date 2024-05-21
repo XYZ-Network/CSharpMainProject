@@ -13,7 +13,7 @@ namespace UnitBrains.Pathfinding
         {
         }
 
-        protected override void Calculate()
+        protected override void Calculate() //расчет пути примитивным способом - ищем клетки и идем по ним
         {
             var currentPoint = startPoint;
             var result = new List<Vector2Int> { startPoint };
@@ -28,13 +28,13 @@ namespace UnitBrains.Pathfinding
                 currentPoint = nextStep;
             }
 
-            path = result.ToArray();
+            path = result.ToArray(); //записываем результат в path 
         }
         
         private Vector2Int CalcNextStepTowards(Vector2Int fromPos, Vector2Int toPos)
         {
             var diff = toPos - fromPos;
-            var stepDiff = diff.SignOrZero();
+            var stepDiff = diff.SignOrZero(); //SignOrZero - метод расширения для создания единичного вектора
             var nextStep = fromPos + stepDiff;
 
             if (runtimeModel.IsTileWalkable(nextStep))

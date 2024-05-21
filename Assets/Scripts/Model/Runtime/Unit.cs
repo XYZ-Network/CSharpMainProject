@@ -15,8 +15,9 @@ namespace Model.Runtime
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
+        public UnitsCoordinator UnitsCoordinator { get; set; }
         public bool IsDead => Health <= 0;
-        public BaseUnitPath ActivePath => _brain?.ActivePath;
+        public BaseUnitPath ActivePath => _brain?.ActivePath; 
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
@@ -26,15 +27,19 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private BuffSystem _buffSystem;
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitsCoordinator unitsCoordinator)
         {
             Config = config;
             Pos = startPos;
+            UnitsCoordinator = unitsCoordinator;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>(); //получаем RuntimeModel через ServiceLocator
+            _buffSystem = ServiceLocator.Get<BuffSystem>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +55,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay * _buffSystem.GetMoveSpeedModifier(this);
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay * _buffSystem.GetAttackSpeedModifier(this);
             }
         }
 
@@ -70,9 +75,9 @@ namespace Model.Runtime
             return true;
         }
 
-        private void Move()
+        private void Move() 
         {
-            var targetPos = _brain.GetNextStep();
+            var targetPos = _brain.GetNextStep(); //когда юнит ходит, он спрашивает у Brain куда идти 
             var delta = targetPos - Pos;
             if (delta.sqrMagnitude > 2)
             {

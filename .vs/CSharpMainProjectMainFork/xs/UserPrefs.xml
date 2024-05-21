@@ -1,0 +1,47 @@
+﻿<Properties StartupConfiguration="{7B826C27-ECBC-F079-E7EC-03B1A5B23888}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/DublUnitBrain.cs">
+    <Files>
+      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" Line="24" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/BaseUnitBrain.cs" Line="151" Column="1" />
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="41" Column="82" />
+      <File FileName="Assets/Scripts/Utilities/ServiceLocator.cs" Line="32" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="38" Column="51" />
+      <File FileName="Assets/Scripts/Model/IReadOnlyRuntimeModel.cs" Line="17" Column="16" />
+      <File FileName="Assets/Scripts/Controller/Buff.cs" Line="15" Column="43" />
+      <File FileName="Assets/Scripts/Controller/BuffSystem.cs" Line="66" Column="22" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/DublUnitBrain.cs" Line="43" Column="56" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProjectMainFork" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Controller" expanded="True" />
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="ReadOnly" expanded="True" />
+                  </Node>
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Player" expanded="True">
+                    <Node name="DublUnitBrain.cs" selected="True" />
+                  </Node>
+                </Node>
+                <Node name="Utilities" expanded="True" />
+                <Node name="View" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="5f74998c-63eb-4e56-9d20-3072fa75c93c" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
