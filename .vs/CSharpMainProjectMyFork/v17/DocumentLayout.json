@@ -1,12 +1,163 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\alexi\\OneDrive\\CSharpMainProjectMyFork\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\EnterPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\SimulationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Controller\\SimulationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\BotController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Controller\\BotController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DefaultPlayerUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SecondUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AQIAABgAAAAAAAAAAAAowC0AAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.2Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ArchToTileProjectile.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.203Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BaseUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.205Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DefaultEnemyUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.206Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Agent.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs",
+              "RelativeDocumentMoniker": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs",
+              "RelativeToolTip": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\TowerDefense\\Agents\\Agent.cs",
+              "ViewState": "AQIAAMAAAAAAAAAAAAAowOEAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SimulationController.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\SimulationController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\SimulationController.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\SimulationController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\SimulationController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAowCEAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.21Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EnterPoint.cs",
+              "DocumentMoniker": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
+              "ToolTip": "C:\\Users\\\u0421\u0430\u0448\u0430\\Documents\\GitHub\\CSharpMainProjectMyFork\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-12T09:46:40.213Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
