@@ -8,7 +8,8 @@ namespace UnitBrains.Pathfinding
     public class DebugPathOutput : MonoBehaviour
     {
         [SerializeField] private GameObject cellHighlightPrefab;
-        [SerializeField] private int maxHighlights = 5;
+        [SerializeField] private int maxHighlights = 10;
+        [SerializeField] private float highlightDelay = 5f;
 
         public BaseUnitPath Path { get; private set; }
         private readonly List<GameObject> allHighlights = new();
@@ -33,7 +34,18 @@ namespace UnitBrains.Pathfinding
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
             // TODO Implement me
-            yield break;
+            // yield break;
+            foreach (var cell in path.GetPath())
+            {
+                CreateHighlight(cell);
+                    
+                if (allHighlights.Count > maxHighlights)
+                    DestroyHighlight(0);
+                    
+                yield return new WaitForSeconds(highlightDelay / 10);
+            }
+            
+            HighlightPath(path);
         }
 
         private void CreateHighlight(Vector2Int atCell)
