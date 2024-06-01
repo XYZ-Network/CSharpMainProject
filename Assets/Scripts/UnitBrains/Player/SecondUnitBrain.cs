@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -12,35 +13,100 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> outOfTargets = new List<Vector2Int>();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+
+            // Получаем текущую температуру и проверяем на перегрев. Если перегреты, завершаем выполнение метода return'ом
+            int temperature = GetTemperature();
+            //Debug.Log(temperature);
+
+            if (temperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            // Создаем снаряд и определяем цель
             var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            // в зависимости от температуры, добавляем количество выстрелов для юнита.
+            for (int i = 0; i <= temperature; i++)
+            {
+
+                //Debug.Log("Выстрел " + i);
+                AddProjectileToList(projectile, intoList);
+            }    
+
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int positionToMove = new Vector2Int();
+
+            if (outOfTargets.Any())
+            {
+                positionToMove = outOfTargets[0];
+            }
+            else
+            {
+                positionToMove = unit.Pos;
+            }
+
+            if (IsTargetInRange(positionToMove))
+            {
+                return unit.Pos;
+            }
+            else
+            {
+                return CalcNextStepTowards(positionToMove);
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> resultsTarget = new ();
+
+            // Локальная переменная, содержащая ссылку на условную цель.
+            Vector2Int currentTarget = Vector2Int.zero;
+            // Локальная переменная, с значением минимального растояния.
+            float minDistance = float.MaxValue; 
+
+            // Находим ближайший вражеский юнит и определяем его целью.
+            foreach (var resultTarget in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                float resultTargetDistance = DistanceToOwnBase(resultTarget);
+
+                if (resultTargetDistance < minDistance)
+                {
+                    currentTarget = resultTarget;
+                    minDistance = resultTargetDistance;
+                }
+
+
             }
-            return result;
-            ///////////////////////////////////////
+
+            outOfTargets.Clear();
+
+            // Записываем цель в результирующий список целей, если такая была найдена.
+            if (minDistance < float.MaxValue)
+            {
+                outOfTargets.Add(currentTarget);
+
+                if (IsTargetInRange(currentTarget))
+                {
+                    resultsTarget.Add(currentTarget);
+                }
+
+            }
+            else if (IsPlayerUnitBrain)
+            {
+                outOfTargets.Add(runtimeModel.RoMap.Bases[Model.RuntimeModel.BotPlayerId]);
+            }
+
+            return resultsTarget;
         }
 
         public override void Update(float deltaTime, float time)
