@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,6 +15,12 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+
+        private static int unitCounter = 0;
+        private int unitNumber;
+        private const int maxTargets = 3;
+
+        private List<Vector2Int> TargetsOutOfReach = new List<Vector2Int>(); 
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -19,25 +28,58 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            float currentTemperature = GetTemperature();
+
+            if (currentTemperature >= overheatTemperature)
+                return;
+
+            for (int i = 0; i <= currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
-
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (TargetsOutOfReach.Count <= 0 || IsTargetInRange(TargetsOutOfReach[0]))
+                return unit.Pos;
+            else 
+                return unit.Pos.CalcNextStepTowards(TargetsOutOfReach[0]);
         }
-
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>(GetAllTargets());
+            TargetsOutOfReach.Clear();
+            if (result.Count > 0)
             {
-                result.RemoveAt(result.Count - 1);
+                Vector2Int outTarget = new();
+                float minDist = float.MaxValue;
+                float nowDist = 0;
+
+                foreach (Vector2Int nowTarget in result)
+                {
+                    nowDist = DistanceToOwnBase(nowTarget);
+                    if (nowDist < minDist)
+                    {
+                        minDist = nowDist;
+                        outTarget = nowTarget;
+                    }
+                }
+                TargetsOutOfReach.Add(outTarget);
+
+                result.Clear();
+                if (IsTargetInRange(outTarget)) result.Add(outTarget);
+                else TargetsOutOfReach.Add(outTarget);
+            }
+            else
+            {
+                result.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                TargetsOutOfReach.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
             }
             return result;
             ///////////////////////////////////////
@@ -57,13 +99,11 @@ namespace UnitBrains.Player
                 }
             }
         }
-
         private int GetTemperature()
         {
             if(_overheated) return (int) OverheatTemperature;
             else return (int)_temperature;
         }
-
         private void IncreaseTemperature()
         {
             _temperature += 1f;
