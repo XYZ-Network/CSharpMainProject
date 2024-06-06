@@ -1,10 +1,14 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains.Enemy;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Config;
 using Model.Runtime;
 using UnityEngine;
 using Utilities;
 using View;
+using UnitBrains;
+using Assets.Scripts.UnitBrains;
 
 namespace Controller
 {
@@ -19,6 +23,9 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private PlayerUnitCoordinator _playerUnitCoordinator;
+        private EnemyUnitCoordinator _enemyUnitCoordinator;
+        
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -47,6 +54,8 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
+            _playerUnitCoordinator = new PlayerUnitCoordinator();
+            _enemyUnitCoordinator = new EnemyUnitCoordinator();
 
             _gameplayView.Reinitialize();
         }
@@ -56,23 +65,23 @@ namespace Controller
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
             
-            SpawnUnit(RuntimeModel.PlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.PlayerId, unitConfig, _playerUnitCoordinator);
             TryStartSimulation();
         }
 
         private void OnBotUnitChosen(UnitConfig unitConfig)
         {
-            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig, _enemyUnitCoordinator);
             TryStartSimulation();
         }
 
-        private void SpawnUnit(int forPlayer, UnitConfig config)
+        private void SpawnUnit(int forPlayer, UnitConfig config, IUnitCoordinator unitCoordinator)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, unitCoordinator);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

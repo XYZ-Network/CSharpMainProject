@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.BuffsDebuffsSystem;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -11,6 +12,7 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly EffectManager _effectManager;
         
         private RootView _rootView;
 
@@ -30,6 +32,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+
+            _effectManager = new EffectManager();
+            ServiceLocator.Register(_effectManager);
             
             _levelController = new(_runtimeModel, this);
             
