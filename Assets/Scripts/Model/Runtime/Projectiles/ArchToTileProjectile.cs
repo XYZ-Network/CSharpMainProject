@@ -18,22 +18,13 @@ namespace Model.Runtime.Projectiles
 
         protected override void UpdateImpl(float deltaTime, float time)
         {
-            float timeSinceStart = time - StartTime;
-            float t = timeSinceStart / _timeToTarget;
+            var timeSinceStart = time - StartTime;
+            var t = timeSinceStart / _timeToTarget;
             
             Pos = Vector2.Lerp(StartPoint, _target, t);
             
-            float localHeight = 0f;
-            float totalDistance = _totalDistance;
-
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
-
-
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
+            var maxHeight = _totalDistance * 0.6f;
+            var localHeight = maxHeight * (1-Mathf.Pow((t*2-1),2));
             
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
