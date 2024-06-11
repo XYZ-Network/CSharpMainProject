@@ -1,0 +1,71 @@
+using System.Collections.Generic;
+using System.Linq;
+using Model;
+using Model.Runtime.Projectiles;
+using UnityEngine;
+using Utilities;
+
+namespace UnitBrains.Player
+{
+    public class ThirdUnitBrain : DefaultPlayerUnitBrain
+    {
+        public enum UnitState
+        {
+            Move,
+            Shoot
+        }
+        public override string TargetUnitName => "Ironclad Behemoth";
+        private float timer;
+        private float switchTime = 0.1f;
+        private UnitState unitState = UnitState.Move;
+        private bool unitMode;
+        public override Vector2Int GetNextStep()
+        {
+            Vector2Int nextPos = base.GetNextStep();
+            {
+                if (nextPos == unit.Pos)
+                {
+                    if (unitState != UnitState.Shoot)
+                    {
+                        unitMode = true;
+                    }
+                    unitState = UnitState.Shoot;
+                }
+                else
+                {
+                    if (unitState != UnitState.Move)
+                    {
+                        unitMode = true;
+                    }
+                    unitState = UnitState.Move;
+                }
+            }
+            return unitMode ? unit.Pos : nextPos;
+        }
+        protected override List<Vector2Int> SelectTargets()
+        {
+            if (unitMode)
+            {
+                return new List<Vector2Int>();
+            }
+            if (unitState == UnitState.Shoot)
+            {
+                return base.SelectTargets();
+            }
+            return new List<Vector2Int>();
+        }
+        public override void Update(float deltatime, float time)
+        {
+            Debug.Log(unitMode);
+            if (unitMode)
+            {
+                timer += Time.deltaTime;
+                if (timer >= switchTime)
+                {
+                    timer = 0f;
+                    unitMode = false;
+                }
+            }
+        }
+    }
+}
