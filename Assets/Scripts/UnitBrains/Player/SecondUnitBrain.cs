@@ -16,7 +16,7 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
 
-        private static int _enemyUnitCounter = 0;
+        private static int _enemyUnitCounter = 0; //ID
         private int _enemyUnitNumber;
         private const int _maxEnemyInTarget = 3;
 
