@@ -5,12 +5,12 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-
+//gggg
 public class EnterPoint : MonoBehaviour
 {
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
-    private float _timeScale = 1;
+    private float _timeScale = 2;
     
     void Start()
     {
