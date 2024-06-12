@@ -6,7 +6,10 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
+//hello 
+//buddies
+//Why are you so serious?
+//It's not your deal!
 //How are you?
 //i'm fine
 namespace Controller
