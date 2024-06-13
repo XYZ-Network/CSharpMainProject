@@ -16,11 +16,17 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
 
-        private static int _enemyUnitCounter = 0; //ID
-        private int _enemyUnitNumber;
-        private const int _maxEnemyInTarget = 3;
+        private List<Vector2Int> _priorityTargets = new List<Vector2Int>();
 
-        private List<Vector2Int> _enemyOutOfRange = new List<Vector2Int>(); //List for save Dangerous Units.
+        public static int unitСounter = 0;
+        private int unitNumber;
+        private const int maxTargetsCount = 3;
+
+        public SecondUnitBrain()
+        {
+            unitNumber = unitСounter;
+            unitСounter++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -48,10 +54,9 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            Vector2Int target = Vector2Int.zero;
-            target = _enemyOutOfRange.Any() ? _enemyOutOfRange[0] : unit.Pos;
-
-            return IsTargetInRange(target) ? unit.Pos : unit.Pos.CalcNextStepTowards(target);
+            Vector2Int targetPosition;
+            targetPosition = _priorityTargets.Count > 0 ? _priorityTargets[0] : unit.Pos;
+            return IsTargetInRange(targetPosition) ? unit.Pos : unit.Pos.CalcNextStepTowards(targetPosition);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -59,52 +64,36 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = new List<Vector2Int>(GetAllTargets());
+            var iD = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.BotPlayerId;
+            var baseCoords = runtimeModel.RoMap.Bases[iD];
             
-            Vector2Int targetPosition;
+            _priorityTargets.Clear();
+            List<Vector2Int> allTargets = GetAllTargets().ToList();
+            List<Vector2Int> reachableTargets = GetReachableTargets();
+            List<Vector2Int> closestTargets = new List<Vector2Int>();
+            
+            SortByDistanceToOwnBase(allTargets);
+            
+            var closestCount = maxTargetsCount > allTargets.Count ? allTargets.Count : maxTargetsCount;
+            closestTargets.AddRange(allTargets.GetRange(0, closestCount));
 
-            _enemyOutOfRange.Clear();
-
-            foreach (Vector2Int target in GetAllTargets())
+            var targetIndex = unitNumber % maxTargetsCount;
+            var indexIsExist = targetIndex < closestTargets.Count && targetIndex > 0;
+            
+            if (indexIsExist)
             {
-                _enemyOutOfRange.Add(target);
+                _priorityTargets.Add(closestTargets[targetIndex]);
             }
-
-            if (_enemyOutOfRange.Count == 0)
+            else if (closestTargets.Count > 0)
             {
-                result.RemoveAt(result.Count - 1);
-                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
-                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
-                _enemyOutOfRange.Add(enemyBase);
+                _priorityTargets.Add(closestTargets[0]);
             }
             else
             {
-                SortByDistanceToOwnBase(_enemyOutOfRange);
-
-                int targetIndex = _enemyUnitNumber % _maxEnemyInTarget;
-
-                if (targetIndex > (_enemyOutOfRange.Count - 1))
-                {
-                    targetPosition = _enemyOutOfRange[0];
-                }
-                else
-                {
-                    if (targetIndex == 0)
-                    {
-                        targetPosition = _enemyOutOfRange[targetIndex];
-                    }
-                    else
-                    {
-                        targetPosition = _enemyOutOfRange[targetIndex - 1];
-                    }
-
-                }
-
-                if (IsTargetInRange(targetPosition))
-                    result.Add(targetPosition);
+                _priorityTargets.Add(baseCoords);
             }
-
-            return result;
+            
+            return reachableTargets.Contains(_priorityTargets.LastOrDefault()) ? _priorityTargets : reachableTargets;
             ///////////////////////////////////////
         }
 
