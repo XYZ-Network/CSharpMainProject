@@ -4,7 +4,7 @@ namespace Model.Runtime.Projectiles
 {
     public class ArchToTileProjectile : BaseProjectile
     {
-        private const float ProjectileSpeed = 7f;
+        private const float ProjectileSpeed = 1f;
         private readonly Vector2Int _target;
         private readonly float _timeToTarget;
         private readonly float _totalDistance;
@@ -20,21 +20,27 @@ namespace Model.Runtime.Projectiles
         {
             float timeSinceStart = time - StartTime;
             float t = timeSinceStart / _timeToTarget;
+             
             
             Pos = Vector2.Lerp(StartPoint, _target, t);
-            
+
             float localHeight = 0f;
             float totalDistance = _totalDistance;
 
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            ///
+            float maxHeight = 60%totalDistance;
+            float localHeightRas = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
 
+            
+            Debug.Log(localHeightRas);
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
