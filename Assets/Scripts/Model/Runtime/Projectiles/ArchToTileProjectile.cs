@@ -29,7 +29,16 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            
+            float maxHeight = 0.6f * totalDistance;
+            
+            t *= 2;
+            t--;
+            float u = -t * t;
+            u++;
+            //Debug.Log(u);
 
+            localHeight = maxHeight * u;          
 
             ///////////////////////////////////////
             // End of the code to insert
