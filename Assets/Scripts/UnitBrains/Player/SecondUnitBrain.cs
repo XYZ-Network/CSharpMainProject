@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -9,6 +11,7 @@ namespace UnitBrains.Player
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
+        private List<Vector2Int> Targets = new List<Vector2Int>();
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
@@ -19,14 +22,24 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            int currentTemparature = GetTemperature();
+            if (currentTemparature >= overheatTemperature) return;
+
+            for (int i = 0; i <= currentTemparature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            bool isNecessaryMoveToTarget = Targets.Count > 0 && !IsTargetInRange(Targets[0]);
+
+            return isNecessaryMoveToTarget ? unit.Pos.CalcNextStepTowards(Targets[0]) : unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +47,12 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
+            Targets.Clear();
+
+            Vector2Int? nearestTargetToBase = GetNearestTargetToBase();
+            Targets.Add(nearestTargetToBase.HasValue ? nearestTargetToBase.Value : GetEnemyTargetBase());
+
+            return Targets;
             ///////////////////////////////////////
         }
 
@@ -68,6 +81,31 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+        }
+
+        private Vector2Int? GetNearestTargetToBase()
+        {
+            Vector2Int? nearestTarget = null;
+
+            float nearestDistance = float.MaxValue;
+            foreach (Vector2Int target in GetAllTargets())
+            {
+                float distance = DistanceToOwnBase(target);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestTarget = target;
+                }
+            }
+
+            return nearestTarget;
+        }
+
+        private Vector2Int GetEnemyTargetBase()
+        {
+            int playerId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+
+            return runtimeModel.RoMap.Bases[playerId];
         }
     }
 }
