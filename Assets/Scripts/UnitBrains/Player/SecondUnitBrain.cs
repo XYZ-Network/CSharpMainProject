@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using ActionGameFramework.Projectiles;
 using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
+using UnityEditor.SearchService;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace UnitBrains.Player
 {
@@ -18,29 +23,79 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////    
+            int a = GetTemperature();
+
+            if (a >= overheatTemperature)
+            {
+                return;
+            }
+
+            for (int i = 0; i < a; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
             ///////////////////////////////////////
+            
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            foreach (var cel in _target)
+            {
+                if (_target.Count > 0)
+                {
+                    Vector2Int pos = _target[0];
+                    pos = CalcNextStepTowards(pos);
+                }
+            }
+            return pos;
         }
-
+        
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> _targets = new List<Vector2Int>();
+            
+            float min = float.MaxValue;
+            float max = float.MinValue;
+            Vector2Int bestTarget = Vector2Int.zero;
+
+            var alltarg = GetAllTargets();
+            foreach ( var vector2 in alltarg )
             {
-                result.RemoveAt(result.Count - 1);
+                var distance = DistanceToOwnBase(vector2);
+
+                if (distance < min)
+                {
+                    min = distance;
+                    bestTarget = vector2;
+                }
+                if (distance > max)
+                {
+                    max = distance;
+                    bestTarget = vector2;
+                }
             }
+
+            _targets.Clear();
+            if (min < float.MaxValue)&(max > float.MinValue)
+            {
+                _targets.Add(bestTarget);
+            }
+            if (min < float.MaxValue)&(max <  float.MinValue) 
+            {
+                result.Add(bestTarget);
+            }
+            return _target;
             return result;
-            ///////////////////////////////////////
+           
         }
 
         public override void Update(float deltaTime, float time)
