@@ -1,25 +1,34 @@
-﻿using System.Collections.Generic;
-using Model;
-using Model.Runtime.Projectiles;
+﻿using Model;
+using Model.Runtime;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
-        protected float DistanceToOwnBase(Vector2Int fromPos) =>
-            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        public override void Update(float deltaTime, float time)
+        {
+            base.Update(deltaTime, time);
+            var recommendedTarget = UnitCoordinator.Instance.GetRecommendedTarget();
+            var recommendedPosition = UnitCoordinator.Instance.GetRecommendedPosition();
 
-        protected void SortByDistanceToOwnBase(List<Vector2Int> list)
-        {
-            list.Sort(CompareByDistanceToOwnBase);
+            MoveTowards(recommendedPosition);
+            AttackTarget(recommendedTarget);
         }
-        
-        private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
+
+        protected float DistanceToOwnBase(Vector2Int fromPos)
         {
-            var distanceA = DistanceToOwnBase(a);
-            var distanceB = DistanceToOwnBase(b);
-            return distanceA.CompareTo(distanceB);
+            return Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        }
+
+        private void MoveTowards(Vector2Int targetPos)
+        {
+        }
+
+        private void AttackTarget(Vector2Int targetPos)
+        {
         }
     }
 }
+

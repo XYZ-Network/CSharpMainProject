@@ -7,6 +7,7 @@ namespace Utilities
     {
         private static readonly Dictionary<Type, object> _services = new();
         
+
         public static void Register<T>(T service)
         {
             _services[typeof(T)] = service;

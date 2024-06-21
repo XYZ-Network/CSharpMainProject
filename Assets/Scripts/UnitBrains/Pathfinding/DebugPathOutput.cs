@@ -33,6 +33,12 @@ namespace UnitBrains.Pathfinding
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
             // TODO Implement me
+            foreach (var cell in path.GetPath())
+            {
+                CreateHighlight(cell);
+                yield return new WaitForSeconds(0.3f);
+            }
+
             yield break;
         }
 

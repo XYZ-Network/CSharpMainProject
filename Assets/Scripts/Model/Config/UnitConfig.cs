@@ -16,7 +16,8 @@ namespace Model.Config
         [SerializeField] private float _attackRange = 3.5f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
-        
+
+        public int Team { get; set; }
         public bool IsPlayerUnit => _isPlayerUnit;
         public string Name => _name;
         public Sprite Icon => _icon;

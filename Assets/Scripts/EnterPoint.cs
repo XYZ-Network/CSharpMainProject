@@ -6,8 +6,11 @@ using Model.Config;
 using UnityEngine;
 using Utilities;
 
+// Hello
+
 public class EnterPoint : MonoBehaviour
 {
+// hello Coment
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
