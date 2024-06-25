@@ -6,13 +6,11 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
-//How are you?
-//i'm fine
+
 namespace Controller
 {
     public class BotController
-    {
+    {   //hello privet
         private readonly TimeUtil _timeUtil;
         private readonly IReadOnlyRuntimeModel _runtimeModel;
         private readonly List<UnitConfig> _sortedUnits;
