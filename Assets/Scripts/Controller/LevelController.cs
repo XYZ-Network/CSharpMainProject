@@ -1,10 +1,15 @@
-﻿using System.Linq;
+﻿using BuffDebuff;
 using Model;
 using Model.Config;
 using Model.Runtime;
+using System.Linq;
+using UnitBrains.Bot;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 using View;
+using BuffDebuff.Buff;
+
 
 namespace Controller
 {
@@ -18,6 +23,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private readonly PlayerUnitCoordinator _playerCoordinator;
+        private readonly PlayerUnitCoordinator _botCoordinator;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -25,17 +32,20 @@ namespace Controller
             _rootController = rootController;
             _botController = new BotController(OnBotUnitChosen);
             _simulationController = new(runtimeModel, OnLevelFinished);
-            
+
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+
+            _playerCoordinator = new GameObject("PlayerUnitCoordinator").AddComponent<PlayerUnitCoordinator>();
+            _botCoordinator = new GameObject("BotUnitCoordinator").AddComponent<PlayerUnitCoordinator>();
         }
 
         public void StartLevel(int level)
         {
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
-            
+
             _rootView.HideLevelFinished();
 
             Random.InitState(level);
@@ -55,26 +65,37 @@ namespace Controller
         {
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
-            
-            SpawnUnit(RuntimeModel.PlayerId, unitConfig);
+
+            var unit = SpawnUnit(RuntimeModel.PlayerId, unitConfig);
             TryStartSimulation();
         }
 
         private void OnBotUnitChosen(UnitConfig unitConfig)
         {
-            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
+            var unit = SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
             TryStartSimulation();
         }
 
-        private void SpawnUnit(int forPlayer, UnitConfig config)
+        private Unit SpawnUnit(int forPlayer, UnitConfig config)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
+
             var unit = new Unit(config, pos);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
+
+            if (forPlayer == RuntimeModel.PlayerId)
+            {
+                (unit.Brain as DefaultPlayerUnitBrain)?.AssignCoordinator(_playerCoordinator);
+            }
+            else if (forPlayer == RuntimeModel.BotPlayerId)
+            {
+                (unit.Brain as DefaultBotUnitBrain)?.AssignCoordinator(_botCoordinator);
+            }
+
+            return unit;
         }
 
         private void TryStartSimulation()
