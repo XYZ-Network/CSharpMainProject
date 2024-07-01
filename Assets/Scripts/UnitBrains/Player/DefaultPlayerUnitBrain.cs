@@ -2,11 +2,19 @@
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
+        private PlayerUnitCoordinator _coordinator;
+
+        public void AssignCoordinator(PlayerUnitCoordinator coordinator)
+        {
+            _coordinator = coordinator;
+        }
+
         protected float DistanceToOwnBase(Vector2Int fromPos) =>
             Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
 
@@ -14,7 +22,7 @@ namespace UnitBrains.Player
         {
             list.Sort(CompareByDistanceToOwnBase);
         }
-        
+
         private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
         {
             var distanceA = DistanceToOwnBase(a);
@@ -23,3 +31,4 @@ namespace UnitBrains.Player
         }
     }
 }
+

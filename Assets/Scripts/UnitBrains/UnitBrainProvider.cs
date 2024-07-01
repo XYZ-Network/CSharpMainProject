@@ -24,7 +24,6 @@ namespace UnitBrains
 
             if (brain == null)
             {
-                Debug.LogError($"Could not find brains for unit {forUnit.Name}");
                 return null;
             }
 
