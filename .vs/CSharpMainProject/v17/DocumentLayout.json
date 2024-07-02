@@ -1,0 +1,85 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|c:\\users\\\u0432\u043E\u043B\u0447\u0430\u0440\u0430 \u0430\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\csharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\enterpoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SecondUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AQIAAGIAAAAAAAAAAAAIwGAAAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-29T02:09:32.181Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ArchToTileProjectile.cs",
+              "DocumentMoniker": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "ToolTip": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAgwCMAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-26T00:26:54.998Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-23T23:42:03.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "EnterPoint.cs",
+              "DocumentMoniker": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",
+              "ToolTip": "C:\\Users\\\u0412\u043E\u043B\u0447\u0430\u0440\u0430 \u0410\u0448\u0438\u043D\u0431\u0435\u043A\u043E\u0432\u0430\\CSharpMainProject\\Assets\\Scripts\\EnterPoint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EnterPoint.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-22T01:54:33.995Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
