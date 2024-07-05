@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Codice.CM.WorkspaceServer.DataStore;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace UnitBrains.Player
 {
@@ -12,15 +14,27 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
+
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
+            IncreaseTemperature();
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            int x = 0;
+            x = GetTemperature();
+            if (x >= overheatTemperature)
+            {
+                return;
+            }
+
+
+            for (int i = 0; i <= x; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
             ///////////////////////////////////////
         }
 
@@ -35,10 +49,44 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+            float min = float.MaxValue;
+
+            switch (result.Count > 1)
+            {
+                case (true):
+                    int x = 0, y = 0;
+                    var b = result[x];
+                    foreach (var target in result)
+                    {
+
+
+                        y++;
+                        if (min > DistanceToOwnBase(result[y]))
+                        {
+                            min = DistanceToOwnBase(result[y]);
+                            x = y;
+                        }
+                        y = 0;
+                        b = result[x];
+
+                    }
+                    b = result[x];
+                    result.Clear();
+                    result.Add(b);
+                    break;
+
+            }
+
+
+
+
             while (result.Count > 1)
             {
+
                 result.RemoveAt(result.Count - 1);
+
             }
+
             return result;
             ///////////////////////////////////////
         }
@@ -46,9 +94,9 @@ namespace UnitBrains.Player
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -60,7 +108,7 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
+            if (_overheated) return (int)OverheatTemperature;
             else return (int)_temperature;
         }
 
