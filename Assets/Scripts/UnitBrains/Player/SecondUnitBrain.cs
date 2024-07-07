@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Model;
+using Utilities;
+using TMPro;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,35 +17,88 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+
+        public static int unitCounter = 0;
+        public int unitNamber = unitCounter++;
+        public const int maxTarget = 3;
+
+        List<Vector2Int> _targetOutOfRange = new List<Vector2Int>();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float currentTemperature = GetTemperature();
+
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            IncreaseTemperature();
+
+            for (int i = 0; i < currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+           
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int targetPosition = _targetOutOfRange.Count > 0 ? _targetOutOfRange[0] : unit.Pos;
+            if (IsTargetInRange(targetPosition)) 
+            {
+                return unit.Pos;
+            }
+            else return unit.Pos.CalcNextStepTowards(targetPosition);
+            
+            
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            
+            List<Vector2Int> result = new List<Vector2Int>();
+            _targetOutOfRange.Clear();
+                     
+                        
+            
+            foreach (Vector2Int target in GetAllTargets()) 
             {
-                result.RemoveAt(result.Count - 1);
+                    
+                _targetOutOfRange.Add(target);
+
+                if (_targetOutOfRange.Count == 0)
+                {
+                    _targetOutOfRange.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                }
+
+                SortByDistanceToOwnBase(_targetOutOfRange);
+
+                int currentUnitNamber = unitNamber % _targetOutOfRange.Count;
+
+                int firstTargetNumber = Mathf.Min(currentUnitNamber, _targetOutOfRange.Count - 1);
+
+                Vector2Int firstTarget = _targetOutOfRange[firstTargetNumber];
+
+
+                if (IsTargetInRange(firstTarget))
+                {
+                    result.Add(firstTarget);
+                    _targetOutOfRange.Clear();
+                }
+
+                return result;
+
+
             }
+
             return result;
-            ///////////////////////////////////////
+
+
+
+
         }
 
         public override void Update(float deltaTime, float time)
