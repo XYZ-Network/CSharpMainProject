@@ -3,6 +3,11 @@ using GluonGui.Dialog;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using System.Linq;
+using System;
+using Model;
+using UnityEditor.Experimental.GraphView;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -14,6 +19,9 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        List<Vector2Int> inaccessibleTarget = new List<Vector2Int>();
+        Vector2Int targetFromAllEnemy = new Vector2Int();
+        List<Vector2Int> result = new List<Vector2Int>();
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -35,55 +43,87 @@ namespace UnitBrains.Player
             }
 
             IncreaseTemperature();
-            
+
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (!inaccessibleTarget.Contains(targetFromAllEnemy) && result.Contains(targetFromAllEnemy))
+            {
+                return unit.Pos;
+            }
+
+            else
+            {
+                Vector2Int position = unit.Pos;
+                Vector2Int nextPosition = targetFromAllEnemy;
+                position = position.CalcNextStepTowards(targetFromAllEnemy);
+                return position;
+            }
         }
+
 
         protected override List<Vector2Int> SelectTargets()
         {
+            IEnumerable<Vector2Int> allTargets = GetAllTargets();
             List<Vector2Int> result = GetReachableTargets();
 
-            if (result.Count == 0)
+            if (allTargets.Count() == 0)
             {
                 return new List<Vector2Int>(); ;
             }
 
-            Vector2Int targetEnemy = new Vector2Int();
+            float minAllDistance = float.MaxValue;
 
-            float minDistance = float.MaxValue;
-
-            foreach (Vector2Int enemy in result)
+            foreach (Vector2Int enemy in allTargets)
             {
                 float distance = DistanceToOwnBase(enemy);
-                if (distance <= minDistance)
+                if (distance < minAllDistance)
                 {
-                    minDistance = distance;
-                    targetEnemy = enemy;
+                    minAllDistance = distance;
+                    targetFromAllEnemy = enemy;
                 }
             }
-            result.Clear();
-            result.Add(targetEnemy);
 
-            while (result.Count > 1)
+            if (!result.Contains(targetFromAllEnemy))
             {
-                result.RemoveAt(result.Count - 1);
+                inaccessibleTarget.Add(targetFromAllEnemy);
             }
-            float distance1 = DistanceToOwnBase(targetEnemy);
-            Debug.Log(distance1);
-            return result;
+
+            if (result.Contains(targetFromAllEnemy))
+            {
+                result.Clear();
+                result.Add(targetFromAllEnemy);
+
+                while (result.Count > 1)
+                {
+                    result.RemoveAt(result.Count - 1);
+                }
+                return result;
+            }
+            else if (result.Count == 0 && inaccessibleTarget.Count == 0)
+            {
+
+                targetFromAllEnemy = runtimeModel.RoMap.Bases[
+                  IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+
+                result.Clear();
+                result.Add(targetFromAllEnemy);
+
+                return result;
+            }
+            else
+            {
+                return new List<Vector2Int>();
+            }
         }
 
-        
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -95,7 +135,7 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
+            if (_overheated) return (int)OverheatTemperature;
             else return (int)_temperature;
         }
 
