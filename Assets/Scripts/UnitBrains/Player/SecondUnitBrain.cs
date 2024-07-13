@@ -1,32 +1,43 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
+using UnityEditor;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
+        private static int _unitCounter = 0;
         public override string TargetUnitName => "Cobra Commando";
+        private const int MaxTargets = 3;
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
+        private List<Vector2Int> Targets = new List<Vector2Int>();
+        [SerializeField] private int UnitId = ++_unitCounter;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            int currentTemparature = GetTemperature();
+            if (currentTemparature >= overheatTemperature) return;
 
-        public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
+            for (int i = 0; i <= currentTemparature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
+            ///////////////////////////////////////
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +45,19 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
+            Targets.Clear();
+
+            Vector2Int enemyTargetBase = GetEnemyTargetBase();
+            List<Vector2Int> allTargets = GetAllTargets().Where(t => !Vector2Int.Equals(t, enemyTargetBase)).ToList();
+            if (allTargets.Count == 0) allTargets.Add(enemyTargetBase);
+            SortByDistanceToOwnBase(allTargets);
+
+            Vector2Int promisingTarget = GetPromisingTarget(allTargets);
+            Targets.Add(promisingTarget);
+
+            if (!IsTargetInRange(promisingTarget)) return new List<Vector2Int>();
+
+            return Targets;
             ///////////////////////////////////////
         }
 
@@ -68,6 +86,21 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+        }
+
+        private Vector2Int GetPromisingTarget(List<Vector2Int> targets)
+        {
+            int numberPromisingGoals = targets.Count <= MaxTargets ? targets.Count : MaxTargets;
+            int promisingGoal = UnitId % numberPromisingGoals;
+
+            return targets[promisingGoal];
+        }
+
+        private Vector2Int GetEnemyTargetBase()
+        {
+            int playerId = IsPlayerUnitBrain ? Model.RuntimeModel.BotPlayerId : Model.RuntimeModel.PlayerId;
+
+            return runtimeModel.RoMap.Bases[playerId];
         }
     }
 }

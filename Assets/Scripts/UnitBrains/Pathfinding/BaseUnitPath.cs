@@ -20,7 +20,7 @@ namespace UnitBrains.Pathfinding
         {
             if (path == null)
                 Calculate();
-            
+
             return path;
         }
 

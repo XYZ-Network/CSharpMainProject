@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -19,6 +20,7 @@ namespace UnitBrains
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
+        private UnitCoordinator _unitCoordinator => UnitCoordinator.GetInstance();
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -36,10 +38,11 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            Vector2Int? target = _unitCoordinator.GetTarget(this) ?? _unitCoordinator.GetPosition(this);
+            Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, target ?? enemyBase);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
