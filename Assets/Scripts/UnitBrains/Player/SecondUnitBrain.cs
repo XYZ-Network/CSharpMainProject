@@ -18,12 +18,23 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////      
+            float temperature = GetTemperature();
+            if (temperature >= overheatTemperature)
+            {
+                return;
+            }
+            for (float strelba = 0; strelba <= temperature; strelba++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
+
+
             ///////////////////////////////////////
         }
-
+        
         public override Vector2Int GetNextStep()
         {
             return base.GetNextStep();
