@@ -157,8 +157,8 @@ MonoBehaviour:
     _mapHeight: 24
     _mapMinDensity: 0.2
     _mapMaxDensity: 0.7
-    _baseLevelMoney: 100
-    _levelMoneyIncrement: 70
+    _baseLevelMoney: 200
+    _levelMoneyIncrement: 200
     _botMoneyAdvantagePerLevel: 15
     _botMoneyAdvantageLevelShift: -3
     _mainBaseMaxHp: 100

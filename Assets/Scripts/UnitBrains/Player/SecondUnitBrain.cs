@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
+using Vector2Int = UnityEngine.Vector2Int;
 
 namespace UnitBrains.Player
 {
@@ -13,20 +16,41 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
         
+        public static int UnitID = 0; // Счетчик юниток
+        public int UnitNumber = UnitID++; // Номер юнита который равен айди с инкрементом
+        public int MaximumTargets = 3; // Максимальное количество целей
+//tst
+        private readonly List<Vector2Int> _currentTarget = new();
+        
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+            int currentTemeperature = GetTemperature();
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (currentTemeperature >= overheatTemperature)
+            {
+                return;
+            }
+            else
+            {
+                for (int i = 0; i <= currentTemeperature; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                    Debug.Log(_temperature + 1);
+                }
+                IncreaseTemperature();
+            }
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int targetPosition;
+            targetPosition = _currentTarget.Count > 0 ? _currentTarget[0] : unit.Pos;
+            return IsTargetInRange(targetPosition) ? unit.Pos : unit.Pos.CalcNextStepTowards(targetPosition);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,29 +58,36 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>(); // Пустой список для хранения целей.
+            _currentTarget.Clear(); // Очищаем список текущих целей.
+
+            // Проходимся по всем целям и добавляем их в очищенный список.
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                _currentTarget.Add(target);
             }
+
+            // Добавляем базу противника, если список целей пуст.
+            if (_currentTarget.Count == 0)
+            {
+                _currentTarget.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+            }
+
+            // Сортируем цели по расстоянию до базы.
+            SortByDistanceToOwnBase(_currentTarget);
+
+            // Рассчитываем номер текущего юнита и определяем цель для атаки.
+            int currentUnitNumber = UnitNumber % _currentTarget.Count;
+            
+            if (_currentTarget.Count > currentUnitNumber && IsTargetInRange(_currentTarget[currentUnitNumber]))
+            {
+                result.Add(_currentTarget[currentUnitNumber]);
+            }
+
             return result;
             ///////////////////////////////////////
         }
 
-        public override void Update(float deltaTime, float time)
-        {
-            if (_overheated)
-            {              
-                _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
-                _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
-                if (t >= 1)
-                {
-                    _cooldownTime = 0;
-                    _overheated = false;
-                }
-            }
-        }
 
         private int GetTemperature()
         {
