@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using GluonGui.WorkspaceWindow.Views.WorkspaceExplorer;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using View;
 
@@ -17,30 +19,43 @@ namespace UnitBrains.Pathfinding
         public void HighlightPath(BaseUnitPath path)
         {
             Path = path;
-            while (allHighlights.Count > 0)
-            {
-                DestroyHighlight(0);
-            }
-            
-            if (highlightCoroutine != null)
-            {
-                StopCoroutine(highlightCoroutine);
-            }
+            DestroyHighlight();
+
+            if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
 
             highlightCoroutine = StartCoroutine(HighlightCoroutine(path));
         }
 
+        /**
+         * Clear Highlight after level ends
+         */
+        void OnDisable()
+        {
+            DestroyHighlight();
+        }
+
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            Vector2Int[] arrayPath = path.GetPath().ToArray();
+
+            while (true)
+            {
+                // highlight only "maxHighlights" active cells of the path
+                for (int i = 0; i < arrayPath.Length; i++)
+                {
+                    CreateHighlight(arrayPath[i]);
+                    yield return new WaitForSeconds(0.2f);
+                    if (allHighlights.Count >= this.maxHighlights) DestroyHighlight(0);
+                }
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)
         {
             var pos = Gameplay3dView.ToWorldPosition(atCell, 1f);
             var highlight = Instantiate(cellHighlightPrefab, pos, Quaternion.identity);
-            highlight.transform.SetParent(transform);
+            // no need to bind coordinates to the unit
+            // highlight.transform.SetParent(transform);
             allHighlights.Add(highlight);
         }
 
@@ -48,6 +63,14 @@ namespace UnitBrains.Pathfinding
         {
             Destroy(allHighlights[index]);
             allHighlights.RemoveAt(index);
+        }
+
+        public void DestroyHighlight()
+        {
+            while (allHighlights.Count > 0)
+            {
+                DestroyHighlight(0);
+            }
         }
     }
 }

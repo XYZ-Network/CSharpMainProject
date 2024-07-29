@@ -12,7 +12,7 @@ namespace UnitBrains.Pathfinding
         public DummyUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
         {
         }
-
+        
         protected override void Calculate()
         {
             var currentPoint = startPoint;
