@@ -24385,6 +24385,7 @@ MonoBehaviour:
   _attackRange: 3.5
   _projectileType: 0
   _damage: 15
+  _unitType: 2
 --- !u!114 &1963013773103935339
 MonoBehaviour:
   m_ObjectHideFlags: 0

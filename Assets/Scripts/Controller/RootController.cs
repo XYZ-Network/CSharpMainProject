@@ -11,17 +11,22 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
+        private readonly EffectsManager _effectsManager;
+
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
+
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
             ServiceLocator.Register(TimeUtil.Create());
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
+            _effectsManager = new();
+            ServiceLocator.Register(_effectsManager);
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
             
@@ -30,7 +35,7 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();

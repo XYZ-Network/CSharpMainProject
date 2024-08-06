@@ -16,7 +16,11 @@ namespace Model.Config
         [SerializeField] private float _attackRange = 3.5f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
-        
+        [SerializeField] private int _unitType = 0;
+        [SerializeField] public float _attackRangeMod  = 1f;
+        [SerializeField] public bool _doubleshot = false;
+
+
         public bool IsPlayerUnit => _isPlayerUnit;
         public string Name => _name;
         public Sprite Icon => _icon;
@@ -28,5 +32,10 @@ namespace Model.Config
         public float AttackRange => _attackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+        public float attackRangeMod => _attackRangeMod;
+        public bool doubleshot => _doubleshot;
+
+        public int UnitType => _unitType;
+
     }
 }

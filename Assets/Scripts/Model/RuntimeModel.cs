@@ -44,7 +44,7 @@ namespace Model
         {
             new (), new ()
         };
-        
+         
         public bool IsTileWalkable(Vector2Int pos)
         {
             return !Map[pos] && AllUnits.All(u => u.Pos != pos);

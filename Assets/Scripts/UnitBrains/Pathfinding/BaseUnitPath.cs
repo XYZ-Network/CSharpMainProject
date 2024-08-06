@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Model;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ namespace UnitBrains.Pathfinding
 
                 found = cell == unitPos;
             }
-
+            path = null;
             Debug.LogError($"Unit {unitPos} is not on the path");
             return unitPos;
         }

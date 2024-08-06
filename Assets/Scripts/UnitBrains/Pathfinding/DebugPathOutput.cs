@@ -19,7 +19,7 @@ namespace UnitBrains.Pathfinding
             Path = path;
             while (allHighlights.Count > 0)
             {
-                DestroyHighlight(0);
+                DestroyHighlight(0); 
             }
             
             if (highlightCoroutine != null)
@@ -32,15 +32,21 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
             yield break;
+
+            /*foreach (Vector2Int cell in path.GetPath()) 
+            {
+                CreateHighlight(cell);
+                yield return new WaitForSeconds(0.5f); 
+            }*/
+            
         }
 
         private void CreateHighlight(Vector2Int atCell)
         {
             var pos = Gameplay3dView.ToWorldPosition(atCell, 1f);
             var highlight = Instantiate(cellHighlightPrefab, pos, Quaternion.identity);
-            highlight.transform.SetParent(transform);
+            //highlight.transform.SetParent(transform); //лучше убрать, а то точки продвигаются вместе с моделькой
             allHighlights.Add(highlight);
         }
 
