@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
+using Controller;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
+using UnitBrains.Buff;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -26,14 +29,21 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public float SpeedModifier { get; set; } = 1.0f;
+        public float AttackModifier { get; set; } = 1.0f;
+        public float AttackTimeModifier { get; set; } = 1.0f;
+        public float RangeModifier { get; set; } = 1.0f;
+
+
+        public Unit(UnitConfig config, Vector2Int startPos, Coordinator coordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetCoordinator(coordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -47,16 +57,16 @@ namespace Model.Runtime
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay / SpeedModifier;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay / AttackTimeModifier;
             }
         }
 
