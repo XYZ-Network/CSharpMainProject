@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -15,12 +16,28 @@ namespace UnitBrains.Player
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
+            float overheatTemperature = OverheatTemperature;         
+
+            if(GetTemperature() < overheatTemperature)
+            {
+                for (float i = -1; i < GetTemperature() ; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                                   
+                }
+            }
+            else
+            {
+                return; 
+            }
+            IncreaseTemperature();
+                                                
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            //var projectile = CreateProjectile(forTarget);
+            //AddProjectileToList(projectile, intoList);
             ///////////////////////////////////////
         }
 
@@ -28,16 +45,36 @@ namespace UnitBrains.Player
         {
             return base.GetNextStep();
         }
-
+        
         protected override List<Vector2Int> SelectTargets()
         {
+           
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            float minDisToEnemy = float.MaxValue;
+            Vector2Int nearEnemy = Vector2Int.zero;
+           List<Vector2Int> result = GetReachableTargets();
+            
+
+                if (result.Count > 0) 
             {
                 result.RemoveAt(result.Count - 1);
+                    foreach (Vector2Int enemyPos in result)
+                    {
+                        float disToCurrentEenemy = DistanceToOwnBase(enemyPos);
+                        if (minDisToEnemy > disToCurrentEenemy)
+                        {
+                            minDisToEnemy = disToCurrentEenemy;
+                            nearEnemy = enemyPos;
+                        }
+                    }
+                    if (result.Contains(nearEnemy))
+                    {
+                        result.Clear();
+                        result.Add(nearEnemy);
+                    }
+                    
             }
             return result;
             ///////////////////////////////////////
