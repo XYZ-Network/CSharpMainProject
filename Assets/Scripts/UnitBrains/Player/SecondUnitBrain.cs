@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -19,8 +21,23 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            //Solution 1.3 - a
+            if (GetTemperature() >= OverheatTemperature)
+            {
+                return;
+            }
+
+            //Solution 1.3 - b
+            IncreaseTemperature();
+
+            int i = 0;
+            while (i != _temperature)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+                i++;
+            }
+
             ///////////////////////////////////////
         }
 
@@ -35,10 +52,27 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
+           
+            
+                float min = float.MaxValue;
+                Vector2Int reachableTarget = Vector2Int.zero;
+                foreach (var r in result)
+                { 
+                   var d = DistanceToOwnBase(r);
+                   if (d < min)
+                   {
+                       min = d;
+                       reachableTarget = r;
+                   }
+                   
+                }
+                
+                result.Clear();
+                if (min != float.MaxValue)
+                {
+                    result.Add(reachableTarget);
+                }
+                
             return result;
             ///////////////////////////////////////
         }
