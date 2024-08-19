@@ -34,12 +34,32 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
+                List<Vector2Int> result = GetReachableTargets();
+
+    if (result.Count == 0)
+    {
+        return new List<Vector2Int>();
+    }
+
+    Vector2Int target = new Vector2Int();
+    float minimalDist = float.MaxValue;
+    foreach (Vector2Int TargProt in result)
+    {
+        float dist = DistanceToOwnBase(TargProt);
+        if (dist < minimalDist)
+        {
+            minimalDist = dist;
+            target = TargProt;
+        }
+    }
+    result.Clear();
+    result.Add(target);
+    while (result.Count > 1)
+    {
+        result.RemoveAt(result.Count - 1);
+    }
+    return result;
+}
             ///////////////////////////////////////
         }
 
