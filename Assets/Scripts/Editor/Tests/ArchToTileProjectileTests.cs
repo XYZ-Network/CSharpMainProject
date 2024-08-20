@@ -2,7 +2,7 @@ using Model.Runtime.Projectiles;
 using NUnit.Framework;
 using UnityEngine;
 
-public class Dz2Test : MonoBehaviour
+public class ArchToTileProjectileTests : MonoBehaviour
 {
     private const int SamplesOverTrajectory = 100;
     

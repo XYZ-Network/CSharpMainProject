@@ -31,6 +31,9 @@ namespace Controller
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
             
+            var buffSystem = new BuffSystem();
+            ServiceLocator.Register(buffSystem);
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();
