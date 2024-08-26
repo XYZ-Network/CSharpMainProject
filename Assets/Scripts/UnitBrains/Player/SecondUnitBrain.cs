@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using Codice.Client.Common.GameUI;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,37 +15,92 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> dangerous = new List<Vector2Int>();
         
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+
+            float _temperature = GetTemperature();
+                
+            if (_temperature >= overheatTemperature) 
+            {
+                return;
+                
+            }
+            
+            if (_temperature == 0)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            
+            for (int i = 1; i <= _temperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
+            }
 
         public override Vector2Int GetNextStep()
         {
+            if (dangerous == null)
+            {
+                return Vector2Int.zero;
+            }
             return base.GetNextStep();
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
-            ///////////////////////////////////////
-        }
 
+            float minTarget = float.MaxValue;
+            Vector2Int closestTarget = new Vector2Int();
+
+            List<Vector2Int> result = new List<Vector2Int>();
+
+
+            IEnumerable<Vector2Int> allTargets = GetAllTargets();
+
+            if (allTargets == null)
+            {
+                result.Clear();
+                result[0] = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                Debug.Log(result);
+            }
+            
+            foreach (var target in allTargets)
+            {
+                
+                float distance = DistanceToOwnBase(target);
+                if (distance < minTarget)
+                {
+                    minTarget = distance;
+                    closestTarget = target;
+                    dangerous.Clear();
+                    
+                }
+            }
+            
+            if (!IsTargetInRange(closestTarget))
+            {
+                return new List<Vector2Int>();
+            }
+
+            if (minTarget != float.MaxValue)
+            {
+                dangerous.Add(closestTarget);
+                result.Add(closestTarget);
+                return result;
+                
+            }
+            result.Clear();
+            Debug.Log(1);
+            return new List<Vector2Int>();
+        }   
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
