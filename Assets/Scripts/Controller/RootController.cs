@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Buffs;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -11,7 +12,8 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
+        private UnitCoordinator _unitCoordinator;
+        private BuffSystem _buffSystem;
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
@@ -21,10 +23,12 @@ namespace Controller
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
-            
+            _buffSystem = new BuffSystem();
+            ServiceLocator.RegisterAs(_buffSystem, typeof(BuffSystem));
+
             var gameplayVisual = SpawnGameplayVisual();
             ServiceLocator.Register(gameplayVisual);
 
@@ -34,6 +38,9 @@ namespace Controller
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();
+
+
+
         }
 
         public void RestartGame()

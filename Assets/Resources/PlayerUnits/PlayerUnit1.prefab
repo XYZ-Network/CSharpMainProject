@@ -10269,6 +10269,7 @@ GameObject:
   - component: {fileID: 4923415631061152142}
   - component: {fileID: 7834118053045334556}
   - component: {fileID: 6781493616917666738}
+  - component: {fileID: 2964045326492657111}
   m_Layer: 14
   m_Name: PlayerUnit1
   m_TagString: Untagged
@@ -10306,6 +10307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthBar: {fileID: 8923541754904775323}
+  _debugPathOutput: {fileID: 2964045326492657111}
 --- !u!114 &6781493616917666738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10327,10 +10329,23 @@ MonoBehaviour:
   _moveDelay: 0.25
   _attackDelay: 0.75
   _attackRange: 3.5
-  _shotsPerTarget: 1
-  _targetsInVolley: 1
   _projectileType: 0
   _damage: 15
+--- !u!114 &2964045326492657111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5633761408682995313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3d2c131c92340d1b6e987a53847d8f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellHighlightPrefab: {fileID: 4141273912711956317, guid: 6b7b54fba8ef4704396fc9f540ee8aa2,
+    type: 3}
+  maxHighlights: 3
 --- !u!1 &5898980875654718684
 GameObject:
   m_ObjectHideFlags: 0

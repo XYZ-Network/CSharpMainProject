@@ -18,7 +18,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
-
+        private readonly UnitCoordinator _playerUnitCoordinator;
+        private readonly UnitCoordinator _botUnitCoordinator;
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -30,6 +31,8 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _playerUnitCoordinator = new UnitCoordinator(true);
+            _botUnitCoordinator = new UnitCoordinator(false);
         }
 
         public void StartLevel(int level)
@@ -42,6 +45,7 @@ namespace Controller
             SetInitialMoney();
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
             var map = MapGenerator.Generate(_settings.MapWidth, _settings.MapHeight, density, level);
+
             _runtimeModel.Clear();
             _runtimeModel.Map = new Map(map, Settings.PlayersCount);
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
@@ -72,7 +76,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, config.IsPlayerUnit? _playerUnitCoordinator:_botUnitCoordinator);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

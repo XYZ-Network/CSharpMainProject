@@ -1,4 +1,6 @@
 ﻿using Model.Runtime.Projectiles;
+using UnitBrains;
+using UnitBrains.Pathfinding;
 using UnityEngine;
 
 namespace Model.Config
@@ -28,5 +30,21 @@ namespace Model.Config
         public float AttackRange => _attackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+
+        public BaseUnitBrain Brain;
+
+        internal void IncAttackRange(float range)
+        {
+            _attackRange += range;
+        }
+
+        internal void IncAttackDelay(float delay)
+        {
+            _attackDelay += delay;
+        }
+        internal void IncMoveDelay(float delay) 
+        { 
+            _moveDelay += delay;
+        }
     }
 }

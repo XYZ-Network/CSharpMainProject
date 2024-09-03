@@ -28,7 +28,7 @@ namespace UnitBrains.Pathfinding
         {
             var found = false;
             foreach (var cell in GetPath())
-            {
+            { 
                 if (found)
                     return cell;
 

@@ -1,4 +1,5 @@
 ﻿using Model.Config;
+using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Model.Runtime.ReadOnly
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; }
         public int Health { get; }
+
         public BaseUnitPath ActivePath { get; }
     }
 }
