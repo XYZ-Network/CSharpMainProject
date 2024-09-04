@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Model;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 
 namespace UnitBrains.Pathfinding
@@ -13,25 +15,31 @@ namespace UnitBrains.Pathfinding
         protected readonly Vector2Int startPoint;
         protected readonly Vector2Int endPoint;
         protected Vector2Int[] path = null;
+        public IEnumerable<Vector2Int> Node {  get; private set; }
 
         protected abstract void Calculate();
         
         public IEnumerable<Vector2Int> GetPath()
         {
             if (path == null)
-                Calculate();
-            
+            {
+               Calculate();
+            }
+
             return path;
         }
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
             var found = false;
+            
             foreach (var cell in GetPath())
             {
                 if (found)
+                {
                     return cell;
-
+                }
+                 
                 found = cell == unitPos;
             }
 

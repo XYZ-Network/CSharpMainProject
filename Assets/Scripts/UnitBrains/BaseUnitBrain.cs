@@ -4,6 +4,7 @@ using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains.Pathfinding;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 using Utilities;
 using Unit = Model.Runtime.Unit;
@@ -15,8 +16,8 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
-        protected Unit unit { get; private set; }
+        protected PathAndTargetCoordinator PathAndTargetCoordinator { get; private set; }
+        public Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
         
@@ -29,6 +30,7 @@ namespace UnitBrains
             new (0.15f, -0.15f),
             new (-0.15f, 0.15f),
             new (-0.15f, -0.15f),
+
         };
 
         public virtual Vector2Int GetNextStep()
@@ -38,9 +40,10 @@ namespace UnitBrains
 
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            _activePath = new BgUnitPath(runtimeModel, unit.Pos, target);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            var step = _activePath.GetNextStepFrom(unit.Pos);
+            return step;
         }
 
         public List<BaseProjectile> GetProjectiles()
@@ -63,6 +66,11 @@ namespace UnitBrains
         public void SetUnit(Unit unit)
         {
             this.unit = unit;
+        }
+
+        public void SetController(PathAndTargetCoordinator pathAndTargetCoordinator)
+        {
+            this.PathAndTargetCoordinator = pathAndTargetCoordinator;
         }
 
         public virtual void Update(float deltaTime, float time)
@@ -117,7 +125,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.RangeModifier;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;

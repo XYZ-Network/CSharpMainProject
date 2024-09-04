@@ -1,6 +1,8 @@
 ﻿using Model.Runtime.ReadOnly;
 using UnitBrains.Pathfinding;
+using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace View
 {
@@ -17,9 +19,9 @@ namespace View
             {
                 transform.rotation = Quaternion.LookRotation(deltaPos, Vector3.up);
             }
-
+            
             if (_debugPathOutput != null &&
-                model.ActivePath != null &&
+                 model.ActivePath != null &&
                 model.ActivePath?.EndPoint != _debugPathOutput.Path?.EndPoint)
             {
                 _debugPathOutput.HighlightPath(model.ActivePath);
