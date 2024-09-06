@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -18,6 +19,7 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private PathAndTargetCoordinator _pathAndTargetCoordinator;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -35,7 +37,7 @@ namespace Controller
         public void StartLevel(int level)
         {
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
-            
+            _pathAndTargetCoordinator = new PathAndTargetCoordinator();
             _rootView.HideLevelFinished();
 
             Random.InitState(level);
@@ -56,23 +58,23 @@ namespace Controller
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
             
-            SpawnUnit(RuntimeModel.PlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.PlayerId, unitConfig, _pathAndTargetCoordinator);
             TryStartSimulation();
         }
 
         private void OnBotUnitChosen(UnitConfig unitConfig)
         {
-            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig, _pathAndTargetCoordinator);
             TryStartSimulation();
         }
 
-        private void SpawnUnit(int forPlayer, UnitConfig config)
+        private void SpawnUnit(int forPlayer, UnitConfig config, PathAndTargetCoordinator pathAndTargetCoordinator)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, pathAndTargetCoordinator);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
