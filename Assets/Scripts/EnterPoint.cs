@@ -12,7 +12,7 @@ public class EnterPoint : MonoBehaviour
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
     
-    void Start()
+    void Awake()
     {
         Time.timeScale = _timeScale;
         _settings.LoadPrefabs();
@@ -20,5 +20,6 @@ public class EnterPoint : MonoBehaviour
         
         var rootController = new RootController(_settings, _targetCanvas);
         ServiceLocator.Register(rootController);
+
     }
 }

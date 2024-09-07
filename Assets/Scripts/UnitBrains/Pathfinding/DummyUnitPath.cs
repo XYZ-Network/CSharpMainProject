@@ -15,9 +15,10 @@ namespace UnitBrains.Pathfinding
 
         protected override void Calculate()
         {
+            var counter = 0;
+            
             var currentPoint = startPoint;
             var result = new List<Vector2Int> { startPoint };
-            var counter = 0;
             while (currentPoint != endPoint && counter++ < MaxLength)
             {
                 var nextStep = CalcNextStepTowards(currentPoint, endPoint);
@@ -29,6 +30,9 @@ namespace UnitBrains.Pathfinding
             }
 
             path = result.ToArray();
+
+            
+
         }
         
         private Vector2Int CalcNextStepTowards(Vector2Int fromPos, Vector2Int toPos)
@@ -52,7 +56,7 @@ namespace UnitBrains.Pathfinding
             }
 
             var sideStep0 = fromPos + new Vector2Int(stepDiff.y, -stepDiff.x);
-            var shiftedStep0 = fromPos + (sideStep0 + stepDiff).SignOrZero();
+            var shiftedStep0 = fromPos + (sideStep0 + stepDiff).SignOrZero(); // единичный вектор
             if (runtimeModel.IsTileWalkable(shiftedStep0))
                 return shiftedStep0;
             
