@@ -31,7 +31,7 @@ namespace UnitBrains
             new (-0.15f, -0.15f),
         };
 
-        public virtual Vector2Int GetNextStep()
+        public virtual Vector2Int GetNextStep() 
         {
             if (HasTargetsInRange())
                 return unit.Pos;
