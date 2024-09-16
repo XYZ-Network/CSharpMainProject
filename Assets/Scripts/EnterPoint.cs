@@ -10,7 +10,7 @@ public class EnterPoint : MonoBehaviour
 {
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
-    private float _timeScale = 1;
+    private float _timeScale = 5;
     
     void Start()
     {
@@ -18,12 +18,6 @@ public class EnterPoint : MonoBehaviour
         _settings.LoadPrefabs();
         ServiceLocator.Register(_settings);
         
-        /*/
-         * 
-         * Hello! Can you hear me? 
-         *
-        /*/
-
         var rootController = new RootController(_settings, _targetCanvas);
         ServiceLocator.Register(rootController);
     }
