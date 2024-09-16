@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.BuffsAndDebuffs;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -7,6 +9,8 @@ using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using static UnityEngine.UI.CanvasScaler;
+using View;
 
 namespace Model.Runtime
 {
@@ -26,15 +30,20 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+        private BuffAndDebuffControllSystem _buffAndDebuffControllSystem;
+        private VFXView _vFXView;
+
+        public Unit(UnitConfig config, Vector2Int startPos, PathAndTargetCoordinator pathAndTargetCoordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetControler(pathAndTargetCoordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffAndDebuffControllSystem = ServiceLocator.Get<BuffAndDebuffControllSystem>();
+            _vFXView = ServiceLocator.Get<VFXView>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +59,21 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                var actualModifier = _buffAndDebuffControllSystem.GetActualModifier(this);
+                _nextMoveTime = time + Config.MoveDelay/actualModifier.moveMod;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                var actualModifier = _buffAndDebuffControllSystem.GetActualModifier(this);
+
+                _nextAttackTime = time + Config.AttackDelay/actualModifier.attackMod;
+            }
+
+           if (_buffAndDebuffControllSystem.CheckUnitInEffectList(this))
+            {
+                _vFXView.PlayVFX(Pos, VFXView.VFXType.BuffApplied);
             }
         }
 

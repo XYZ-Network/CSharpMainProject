@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.BuffsAndDebuffs;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -30,7 +31,10 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
+            var _buffAndDebuffControllSystem = new BuffAndDebuffControllSystem();
+            ServiceLocator.Register(_buffAndDebuffControllSystem);
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();

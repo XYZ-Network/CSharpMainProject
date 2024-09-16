@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -16,6 +18,7 @@ namespace UnitBrains
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
         
+        protected PathAndTargetCoordinator PathAndTargetCoordinator { get; private set; }
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
@@ -38,9 +41,9 @@ namespace UnitBrains
 
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            _activePath = new BgUnitPath(runtimeModel, unit.Pos, target);
+            var step = _activePath.GetNextStepFrom(unit.Pos);
+            return step;
         }
 
         public List<BaseProjectile> GetProjectiles()
@@ -64,6 +67,12 @@ namespace UnitBrains
         {
             this.unit = unit;
         }
+
+        public void SetControler(PathAndTargetCoordinator pathAndTargetCoordinator)
+        {
+            this.PathAndTargetCoordinator = pathAndTargetCoordinator;
+        }
+
 
         public virtual void Update(float deltaTime, float time)
         {

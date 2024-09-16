@@ -13,29 +13,35 @@ namespace UnitBrains.Pathfinding
         protected readonly Vector2Int startPoint;
         protected readonly Vector2Int endPoint;
         protected Vector2Int[] path = null;
+        public IEnumerable<Vector2Int> Node {  get; private set; }
 
         protected abstract void Calculate();
         
         public IEnumerable<Vector2Int> GetPath()
         {
             if (path == null)
+            {
                 Calculate();
-            
+            }
+
             return path;
         }
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
             var found = false;
+
             foreach (var cell in GetPath())
             {
                 if (found)
+                {
                     return cell;
+                }
 
                 found = cell == unitPos;
             }
 
-            Debug.LogError($"Unit {unitPos} is not on the path");
+           // Debug.LogError($"Unit {unitPos} is not on the path");
             return unitPos;
         }
 
