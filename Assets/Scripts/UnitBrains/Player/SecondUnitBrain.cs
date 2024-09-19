@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -18,9 +20,15 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            /////////////////////////////////////// 
+            float temp = GetTemperature();
+            if (temp >= overheatTemperature) return;
+            else IncreaseTemperature();
+            for (int i = 0; i <= temp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
@@ -33,12 +41,29 @@ namespace UnitBrains.Player
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+            ///////////////////////////////////////           
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return new List<Vector2Int>();
             }
+
+            Vector2Int minTarget = result[0];
+            float minDist = float.MinValue;
+
+            foreach (Vector2Int target in result)
+            {
+                float distance = DistanceToOwnBase(target);
+                if (distance < minDist)
+                {
+                    minDist = distance;
+                    minTarget = target;
+                }
+            }
+            result.Clear();
+            result.Add(minTarget);
+            
             return result;
             ///////////////////////////////////////
         }
