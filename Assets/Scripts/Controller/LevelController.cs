@@ -19,6 +19,8 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private RecommendationsForUnitsSingleton _recommendationsForUnitsSingleton; // 1. Добавлено поле 
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -29,7 +31,7 @@ namespace Controller
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
-            _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _timeUtil = ServiceLocator.Get<TimeUtil>();           
         }
 
         public void StartLevel(int level)
@@ -49,6 +51,9 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
             _gameplayView.Reinitialize();
+
+            _recommendationsForUnitsSingleton = new RecommendationsForUnitsSingleton(_runtimeModel, _timeUtil); // 2. Создан экземпляр локатора
+            Debug.Log(_recommendationsForUnitsSingleton.RecommendationTarget());
         }
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
@@ -72,7 +77,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, _recommendationsForUnitsSingleton); // 3. Передал локатор в Unit
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
