@@ -15,13 +15,24 @@ namespace UnitBrains.Player
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+            float overheatTemperature = OverheatTemperature;          
+            
+        if (GetTemperature() >= overheatTemperature)
+        //Проверка текущей температуры на перегрев
+        {
+                return;
+                //Завершение стрельбы если идет перегрев
+        }
+        //Увеличение снарядов с каждым выстрелом
+        for (float i = 0f; i <= GetTemperature(); i++)
+        {
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            
+            Debug.Log("Текущая температура" + GetTemperature());
+            Debug.Log("Номер снаряда" + (i + 1f));
+        }
+        IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
@@ -31,16 +42,40 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+            
+            if (result.Count == 0)
+            {
+                return new List<Vector2Int>();
+            }
+
+            Vector2Int targetEnemy = new Vector2Int();
+
+            float minDistance = float.MaxValue;
+
+            foreach (Vector2Int enemy in result)
+            {
+                float spacing = DistanceToOwnBase(enemy);
+                if (spacing < minDistance)
+                {
+                    minDistance = spacing;
+                    targetEnemy = enemy;
+                }
+            }
+
+            result.Clear();
+            result.Add(targetEnemy);
+            
             while (result.Count > 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
+            
+            float distance = DistanceToOwnBase(targetEnemy);
+            Debug.Log(distance);
+
+            return result;
         }
 
         public override void Update(float deltaTime, float time)
