@@ -8,12 +8,9 @@ using Utilities;
 
 public class EnterPoint : MonoBehaviour
 {
-    //prived field
-    //prictice push
-
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
-    private float _timeScale = 1;
+    private float _timeScale = 5;
     
     void Start()
     {
