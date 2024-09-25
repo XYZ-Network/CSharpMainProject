@@ -8,8 +8,8 @@ using Utilities;
 
 public class EnterPoint : MonoBehaviour
 {
-    //закрытые поля
-    //практика пуша
+    //prived field
+    //prictice push
 
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
