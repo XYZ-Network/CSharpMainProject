@@ -11,17 +11,21 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly BuffController _buffController;
         
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
-        {
+        {            
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
             ServiceLocator.Register(TimeUtil.Create());
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
+            _buffController = new();
+            ServiceLocator.Register(_buffController);
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
             

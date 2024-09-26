@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.UnitBrains.Pathfinding;
 using Model;
-using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -20,6 +21,21 @@ namespace UnitBrains.Player
             var distanceA = DistanceToOwnBase(a);
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
+        }
+
+        public override Vector2Int GetNextStep()
+        {
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            IReadOnlyUnit recommendTarget = _unitCoordinator.recommendTarget;
+            if (recommendTarget != null)
+            {
+                SmartUnitPath path = new SmartUnitPath(runtimeModel, unit.Pos, recommendTarget.Pos);
+                return path.GetNextStepFrom(unit.Pos);
+            }
+
+            return base.GetNextStep();
         }
     }
 }

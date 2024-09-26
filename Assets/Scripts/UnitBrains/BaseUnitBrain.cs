@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Pathfinding;
+using Assets.Scripts.Utilities;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -12,14 +15,15 @@ namespace UnitBrains
 {
     public abstract class BaseUnitBrain
     {
-        public virtual string TargetUnitName => string.Empty;
-        public virtual bool IsPlayerUnitBrain => true;
-        public virtual BaseUnitPath ActivePath => _activePath;
-        
-        protected Unit unit { get; private set; }
-        protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
+        public virtual string TargetUnitName => string.Empty;// Определяет название юнита
+        public virtual bool IsPlayerUnitBrain => true;// Принадлежит ли юнит игроку
+        public virtual BaseUnitPath ActivePath => _activePath;// Активный путь, по которому движется юнит
+
+        protected Unit unit { get; private set; }// Ссылка на юнита, которому принадлежит UnitBrain
+        protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();// runtimeModel хранит сведения о текущей сессии
         private BaseUnitPath _activePath = null;
-        
+        protected UnitCoordinator _unitCoordinator;
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -33,19 +37,20 @@ namespace UnitBrains
 
         public virtual Vector2Int GetNextStep()
         {
-            if (HasTargetsInRange())
-                return unit.Pos;
+            if (HasTargetsInRange())// Проверяет, есть ли цели которые можно атаковать
+                return unit.Pos;// Если есть, то остаётся на месте (и стреляет)
 
             var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];// Если цели нет, то выбирает целью базу
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, target);// Прокладывается путь с помощью алгоритма А*
+
+            return _activePath.GetNextStepFrom(unit.Pos);// Передаёт текущую позицию юнита и возвращает куда идти
         }
 
         public List<BaseProjectile> GetProjectiles()
         {
-            List<BaseProjectile> result = new ();
+            List<BaseProjectile> result = new();
             foreach (var target in SelectTargets())
             {
                 GenerateProjectiles(target, result);
@@ -65,6 +70,11 @@ namespace UnitBrains
             this.unit = unit;
         }
 
+        public void SetCoordinator(UnitCoordinator coordinator)
+        {
+            _unitCoordinator = coordinator;
+        }
+
         public virtual void Update(float deltaTime, float time)
         {
         }
@@ -72,6 +82,8 @@ namespace UnitBrains
         protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             AddProjectileToList(CreateProjectile(forTarget), intoList);
+            if (unit.Config.DoubleShot)
+                AddProjectileToList(CreateProjectile(forTarget),intoList);
         }
 
         protected virtual List<Vector2Int> SelectTargets()
@@ -81,10 +93,10 @@ namespace UnitBrains
                 result.RemoveAt(result.Count - 1);
             return result;
         }
-        
+
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
             BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos, target, unit.Config.Damage);
-        
+
         protected void AddProjectileToList(BaseProjectile projectile, List<BaseProjectile> list) =>
             list.Add(projectile);
 
@@ -96,7 +108,7 @@ namespace UnitBrains
             var units = new List<IReadOnlyUnit>();
             var pos = unit.Pos;
             var distanceSqr = radius * radius;
-            
+
             foreach (var otherUnit in runtimeModel.RoUnits)
             {
                 if (otherUnit == unit)
@@ -117,7 +129,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.Config.AttackRangeBuff;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -144,7 +156,7 @@ namespace UnitBrains
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.Config.AttackRangeBuff;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -152,12 +164,12 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange * unit.Config.AttackRangeBuff;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
                     continue;
-                
+
                 result.Add(possibleTarget);
             }
 

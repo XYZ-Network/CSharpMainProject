@@ -13,6 +13,7 @@ namespace UnitBrains.Pathfinding
         protected readonly Vector2Int startPoint;
         protected readonly Vector2Int endPoint;
         protected Vector2Int[] path = null;
+        public IEnumerable<Vector2Int> Node { get; private set; }
 
         protected abstract void Calculate();
         
