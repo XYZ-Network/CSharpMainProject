@@ -1,4 +1,4 @@
-﻿using Model;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -30,6 +30,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+
+            BuffSystem buffSystem = new BuffSystem();
+            ServiceLocator.Register(buffSystem);
             
             _levelController = new(_runtimeModel, this);
             
