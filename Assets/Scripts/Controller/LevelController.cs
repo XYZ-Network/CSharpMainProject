@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -18,6 +19,9 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+
+        private UnitCoordinator _playerCoordinator;
+        private UnitCoordinator _botCoordinator;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -47,7 +51,8 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
-
+            _playerCoordinator = new UnitCoordinator();
+            _botCoordinator = new UnitCoordinator();
             _gameplayView.Reinitialize();
         }
 
@@ -72,7 +77,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, forPlayer == RuntimeModel.PlayerId ? _playerCoordinator : _botCoordinator);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

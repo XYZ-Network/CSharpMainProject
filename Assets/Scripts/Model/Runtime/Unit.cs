@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -22,41 +23,74 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        private BuffSystem _buffSystem;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitCoordinator unitCoordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetCoordinator(unitCoordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffSystem = ServiceLocator.Get<BuffSystem>();
+
+            int randomNumber = Random.Range(1, 99999);
+            switch (randomNumber)
+            {
+                case 1:
+                    _buffSystem.setBuff(this, new UpMoveSpeedBuff());
+                    break;
+                case 2:
+                    _buffSystem.setBuff(this, new DownMoveSpeedBuff());
+                    break;
+                case 3:
+                    _buffSystem.setBuff(this,new UpAttackSpeedBuff());
+                    break;
+                case 4:
+                    _buffSystem.setBuff(this, new DownAttackSpeedBuff());
+                    break;
+                default:
+                    // no buff for unit
+                    break;
+            }
         }
 
         public void Update(float deltaTime, float time)
         {
+            _buffSystem.UpdateBuffDuration();
+
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                BuffNames[] moveBuffs = { BuffNames.UpMoveSpeed, BuffNames.DownMoveSpeed };
+                AbstractBuff[] buffs = this._buffSystem.getBuffs(this, moveBuffs);
+                float modifier = (buffs != null) ? buffs.Aggregate(1.0f, (current, buff) => current * buff.Modifier) : 1;
+
+                _nextMoveTime = (time + Config.MoveDelay) * modifier;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                BuffNames[] moveBuffs = { BuffNames.UpAttackSpeed, BuffNames.DownAttackSpeed };
+                AbstractBuff[] buffs = this._buffSystem.getBuffs(this, moveBuffs);
+                float modifier = (buffs != null) ? buffs.Aggregate(1.0f, (current, buff) => current * buff.Modifier) : 1;
+
+                _nextAttackTime = (time + Config.AttackDelay) * modifier;
             }
         }
 
@@ -65,7 +99,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +119,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
