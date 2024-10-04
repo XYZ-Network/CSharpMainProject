@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,6 +16,9 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        public Vector2Int _unreacheableEnemy;
+        private List<Vector2Int> _vector2s = new List<Vector2Int>();
+        
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -19,27 +26,108 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            
+
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+
+            }
+
+            IncreaseTemperature();
+
+            for (int x = 1; x<=GetTemperature(); x++)
+            {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+            }
+
+
+
+            
+            //Debug.Log(GetTemperature());
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+
+      
+            
+
+                
+                if (_vector2s.Count > 0)
+                {
+                  
+                    _unreacheableEnemy = _unreacheableEnemy.CalcNextStepTowards(_vector2s[0]);
+
+                    return _unreacheableEnemy;
+
+                }
+                else
+                {
+                    return Vector2Int.zero;
+                }
+
+            
         }
+
+
 
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = GetAllTargets().ToList();
+            
+
+
+            Vector2Int closestEnemyCoordinates = Vector2Int.zero;
+            float enemy = float.MaxValue;
+
+            Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId];
+
+
+            if (result.Count() != 0)
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (var i in result)
+                {
+                    var coordinatesToBase = DistanceToOwnBase(i);
+                    if (coordinatesToBase < enemy)
+                    {
+                        enemy = coordinatesToBase;
+                        closestEnemyCoordinates = i;
+
+                    }
+                    
+                }
+                if (IsTargetInRange(closestEnemyCoordinates))
+                {
+                    
+                    result.Add(closestEnemyCoordinates);
+                    result.Clear();
+                    return result;
+                }
+                else
+                {
+                    _vector2s.Clear();
+                    _vector2s.Add(closestEnemyCoordinates);
+                    
+                    return _vector2s;
+                }
+
             }
-            return result;
+            else 
+            {
+                _vector2s.Clear();
+                _vector2s.Add(enemyBase);
+                return _vector2s;
+            }
+
+            
+
+
             ///////////////////////////////////////
         }
 
