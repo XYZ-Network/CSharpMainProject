@@ -9,6 +9,6 @@ namespace Model.Runtime.ReadOnly
         public bool this[Vector2Int pos] { get; }
         public int Width { get; }
         public int Height { get; }
-        public IReadOnlyList<Vector2Int> Bases { get; }
+        public IReadOnlyList<Vector2Int> Bases { get; } // список баз, индекс ID игрока
     }
 }
