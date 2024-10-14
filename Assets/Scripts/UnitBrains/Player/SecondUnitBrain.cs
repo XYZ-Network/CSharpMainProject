@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -12,16 +13,21 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            if (GetTemperature() >= overheatTemperature)
+                return;
+
+            IncreaseTemperature();
+
+            for (int i = 0; i < GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
 
         public override Vector2Int GetNextStep()
@@ -31,17 +37,32 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            var targetDistanse = float.MaxValue;
+            Vector2Int target = default;
+
+            if (result.Count > 1)
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (var aim in result)
+                {
+                    float aimDistance = DistanceToOwnBase(aim);
+
+                    if (aim == target)
+                        break;
+                    else if (aimDistance < targetDistanse)
+                    {
+                        targetDistanse = aimDistance;
+                        target = aim;
+                    }
+                }
+
+                result.Clear();
+                result.Add(target);
             }
+
             return result;
-            ///////////////////////////////////////
         }
+
 
         public override void Update(float deltaTime, float time)
         {
