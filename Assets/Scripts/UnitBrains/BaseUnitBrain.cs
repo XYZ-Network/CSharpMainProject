@@ -6,6 +6,7 @@ using Model.Runtime.ReadOnly;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using static UnityEngine.GraphicsBuffer;
 using Unit = Model.Runtime.Unit;
 
 namespace UnitBrains
@@ -18,7 +19,7 @@ namespace UnitBrains
         
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private PatAStar _activePath = null;
+        protected PatAStar _activePath = null;
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -31,6 +32,7 @@ namespace UnitBrains
             new (-0.15f, -0.15f),
         };
 
+
         public virtual Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())
@@ -42,6 +44,7 @@ namespace UnitBrains
             _activePath = new PatAStar(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
+
 
         public List<BaseProjectile> GetProjectiles()
         {
