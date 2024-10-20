@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Scripts.Pathfinding;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
@@ -21,5 +24,32 @@ namespace UnitBrains.Player
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
         }
+
+        public override Vector2Int GetNextStep()
+        {
+
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            SingletonForUnitCoordination coordinator = SingletonForUnitCoordination.GetInstance();
+            MyUnitPath _activePath;
+
+            Vector2Int preferredTarget = coordinator.PreferredTargetForPlayer;
+            Vector2Int preferredPos = coordinator.PreferredPosForPlayer;
+    
+            if (coordinator.DoPreferredStep(unit, preferredTarget) && preferredTarget!=Vector2Int.zero)
+            {
+                _activePath = new MyUnitPath(runtimeModel, unit.Pos, preferredTarget, IsPlayerUnitBrain);
+                Debug.Log(1);
+                Debug.Log(preferredTarget);
+                return _activePath.GetNextStepFrom(unit.Pos);
+            }
+            Debug.Log(2);
+            Debug.Log(preferredPos);
+            _activePath = new MyUnitPath(runtimeModel, unit.Pos, preferredPos, IsPlayerUnitBrain);
+            return _activePath.GetNextStepFrom(unit.Pos);
+        }
+        
+
     }
 }
