@@ -7,11 +7,13 @@ using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Model.Runtime
 {
     public class Unit : IReadOnlyUnit
     {
+        public string UnitID { get; private set; }
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
@@ -26,19 +28,24 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private BuffService _buffService => ServiceLocator.Get<BuffService>();
+        private bool isBuffable = false;
+                
+        public Unit(UnitConfig config, Vector2Int startPos, RecommendationsForUnitsSingleton recommendationsForUnitsSingleton) // 4. добавлена зависимость
         {
+            UnitID = IDGenerator.GenerateStringID(10);
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
-            _brain.SetUnit(this);
-            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _brain.SetUnit(this, recommendationsForUnitsSingleton); // 5.добавлена зависимость
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();                                
         }
 
         public void Update(float deltaTime, float time)
         {
+            
             if (IsDead)
                 return;
             
@@ -50,13 +57,27 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+
+                if(_buffService._buffs.ContainsKey(this.UnitID))
+                {
+                    _nextMoveTime = time + _buffService._buffs[UnitID].moveSpeed;
+                } else
+                {
+                    _nextMoveTime = time + Config.MoveDelay;
+                }
+                              
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                if (_buffService._buffs.ContainsKey(this.UnitID))
+                {
+                    _nextAttackTime = time + _buffService._buffs[UnitID].shootSpeed;
+                } else
+                {
+                    _nextAttackTime = time + Config.AttackDelay;
+                }
             }
         }
 
@@ -97,6 +118,14 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void TakeBuff()
+        {
+            if(!isBuffable)
+            _buffService.TempBuff(UnitID, _buffService.GetRandomBuff(), 5f);
+
+            isBuffable = true;
         }
     }
 }

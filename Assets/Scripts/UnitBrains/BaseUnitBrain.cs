@@ -14,12 +14,17 @@ namespace UnitBrains
     {
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
-        public virtual BaseUnitPath ActivePath => _activePath;
-        
+        public virtual BaseUnitPath ActivePath => _activePath;        
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+
+        protected RecommendationsForUnitsSingleton _recommendationsForUnitsSingleton; // 6. Создано поле локатора, его унаследует DefaultPlayerUnitBrain
+
+        // HM13
+        protected BuffService _buffService;
+        protected bool isBuffable = false;
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -31,7 +36,7 @@ namespace UnitBrains
             new (-0.15f, -0.15f),
         };
 
-        public virtual Vector2Int GetNextStep()
+        public virtual Vector2Int GetNextStep() 
         {
             if (HasTargetsInRange())
                 return unit.Pos;
@@ -60,13 +65,16 @@ namespace UnitBrains
             return result;
         }
 
-        public void SetUnit(Unit unit)
+        public void SetUnit(Unit unit, RecommendationsForUnitsSingleton recommendationsForUnitsSingleton) // 7. Добавлена зависимость
         {
             this.unit = unit;
+            _recommendationsForUnitsSingleton = recommendationsForUnitsSingleton; // 8. Записываем локатор
+            _buffService = ServiceLocator.Get<BuffService>();
         }
 
         public virtual void Update(float deltaTime, float time)
         {
+            
         }
 
         protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)

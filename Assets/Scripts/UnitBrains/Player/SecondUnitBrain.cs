@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -56,6 +57,13 @@ namespace UnitBrains.Player
                     _overheated = false;
                 }
             }
+
+            /*if(Input.GetKeyDown(KeyCode.F))
+            {
+                ServiceLocator.Get<BuffService>().AddBuff(this, new MoveFasterBuff(5));
+                Debug.Log(ServiceLocator.Get<BuffService>()._buffs[this]);
+                //this.unit.Config.AttackDelay = power;
+            }*/
         }
 
         private int GetTemperature()
