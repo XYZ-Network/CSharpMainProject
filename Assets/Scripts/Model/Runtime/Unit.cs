@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -26,9 +27,11 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public UnitsCoordinator Coordinator;
+        public Unit(UnitConfig config, Vector2Int startPos, UnitsCoordinator _coordinator)
         {
+            Coordinator = _coordinator;
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
