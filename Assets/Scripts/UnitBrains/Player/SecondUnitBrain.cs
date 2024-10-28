@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using GluonGui.Dialog;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -9,6 +13,7 @@ namespace UnitBrains.Player
     {
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
+        private List<Vector2Int> targetsOutRangeUnit = new();
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
@@ -32,37 +37,64 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (targetsOutRangeUnit.Count > 0)
+            {
+                Vector2Int position = unit.Pos;
+                Vector2Int nextPosition = targetsOutRangeUnit[0];
+                return position.CalcNextStepTowards(nextPosition);
+            }
+
+            return SelectTargets()[0];
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> result = GetReachableTargets();
-            var targetDistanse = float.MaxValue;
-            Vector2Int target = default;
+            List<Vector2Int> targets = GetAllTargets().ToList();
+            Vector2Int dangerTarget = FindNearestTarget(targets);
 
-            if (result.Count > 1)
+            if (IsTargetInRange(dangerTarget))
             {
-                foreach (var aim in result)
-                {
-                    float aimDistance = DistanceToOwnBase(aim);
-
-                    if (aim == target)
-                        break;
-                    else if (aimDistance < targetDistanse)
-                    {
-                        targetDistanse = aimDistance;
-                        target = aim;
-                    }
-                }
-
-                result.Clear();
-                result.Add(target);
+                Debug.Log("ВРАГ ОБНАРУЖЕН");
+                targets.Clear();
+                targets.Add(dangerTarget);
+                return targets;
+            }
+            else if(!IsTargetInRange(dangerTarget))
+            {
+                Debug.Log("ВРАГ ВНЕ ДОСИГАЕМОСТИ");
+                targetsOutRangeUnit.Clear();
+                targetsOutRangeUnit.Add(dangerTarget);
+                targets.Clear();
+            }
+            else
+            {
+                targetsOutRangeUnit.Clear();
+                targetsOutRangeUnit.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
             }
 
-            return result;
+            
+            return targets;
         }
 
+        public Vector2Int FindNearestTarget(List<Vector2Int> targets)
+        {
+            Vector2Int dangerTarget = default;
+            var maxTargetDistanse = float.MaxValue;
+
+            if (targets != null)
+            {
+                foreach (var target in targets)
+                {
+                    if (DistanceToOwnBase(target) < maxTargetDistanse)
+                    {
+                        dangerTarget = target;
+                        maxTargetDistanse = DistanceToOwnBase(target);
+                    }
+                }
+            }
+
+            return dangerTarget;
+        }
 
         public override void Update(float deltaTime, float time)
         {
