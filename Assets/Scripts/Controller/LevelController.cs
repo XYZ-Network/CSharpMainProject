@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains.Buffs;
 using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Config;
@@ -20,6 +21,7 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
         private readonly TargetAdviser _playerTargetAdviser;
+        private readonly BuffController _buffController;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -32,6 +34,7 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _buffController = ServiceLocator.Get<BuffController>();
             _playerTargetAdviser = new TargetAdviser(_runtimeModel, _timeUtil);
         }
 
@@ -50,7 +53,7 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
-
+            _buffController.ClearAllBuffs();
             _gameplayView.Reinitialize();
         }
 

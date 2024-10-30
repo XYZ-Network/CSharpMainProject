@@ -17,7 +17,6 @@ namespace Assets.Scripts.UnitBrains.Player
     public class TargetAdviser
     {
 
-        private static TargetAdviser _instance;
         private IReadOnlyRuntimeModel _runtimeModel;
 
         public Vector2Int PlayerBase => _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId];

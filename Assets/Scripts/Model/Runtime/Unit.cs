@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Buffs;
 using Assets.Scripts.UnitBrains.Player;
 using Model.Config;
 using Model.Runtime.Projectiles;
@@ -23,6 +24,7 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        protected BuffController _buffController;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
@@ -37,6 +39,7 @@ namespace Model.Runtime
             _brain.SetUnit(this);
             _brain.SetTargetAdviser(targetAdviser);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffController = ServiceLocator.Get<BuffController>();
         }
 
         public void Update(float deltaTime, float time)
@@ -52,13 +55,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay * _buffController.GetBuffModifierForUnit(this, Buff.BuffType.MoveSpeed);
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay * _buffController.GetBuffModifierForUnit(this, Buff.BuffType.AttackSpeed);
             }
         }
 
