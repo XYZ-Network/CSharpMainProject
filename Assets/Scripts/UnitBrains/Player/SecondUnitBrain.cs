@@ -19,8 +19,25 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+
+            if (GetTemperature() >= overheatTemperature || _overheated)
+            {
+                Debug.Log("Оружие перегрелось, пропускаем выстрел.");
+                return;
+            }
+
+            int projectileCount = Mathf.Clamp(GetTemperature() + 1, 1, 3);
+            Debug.Log($"Текущая температура: {GetTemperature()}, количество снарядов для выстрела: {projectileCount}");
+
+
+            for (int i = 0; i < projectileCount; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
+            Debug.Log($"Температура после выстрела: {GetTemperature()}");
             ///////////////////////////////////////
         }
 
