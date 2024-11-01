@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains.Buffs;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -18,6 +20,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private readonly TargetAdviser _playerTargetAdviser;
+        private readonly BuffController _buffController;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -30,6 +34,8 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _buffController = ServiceLocator.Get<BuffController>();
+            _playerTargetAdviser = new TargetAdviser(_runtimeModel, _timeUtil);
         }
 
         public void StartLevel(int level)
@@ -47,7 +53,7 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
-
+            _buffController.ClearAllBuffs();
             _gameplayView.Reinitialize();
         }
 
@@ -72,7 +78,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, forPlayer == RuntimeModel.PlayerId ? _playerTargetAdviser : null);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

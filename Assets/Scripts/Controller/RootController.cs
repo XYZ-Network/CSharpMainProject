@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.UnitBrains.Buffs;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -18,7 +19,8 @@ namespace Controller
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
             ServiceLocator.Register(TimeUtil.Create());
-            
+            ServiceLocator.Register(BuffController.Create());
+
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
             
