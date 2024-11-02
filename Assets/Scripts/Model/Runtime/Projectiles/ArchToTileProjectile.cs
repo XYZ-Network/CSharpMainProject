@@ -26,15 +26,21 @@ namespace Model.Runtime.Projectiles
             float localHeight = 0f;
             float totalDistance = _totalDistance;
 
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
+            float maxheight = totalDistance * 0.60f;
+            /*/ указал максимальную высоту по формуле которая на сайте float b = a * 0,34f 
+             * вот другая если не подойдет
+             * float maxHeight = (totalDistance * 100)*60
+             /*/
+
+             localHeight = maxheight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
+            // я надеюсь формулу не надо расписывать и не надо ставить f в конце, потому что выдает ошибку. 
+
+           
 
 
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
-            
+
+
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
