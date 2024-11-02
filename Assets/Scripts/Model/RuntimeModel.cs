@@ -4,6 +4,10 @@ using Model.Runtime;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
+using Model.Config;
+using UnitBrains.Player;
+using Model;
+using Utilities;
 
 namespace Model
 {
@@ -79,5 +83,19 @@ namespace Model
             Simulation,
             Finished,
         }
+
+        public Unit CreateUnit(UnitConfig config, Vector2Int startPos)
+        {
+            Unit newUnit = new Unit(config, startPos);
+            newUnit.SetBrain(new DefaultPlayerUnitBrain(newUnit, this));  // Передаем RuntimeModel
+            _playersUnits[PlayerId].Add(newUnit);
+
+            // Пример получения и регистрации DefaultPlayerUnitBrain
+            var playerUnitBrain = newUnit.GetBrain<DefaultPlayerUnitBrain>();
+            ServiceLocator.Register<DefaultPlayerUnitBrain>(playerUnitBrain);
+
+            return newUnit;
+        }
     }
 }
+

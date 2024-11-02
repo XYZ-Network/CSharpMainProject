@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyUnit.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\BaseUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Utilities\CameraPositioning.cs" />
+    <Compile Include="Assets\Scripts\UnitBrains\Pathfinding\GameInitializer.cs" />
     <Compile Include="Assets\Scripts\View\ChooseUnitView.cs" />
     <Compile Include="Assets\Scripts\View\UnitCardView.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Pathfinding\UnitCoordinator.cs" />
