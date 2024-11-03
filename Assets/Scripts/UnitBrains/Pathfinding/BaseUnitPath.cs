@@ -27,12 +27,14 @@ namespace UnitBrains.Pathfinding
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
             var found = false;
+
             foreach (var cell in GetPath())
             {
                 if (found)
                     return cell;
-
+                
                 found = cell == unitPos;
+
             }
 
             Debug.LogError($"Unit {unitPos} is not on the path");

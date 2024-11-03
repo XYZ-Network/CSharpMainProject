@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Model.Runtime.Effects;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -21,42 +23,50 @@ namespace Model.Runtime
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
+        private EffectManager _effectManager;
         private BaseUnitBrain _brain;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitCoordinator unitCoordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetCoordinator(unitCoordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _effectManager = ServiceLocator.Get<EffectManager>();
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
+            {
+                _effectManager.RemoveAllEffects(this);
                 return;
-            
+            }
+
+            _effectManager.UpdateEffectsDuration(this);
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay * _effectManager.GetMoveDelayModifier(this);
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay * _effectManager.GetAttackDelayModifier(this);
             }
         }
 
@@ -65,7 +75,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +95,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 

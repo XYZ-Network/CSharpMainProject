@@ -1,4 +1,6 @@
-﻿using Model;
+﻿using Assets.Scripts.Model.Runtime.Effects;
+using Assets.Scripts.UnitBrains;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -11,28 +13,35 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
+
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
+            var timeUtil = TimeUtil.Create();
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(TimeUtil.Create());
-            
+            ServiceLocator.Register(timeUtil);
+
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
+            var effectsManager = new EffectManager();
+            ServiceLocator.Register(effectsManager);
+
+            var unitCoordinator = new UnitCoordinator(_runtimeModel, timeUtil);
+            ServiceLocator.Register(unitCoordinator);
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
-            
+
             var gameplayVisual = SpawnGameplayVisual();
             ServiceLocator.Register(gameplayVisual);
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
             _levelController = new(_runtimeModel, this);
-            
+
             _rootView.ShowStartMenu();
         }
 
@@ -63,13 +72,13 @@ namespace Controller
             _rootView = Object.Instantiate(prefab, targetCanvas.transform);
             _rootView.Initialize(this);
         }
-        
+
         private Gameplay3dView SpawnGameplayVisual()
         {
             var prefab = Resources.Load<Gameplay3dView>("View/Gameplay3dView");
             return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
         }
-        
+
         private VFXView SpawnVFXView()
         {
             var prefab = Resources.Load<VFXView>("View/VFXView");
