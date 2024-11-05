@@ -9,45 +9,81 @@ using Model.Config;
 using UnitBrains.Player;
 using Model;
 using Utilities;
+using System.Threading.Tasks;
 
 public class GameInitializer : MonoBehaviour
 {
-    void Awake()
-    {
-        Debug.Log("GameInitializer Awake called.");
-
-        // Создание экземпляра RuntimeModel
-        RuntimeModel runtimeModelInstance = new RuntimeModel();
-
-        // Добавление логирования перед регистрацией
-        Debug.Log("Registering RuntimeModel in ServiceLocator...");
-
-        // Регистрация в ServiceLocator
-        ServiceLocator.Register<RuntimeModel>(runtimeModelInstance);
-        Debug.Log("RuntimeModel registered.");
-    }
-
-    void Start()
+    async void Start()
     {
         Debug.Log("GameInitializer Start called.");
-
-        // Добавление логирования перед вызовом
-        Debug.Log("Attempting to retrieve RuntimeModel from ServiceLocator...");
-        ExecuteSomeMethod();
+        await InitializeGame();
+        ExecuteSomeMethod(); // Вызываем здесь, после регистрации
     }
 
-    void ExecuteSomeMethod()
+    private async Task InitializeGame()
     {
+        Debug.Log("GameInitializer InitializeGame called.");
+
         try
         {
-            var runtimeModel = ServiceLocator.Get<RuntimeModel>();
-            if (runtimeModel != null)
+            // Создание экземпляра RuntimeModel асинхронно
+            RuntimeModel runtimeModelInstance = await CreateRuntimeModelAsync();
+
+            if (runtimeModelInstance != null)
             {
+                ServiceLocator.Register<RuntimeModel>(runtimeModelInstance);
+                Debug.Log("RuntimeModel registered.");
+            }
+            else
+            {
+                Debug.LogError("Failed to create RuntimeModel instance.");
+            }
+
+
+            // Регистрация в ServiceLocator
+            ServiceLocator.Register<RuntimeModel>(runtimeModelInstance);
+            Debug.Log("RuntimeModel registered.");
+
+            // Подтверждение регистрации
+            if (ServiceLocator.Contains<RuntimeModel>())
+            {
+                Debug.Log("RuntimeModel successfully registered and available in ServiceLocator.");
+            }
+            else
+            {
+                Debug.LogError("RuntimeModel is not registered in ServiceLocator.");
+            }
+
+            // Выполнение дополнительной логики
+            ExecuteSomeMethod();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"An error occurred while initializing RuntimeModel: {ex}");
+        }
+    }
+
+    private async Task<RuntimeModel> CreateRuntimeModelAsync()
+    {
+        return await Task.Run(() => {
+            // Ваша логика создания RuntimeModel
+            return new RuntimeModel(); // Убедитесь, что это не null
+        });
+    }
+
+    private void ExecuteSomeMethod()
+    {
+        Debug.Log("Attempting to retrieve RuntimeModel...");
+        try
+        {
+            if (ServiceLocator.Contains<RuntimeModel>())
+            {
+                var runtimeModel = ServiceLocator.Get<RuntimeModel>();
                 Debug.Log("RuntimeModel retrieved successfully.");
             }
             else
             {
-                Debug.LogError("Retrieved RuntimeModel is null.");
+                Debug.LogError("RuntimeModel is not registered.");
             }
         }
         catch (KeyNotFoundException ex)

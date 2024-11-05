@@ -10,50 +10,40 @@ using View;
 
 public class UnitCoordinator : MonoBehaviour
 {
-    public static UnitCoordinator Instance { get; private set; }
-
     private IReadOnlyRuntimeModel _runtimeModel;
-    private TimeUtil _timeUtil;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
         // Получаем зависимости
         _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         if (_runtimeModel == null)
         {
             Debug.LogError("Failed to get IReadOnlyRuntimeModel from ServiceLocator.");
         }
-        _timeUtil = TimeUtil.Create(); // Создаем или получаем существующий экземпляр TimeUtil
     }
 
-    public Vector2Int RecommendedTarget { get; private set; }
-    public Vector2Int RecommendedPosition { get; private set; }
-
-    public void UpdateRecommendations(int attackRadius, int mapHalf)
+    public (Vector2Int recommendedTarget, Vector2Int recommendedPosition) GetRecommendations(int attackRadius, int mapHalf)
     {
         var enemyUnits = GetEnemyUnits();
         Vector2Int playerBasePos = GetPlayerBasePosition();
 
+        Vector2Int recommendedTarget;
+        Vector2Int recommendedPosition;
+
         if (enemyUnits.Any(unit => unit.Pos.x < mapHalf))
         {
             // Есть враги на нашей половине карты
-            RecommendedTarget = GetClosestEnemy(enemyUnits, playerBasePos);
-            RecommendedPosition = playerBasePos + new Vector2Int(-1, 0); // Точка перед базой
+            recommendedTarget = GetClosestEnemy(enemyUnits, playerBasePos);
+            recommendedPosition = playerBasePos + new Vector2Int(-1, 0); // Точка перед базой
         }
         else
         {
             // Враги на другой стороне
-            RecommendedTarget = GetWeakestEnemy(enemyUnits);
-            RecommendedPosition = RecommendedTarget + new Vector2Int(0, 1); // Точка на расстоянии выстрела от ближайшего врага
+            recommendedTarget = GetWeakestEnemy(enemyUnits);
+            recommendedPosition = recommendedTarget + new Vector2Int(0, 1); // Точка на расстоянии выстрела от ближайшего врага
         }
+
+        return (recommendedTarget, recommendedPosition);
     }
 
     private List<Unit> GetEnemyUnits()
@@ -65,13 +55,9 @@ public class UnitCoordinator : MonoBehaviour
 
     private Vector2Int GetPlayerBasePosition()
     {
-        var playerBase = _runtimeModel.RoBases.ElementAtOrDefault(RuntimeModel.PlayerId) as MainBase;
-        if (playerBase == null)
-        {
-            Debug.LogError($"Player base not found for PlayerId: {RuntimeModel.PlayerId}");
-            return Vector2Int.zero; // Возврат значения по умолчанию
-        }
-        return playerBase.Pos; // Получаем позицию базы игрока
+        // Используем фиксированную позицию для базы
+        Vector2Int playerBasePosition = new Vector2Int(0, 0); // Замените на вашу реальную позицию
+        return playerBasePosition;
     }
 
     private Vector2Int GetClosestEnemy(List<Unit> enemies, Vector2Int playerBase)

@@ -4,6 +4,8 @@ using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 using Utilities;
+using UnitBrains.Player;
+using Model.Runtime;
 
 namespace UnitBrains.Player
 {
@@ -29,7 +31,8 @@ namespace UnitBrains.Player
         private Vector2Int _notRangeEnemyPosition;
         private List<Vector2Int> allTargetEnemies = new List<Vector2Int>();
 
-        public ThirdUnitBrain()
+        public ThirdUnitBrain(Unit unit, IReadOnlyRuntimeModel runtimeModel)
+             : base(unit, runtimeModel) // Передаем параметры в конструктор базового класса
         {
             Id = IdBilling++;
         }
