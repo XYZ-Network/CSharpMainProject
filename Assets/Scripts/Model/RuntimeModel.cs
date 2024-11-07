@@ -11,18 +11,18 @@ namespace Model
     {
         public const int PlayerId = 0;
         public const int BotPlayerId = 1;
-        
+
         public IReadOnlyMap RoMap => Map;
         public IReadOnlyDictionary<int, int> RoMoney => Money;
 
         public IEnumerable<IReadOnlyUnit> RoUnits =>
             _playersUnits[PlayerId].Concat(_playersUnits[BotPlayerId]);
         public IEnumerable<IReadOnlyProjectile> RoProjectiles => Projectiles;
-        
+
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits => _playersUnits[PlayerId];
         public IEnumerable<IReadOnlyUnit> RoBotUnits => _playersUnits[BotPlayerId];
         public IReadOnlyList<IReadOnlyBase> RoBases => Bases;
-        
+
         public Map Map { get; set; }
         public GameStage Stage { get; set; } = GameStage.None;
         public int Level { get; set; }
@@ -39,12 +39,12 @@ namespace Model
             { PlayerId, 0 },
             { BotPlayerId, 0 }
         };
-        
+
         private readonly List<List<Unit>> _playersUnits = new()
         {
             new (), new ()
         };
-        
+
         public bool IsTileWalkable(Vector2Int pos)
         {
             return !Map[pos] && AllUnits.All(u => u.Pos != pos);
@@ -68,10 +68,10 @@ namespace Model
         {
             foreach (var list in _playersUnits)
                 list.Clear();
-            
+
             Projectiles.Clear();
         }
-        
+
         public enum GameStage
         {
             None,

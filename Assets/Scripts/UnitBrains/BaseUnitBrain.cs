@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -14,12 +15,13 @@ namespace UnitBrains
     {
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
-        public virtual BaseUnitPath ActivePath => _activePath;
-        
+        public virtual BaseUnitPath ActivePath { get; protected set; }
+
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
-        
+        protected BaseUnitPath _activePath = null;
+        protected TargetAdviser targetAdviser { get; private set; }
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -39,13 +41,13 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
         public List<BaseProjectile> GetProjectiles()
         {
-            List<BaseProjectile> result = new ();
+            List<BaseProjectile> result = new();
             foreach (var target in SelectTargets())
             {
                 GenerateProjectiles(target, result);
@@ -65,6 +67,11 @@ namespace UnitBrains
             this.unit = unit;
         }
 
+        public void SetTargetAdviser(TargetAdviser targetAdviser)
+        {
+            this.targetAdviser = targetAdviser;
+        }
+
         public virtual void Update(float deltaTime, float time)
         {
         }
@@ -81,10 +88,10 @@ namespace UnitBrains
                 result.RemoveAt(result.Count - 1);
             return result;
         }
-        
+
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
             BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos, target, unit.Config.Damage);
-        
+
         protected void AddProjectileToList(BaseProjectile projectile, List<BaseProjectile> list) =>
             list.Add(projectile);
 
@@ -96,7 +103,7 @@ namespace UnitBrains
             var units = new List<IReadOnlyUnit>();
             var pos = unit.Pos;
             var distanceSqr = radius * radius;
-            
+
             foreach (var otherUnit in runtimeModel.RoUnits)
             {
                 if (otherUnit == unit)
@@ -157,7 +164,7 @@ namespace UnitBrains
             {
                 if (!IsTargetInRange(possibleTarget))
                     continue;
-                
+
                 result.Add(possibleTarget);
             }
 
