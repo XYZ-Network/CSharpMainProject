@@ -1,4 +1,5 @@
 using Model.Runtime;
+using Model.Runtime.ReadOnly;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -63,6 +64,22 @@ namespace Assets.Scripts.Model.Runtime.Effects
             effectsList.Add(new TEffect());
         }
 
+        public void AddEffect(Unit unit, Type type)
+        {
+            if (!typeof(Effect).IsAssignableFrom(type))
+            {
+                return;
+            }
+
+            var effectsList = new List<Effect>();
+
+            _appliedEffectsToUnit.GetOrAdd(unit, effectsList);
+
+            var effectToAdd = (Effect)Activator.CreateInstance(type);
+
+            effectsList.Add(effectToAdd);
+        }
+
         public void UpdateEffectsDuration(Unit unit)
         {
             var time = Time.deltaTime;
@@ -74,12 +91,19 @@ namespace Assets.Scripts.Model.Runtime.Effects
                     effect.Duration -= time;
                 }
 
-                var effectsToRemove = effectsList.Where(e => e.Duration <= 0);
+                var effectsToRemove = effectsList.Where(e => e.Duration <= 0).ToList();
+
+                if (!effectsToRemove.Any())
+                {
+                    return;
+                }
 
                 foreach (var effectToRemove in effectsToRemove)
                 {
                     effectsList.Remove(effectToRemove);
                 }
+
+                effectsToRemove.Clear();
             }
         }
 
@@ -88,6 +112,18 @@ namespace Assets.Scripts.Model.Runtime.Effects
             if (_appliedEffectsToUnit.ContainsKey(unit))
             {
                 _appliedEffectsToUnit.TryRemove(unit, out var _);
+            }
+        }
+
+        public IEnumerable<Effect> GetEffectsOnTarget(IReadOnlyUnit unitToBuff)
+        {
+            if (_appliedEffectsToUnit.TryGetValue(unitToBuff as Unit, out var effects))
+            {
+                return effects;
+            }
+            else
+            {
+                return Enumerable.Empty<Effect>();
             }
         }
     }
