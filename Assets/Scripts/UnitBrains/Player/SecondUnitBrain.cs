@@ -18,6 +18,21 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        
+        /////////////////////////////////////////////////////////
+        public static int CounterUnit { get; private set; } = 0;
+        public int NumberUnit { get; set; }
+        public const int MaxUnitTargetToAttack = 3;
+        /////////////////////////////////////////////////////////
+
+        public SecondUnitBrain()
+        {
+            if (CounterUnit == MaxUnitTargetToAttack - 1)
+                NumberUnit = MaxUnitTargetToAttack - 1;
+
+            NumberUnit = CounterUnit;
+            CounterUnit++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -37,34 +52,37 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
+            List<Vector2Int> targets = SelectTargets();
+            
             if (targetsOutRangeUnit.Count > 0)
             {
                 Vector2Int position = unit.Pos;
-                Vector2Int nextPosition = targetsOutRangeUnit[0];
+                Vector2Int nextPosition = targetsOutRangeUnit[NumberUnit % targetsOutRangeUnit.Count];
                 return position.CalcNextStepTowards(nextPosition);
             }
-
-            return SelectTargets()[0];
+            return targets[NumberUnit % targets.Count];
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> targets = GetAllTargets().ToList();
-            Vector2Int dangerTarget = FindNearestTarget(targets);
+            SortByDistanceToOwnBase(targets);
+            List<Vector2Int> result = new();
 
-            if (IsTargetInRange(dangerTarget))
+            if (targets != null)
             {
-                Debug.Log("ВРАГ ОБНАРУЖЕН");
-                targets.Clear();
-                targets.Add(dangerTarget);
-                return targets;
-            }
-            else if(!IsTargetInRange(dangerTarget))
-            {
-                Debug.Log("ВРАГ ВНЕ ДОСИГАЕМОСТИ");
-                targetsOutRangeUnit.Clear();
-                targetsOutRangeUnit.Add(dangerTarget);
-                targets.Clear();
+                for (int i = 0; i < targets.Count; i++)
+                {
+                    if (i == MaxUnitTargetToAttack)
+                        break;
+                    else if (IsTargetInRange(targets[i]))
+                        result.Add(targets[i]);
+                    else
+                    {
+                        targetsOutRangeUnit.Clear();
+                        targetsOutRangeUnit.Add(targets[i]);
+                    }
+                }
             }
             else
             {
@@ -72,28 +90,7 @@ namespace UnitBrains.Player
                 targetsOutRangeUnit.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
             }
 
-            
-            return targets;
-        }
-
-        public Vector2Int FindNearestTarget(List<Vector2Int> targets)
-        {
-            Vector2Int dangerTarget = default;
-            var maxTargetDistanse = float.MaxValue;
-
-            if (targets != null)
-            {
-                foreach (var target in targets)
-                {
-                    if (DistanceToOwnBase(target) < maxTargetDistanse)
-                    {
-                        dangerTarget = target;
-                        maxTargetDistanse = DistanceToOwnBase(target);
-                    }
-                }
-            }
-
-            return dangerTarget;
+            return result;
         }
 
         public override void Update(float deltaTime, float time)
