@@ -27,11 +27,10 @@ namespace UnitBrains.Player
 
         public SecondUnitBrain()
         {
-            if (CounterUnit == MaxUnitTargetToAttack - 1)
-                NumberUnit = MaxUnitTargetToAttack - 1;
-
             NumberUnit = CounterUnit;
-            CounterUnit++;
+
+            if (CounterUnit <= MaxUnitTargetToAttack - 1)
+                CounterUnit++;
         }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
@@ -52,44 +51,47 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            List<Vector2Int> targets = SelectTargets();
-            
             if (targetsOutRangeUnit.Count > 0)
             {
                 Vector2Int position = unit.Pos;
-                Vector2Int nextPosition = targetsOutRangeUnit[NumberUnit % targetsOutRangeUnit.Count];
+                Vector2Int nextPosition = targetsOutRangeUnit[0];
                 return position.CalcNextStepTowards(nextPosition);
             }
-            return targets[NumberUnit % targets.Count];
+
+            return SelectTargets()[0];
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
             List<Vector2Int> targets = GetAllTargets().ToList();
-            SortByDistanceToOwnBase(targets);
             List<Vector2Int> result = new();
+            SortByDistanceToOwnBase(targets);
+            Vector2Int target;
 
-            if (targets != null)
-            {
-                for (int i = 0; i < targets.Count; i++)
+
+            if(targets.Count > MaxUnitTargetToAttack)
+                targets.RemoveRange(MaxUnitTargetToAttack -1, targets.Count - MaxUnitTargetToAttack);
+
+            target = targets[NumberUnit % targets.Count];
+
+            if (IsTargetInRange(target))
                 {
-                    if (i == MaxUnitTargetToAttack)
-                        break;
-                    else if (IsTargetInRange(targets[i]))
-                        result.Add(targets[i]);
-                    else
-                    {
-                        targetsOutRangeUnit.Clear();
-                        targetsOutRangeUnit.Add(targets[i]);
-                    }
+                    result.Clear();
+                    result.Add(target);
+              
                 }
-            }
-            else
-            {
-                targetsOutRangeUnit.Clear();
-                targetsOutRangeUnit.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
-            }
-
+                else if (!IsTargetInRange(target))
+                {
+                    targetsOutRangeUnit.Clear();
+                    targetsOutRangeUnit.Add(target);
+                  
+                }
+                else
+                {
+                    targetsOutRangeUnit.Clear();
+                    targetsOutRangeUnit.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                    
+                }
             return result;
         }
 
