@@ -16,7 +16,8 @@ namespace Model.Config
         [SerializeField] private float _attackRange = 3.5f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
-        
+        [SerializeField] private int _maxTargets = 1;
+
         public bool IsPlayerUnit => _isPlayerUnit;
         public string Name => _name;
         public Sprite Icon => _icon;
@@ -26,7 +27,9 @@ namespace Model.Config
         public float MoveDelay => _moveDelay;
         public float AttackDelay => _attackDelay;
         public float AttackRange => _attackRange;
+        public float SquaredAttackRange => AttackRange * AttackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+        public int MaxTargets => _maxTargets;
     }
 }

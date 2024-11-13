@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Buffs;
+using Assets.Scripts.UnitBrains.Player;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -13,8 +15,10 @@ namespace Model.Runtime
     public class Unit : IReadOnlyUnit
     {
         public UnitConfig Config { get; }
+        public UnitConfigModifiers Modifiers { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
+        public BaseUnitBrain UnitBrain =>_brain;
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
@@ -22,19 +26,23 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        protected BuffController _buffController;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, Vector2Int startPos, TargetAdviser targetAdviser)
         {
             Config = config;
+            Modifiers = new UnitConfigModifiers();
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetTargetAdviser(targetAdviser);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffController = ServiceLocator.Get<BuffController>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +58,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay + Modifiers.MoveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay + Modifiers.AttackDelay;
             }
         }
 
