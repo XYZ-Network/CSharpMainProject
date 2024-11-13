@@ -13,21 +13,21 @@ using System.Threading.Tasks;
 
 public class GameInitializer : MonoBehaviour
 {
-    async void Start()
+    void Start()
     {
         Debug.Log("GameInitializer Start called.");
-        await InitializeGame();
+        InitializeGame(); // Инициализируем игру
         ExecuteSomeMethod(); // Вызываем здесь, после регистрации
     }
 
-    private async Task InitializeGame()
+    private void InitializeGame()
     {
         Debug.Log("GameInitializer InitializeGame called.");
 
         try
         {
-            // Создание экземпляра RuntimeModel асинхронно
-            RuntimeModel runtimeModelInstance = await CreateRuntimeModelAsync();
+            // Создание и регистрация RuntimeModel
+            RuntimeModel runtimeModelInstance = CreateRuntimeModel();
 
             if (runtimeModelInstance != null)
             {
@@ -36,39 +36,29 @@ public class GameInitializer : MonoBehaviour
             }
             else
             {
-                Debug.LogError("Failed to create RuntimeModel instance.");
+                Debug.LogError("Failed to create RuntimeModel.");
             }
 
-
-            // Регистрация в ServiceLocator
-            ServiceLocator.Register<RuntimeModel>(runtimeModelInstance);
-            Debug.Log("RuntimeModel registered.");
-
-            // Подтверждение регистрации
+            // Проверка успешной регистрации
             if (ServiceLocator.Contains<RuntimeModel>())
             {
                 Debug.Log("RuntimeModel successfully registered and available in ServiceLocator.");
             }
             else
             {
-                Debug.LogError("RuntimeModel is not registered in ServiceLocator.");
+                Debug.LogError("RuntimeModel is not registered after creation.");
             }
-
-            // Выполнение дополнительной логики
-            ExecuteSomeMethod();
         }
         catch (Exception ex)
         {
-            Debug.LogError($"An error occurred while initializing RuntimeModel: {ex}");
+            Debug.LogError($"An error occurred while initializing services: {ex}");
         }
     }
 
-    private async Task<RuntimeModel> CreateRuntimeModelAsync()
+    private RuntimeModel CreateRuntimeModel()
     {
-        return await Task.Run(() => {
-            // Ваша логика создания RuntimeModel
-            return new RuntimeModel(); // Убедитесь, что это не null
-        });
+        // Ваша логика создания RuntimeModel
+        return new RuntimeModel(); // Убедитесь, что это не null
     }
 
     private void ExecuteSomeMethod()
