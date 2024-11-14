@@ -30,6 +30,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+
+            var effectController = SpawnEffectController();
+            ServiceLocator.Register(effectController);
             
             _levelController = new(_runtimeModel, this);
             
@@ -73,6 +76,11 @@ namespace Controller
         private VFXView SpawnVFXView()
         {
             var prefab = Resources.Load<VFXView>("View/VFXView");
+            return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        }
+        private EffectController SpawnEffectController() 
+        {
+            var prefab = Resources.Load<EffectController>("View/EffectController");
             return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
         }
     }
