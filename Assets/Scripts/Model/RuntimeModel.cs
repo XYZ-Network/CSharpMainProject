@@ -4,6 +4,10 @@ using Model.Runtime;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
+using Model.Config;
+using UnitBrains.Player;
+using Model;
+using Utilities;
 
 namespace Model
 {
@@ -11,7 +15,8 @@ namespace Model
     {
         public const int PlayerId = 0;
         public const int BotPlayerId = 1;
-        
+        public int ID { get; private set; }
+
         public IReadOnlyMap RoMap => Map;
         public IReadOnlyDictionary<int, int> RoMoney => Money;
 
@@ -79,5 +84,39 @@ namespace Model
             Simulation,
             Finished,
         }
+
+        public void UpdateState()
+        {
+            var runtimeModel = ServiceLocator.Get<RuntimeModel>();
+            if (runtimeModel != null)
+            {
+                runtimeModel.UpdateState();
+            }
+            else
+            {
+                Debug.LogWarning("RuntimeModel is not registered or is null.");
+            }
+            Debug.Log("Updating state for RuntimeModel.");
+            // Например, обновление уровня, стадии игры и т. д.
+        }
+
+        public Unit CreateUnit(UnitConfig config, Vector2Int startPos)
+        {
+            if (config == null)
+            {
+                Debug.LogError("UnitConfig is null, cannot create unit.");
+                return null; // или выбросить исключение
+            }
+            Unit newUnit = new Unit(config, startPos);
+            newUnit.SetBrain(new DefaultPlayerUnitBrain(newUnit, this));  // Передаем RuntimeModel
+            _playersUnits[PlayerId].Add(newUnit);
+
+            // Пример получения и регистрации DefaultPlayerUnitBrain
+            var playerUnitBrain = newUnit.GetBrain<DefaultPlayerUnitBrain>();
+            ServiceLocator.Register<DefaultPlayerUnitBrain>(playerUnitBrain);
+
+            return newUnit;
+        }
     }
 }
+

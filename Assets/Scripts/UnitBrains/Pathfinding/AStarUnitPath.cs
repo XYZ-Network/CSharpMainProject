@@ -12,10 +12,28 @@ namespace UnitBrains.Pathfinding
 {
     public class AStarUnitPath : BaseUnitPath
     {
-        private int[] dx = { -1, 0, 1, 0 };
-        private int[] dy = { 0, 1, 0, -1 };
-        private int MaxLength => runtimeModel.RoMap.Width * runtimeModel.RoMap.Height;
+        private static readonly Vector2Int[] possibleSteps = {
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0),
+            new Vector2Int(0, -1),
+            new Vector2Int(0, 1)
+        };
+
         private const int MoveCost = 10;
+
+        private int MaxLength
+        {
+            get
+            {
+                if (runtimeModel == null || runtimeModel.RoMap == null)
+                {
+                    Debug.LogWarning("RuntimeModel or RoMap is not initialized!");
+                    return 0; // Или любое значение по умолчанию
+                }
+
+                return runtimeModel.RoMap.Width * runtimeModel.RoMap.Height;
+            }
+        }
 
         public AStarUnitPath(int x, int y, IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint)
             : base(runtimeModel, startPoint, endPoint)
@@ -26,31 +44,22 @@ namespace UnitBrains.Pathfinding
         {
             var currentPoint = startPoint;
             var result = new List<Vector2Int> { startPoint };
-            var visited = new HashSet<Vector2Int> { startPoint }; 
-            var counter = 0;
+            var visited = new HashSet<Vector2Int> { startPoint };
 
-            while (currentPoint != endPoint && counter++ < MaxLength)
+            for (int counter = 0; currentPoint != endPoint && counter < MaxLength; counter++)
             {
-                var currentNode = new Nodes(currentPoint.x, currentPoint.y);
-                currentNode.CalculateEstimate(endPoint.x, endPoint.y);
-                currentNode.SetCost(10);
-
-                
                 var nextPoint = CalcNextStepTowards(currentPoint, endPoint);
 
-                
-                if (!visited.Contains(nextPoint) && runtimeModel.IsTileWalkable(nextPoint))
+                if (IsValidNextStep(nextPoint, visited))
                 {
                     result.Add(nextPoint);
-                    visited.Add(nextPoint); 
+                    visited.Add(nextPoint);
                     currentPoint = nextPoint;
                 }
                 else
                 {
-                   
                     if (!TryStep(currentPoint, visited, result))
                     {
-                       
                         Debug.LogWarning($"No available steps from {currentPoint}. Stopping calculation.");
                         break;
                     }
@@ -58,38 +67,34 @@ namespace UnitBrains.Pathfinding
             }
 
             path = result.ToArray();
-            Debug.Log($"Calculating path from {startPoint} to {endPoint}");
+            Debug.LogWarning($"Calculating path from {startPoint} to {endPoint}");
         }
 
-        private static readonly Vector2Int[] possibleSteps = {
-             new Vector2Int(1, 0), 
-             new Vector2Int(-1, 0),
-             new Vector2Int(0, 1), 
-             new Vector2Int(0, -1) 
-        };
+        private bool IsValidNextStep(Vector2Int nextPoint, HashSet<Vector2Int> visited)
+        {
+            return !visited.Contains(nextPoint) && runtimeModel.IsTileWalkable(nextPoint);
+        }
 
         private bool TryStep(Vector2Int currentPoint, HashSet<Vector2Int> visited, List<Vector2Int> result)
         {
             foreach (var step in possibleSteps)
             {
-                Vector2Int newStep = new Vector2Int(currentPoint.x + step.x, currentPoint.y + step.y);
-                if (!visited.Contains(newStep) && runtimeModel.IsTileWalkable(newStep))
+                Vector2Int newStep = currentPoint + step;
+                if (IsValid(newStep) && !visited.Contains(newStep))
                 {
                     result.Add(newStep);
-                    visited.Add(newStep); 
-                    return true; 
+                    visited.Add(newStep);
+                    return true;
                 }
             }
-
-            return false; 
+            return false;
         }
 
         private bool IsValid(Vector2Int cell)
         {
-            bool isValidX = cell.x >= 0 && cell.x < runtimeModel.RoMap.Width;
-            bool isValidY = cell.y >= 0 && cell.y < runtimeModel.RoMap.Height;
-
-            return isValidX && isValidY && runtimeModel.IsTileWalkable(cell);
+            return cell.x >= 0 && cell.x < runtimeModel.RoMap.Width &&
+                   cell.y >= 0 && cell.y < runtimeModel.RoMap.Height &&
+                   runtimeModel.IsTileWalkable(cell);
         }
 
         private Vector2Int CalcNextStepTowards(Vector2Int current, Vector2Int target)
@@ -114,5 +119,10 @@ namespace UnitBrains.Pathfinding
             return bestStep;
         }
 
+        public void ExecutePathfinding()
+        {
+            Calculate(); // Вызов внутреннего метода
+            Debug.Log("Pathfinding executed.");
+        }
     }
 }
