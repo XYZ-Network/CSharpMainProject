@@ -1,60 +1,138 @@
-﻿using System.Collections.Generic;
-using Model;
-using Model.Runtime.Projectiles;
-using UnityEngine;
+﻿using UnityEngine;
+using Utilities;
 
-namespace UnitBrains.Player
+namespace GameLogic
 {
-    public class DefaultPlayerUnitBrain : BaseUnitBrain
+    public class UnitCoordinator : MonoBehaviour
     {
+        private static UnitCoordinator _instance;
 
-        protected float DistanceToOwnBase(Vector2Int fromPos) =>
-            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
-
-        protected void SortByDistanceToOwnBase(List<Vector2Int> list)
+        public static UnitCoordinator Instance
         {
-            list.Sort(CompareByDistanceToOwnBase);
-        }
-        
-        private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
-        {
-            var distanceA = DistanceToOwnBase(a);
-            var distanceB = DistanceToOwnBase(b);
-            return distanceA.CompareTo(distanceB);
-        }
-
-        public void UpdateBrain()
-        {
-            var target = UnitCoordinator.Instance.RecommendedTarget;
-            var recommendedPosition = UnitCoordinator.Instance.RecommendedPosition;
-
-            // Логика для выбора цели и движения
-            if (Vector2Int.Distance(CurrentUnit.Pos, target) <= attackRadius)
+            get
             {
-                AttackTarget(target);
+                if (_instance == null)
+                {
+                    throw new System.Exception("UnitCoordinator instance is null. Make sure it is in the scene.");
+                }
+                return _instance;
+            }
+        }
+
+        public Vector2Int RecommendedTarget { get; private set; }
+        public Vector2Int RecommendedPoint { get; private set; }
+
+        private IReadOnlyRuntimeModel _runtimeModel;
+        private TimeUtil _timeUtil;
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+                DontDestroyOnLoad(gameObject);
+
+                // Создаем экземпляр TimeUtil
+                _timeUtil = TimeUtil.Create();
+
+                // Подписываемся на обновления
+                _timeUtil.AddUpdateAction(OnUpdate);
             }
             else
             {
-                MoveTo(recommendedPosition);
+                Destroy(gameObject);
             }
         }
 
-        public void UpdateUnit()
+        public void Initialize(IReadOnlyRuntimeModel runtimeModel)
         {
-            var target = UnitCoordinator.Instance.RecommendedTarget;
-            var recommendedPosition = UnitCoordinator.Instance.RecommendedPosition;
+            _runtimeModel = runtimeModel;
+            UpdateRecommendations();
+        }
 
-            // Проверяем расстояние до рекомендуемой цели
-            if (target != null)
+        private void OnUpdate(float deltaTime)
+        {
+            // Логика, которая будет выполняться каждый кадр
+            // Можете использовать deltaTime для расчетов
+        }
+
+        public void UpdateRecommendations()
+        {
+            Vector2Int[] enemies = _runtimeModel.GetEnemiesPositions();
+            int playerId = _runtimeModel.GetPlayerId();
+            Vector2Int basePosition = _runtimeModel.GetBasePosition(playerId);
+
+            if (enemies.Length > 0 && IsEnemyOnOurHalf(enemies, basePosition))
             {
-                if (Vector2Int.Distance(CurrentUnit.Pos, target) <= attackRadius)
+                RecommendedTarget = GetClosestEnemyToBase(enemies, basePosition);
+                RecommendedPoint = basePosition + Vector2Int.up; // Или используйте нужное смещение
+            }
+            else
+            {
+                RecommendedTarget = GetWeakestEnemy(enemies);
+                RecommendedPoint = GetPointNearWeakestEnemy(enemies, basePosition);
+            }
+        }
+
+        private bool IsEnemyOnOurHalf(Vector2Int[] enemies, Vector2Int basePosition)
+        {
+            // Ваша логика проверки
+            return true; // Пример
+        }
+
+        private Vector2Int GetClosestEnemyToBase(Vector2Int[] enemies, Vector2Int basePosition)
+        {
+            Vector2Int closestEnemy = enemies[0];
+            float closestDistance = Vector2Int.Distance(basePosition, closestEnemy);
+
+            foreach (Vector2Int enemy in enemies)
+            {
+                float distance = Vector2Int.Distance(basePosition, enemy);
+                if (distance < closestDistance)
                 {
-                    AttackTarget(target);
+                    closestDistance = distance;
+                    closestEnemy = enemy;
                 }
-                else
+            }
+
+            return closestEnemy;
+        }
+
+        private Vector2Int GetWeakestEnemy(Vector2Int[] enemies)
+        {
+            Vector2Int weakestEnemy = enemies[0];
+            float lowestHealth = GetEnemyHealth(weakestEnemy);
+
+            foreach (Vector2Int enemy in enemies)
+            {
+                float health = GetEnemyHealth(enemy);
+                if (health < lowestHealth)
                 {
-                    MoveTo(recommendedPosition);
+                    lowestHealth = health;
+                    weakestEnemy = enemy;
                 }
+            }
+
+            return weakestEnemy;
+        }
+
+        private Vector2Int GetPointNearWeakestEnemy(Vector2Int[] enemies, Vector2Int basePosition)
+        {
+            Vector2Int weakestEnemy = GetWeakestEnemy(enemies);
+            return weakestEnemy + Vector2Int.right; // Или используйте нужное смещение на расстоянии выстрела
+        }
+
+        private float GetEnemyHealth(Vector2Int enemyPos)
+        {
+            return _runtimeModel.GetEnemyHealth(enemyPos);
+        }
+
+        private void OnDestroy()
+        {
+            // Отписываемся от обновлений
+            if (_timeUtil != null)
+            {
+                _timeUtil.RemoveUpdateAction(OnUpdate);
             }
         }
     }
