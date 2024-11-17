@@ -18,20 +18,12 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         /////////////////////////////////////////////////////////
         public static int CounterUnit { get; private set; } = 0;
-        public int NumberUnit { get; set; }
+        public int ID { get; set; } = CounterUnit++;
         public const int MaxUnitTargetToAttack = 3;
         /////////////////////////////////////////////////////////
-
-        public SecondUnitBrain()
-        {
-            NumberUnit = CounterUnit;
-
-            if (CounterUnit <= MaxUnitTargetToAttack - 1)
-                CounterUnit++;
-        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -52,46 +44,57 @@ namespace UnitBrains.Player
         public override Vector2Int GetNextStep()
         {
             if (targetsOutRangeUnit.Count > 0)
-            {
-                Vector2Int position = unit.Pos;
-                Vector2Int nextPosition = targetsOutRangeUnit[0];
-                return position.CalcNextStepTowards(nextPosition);
-            }
-
-            return SelectTargets()[0];
+                return unit.Pos.CalcNextStepTowards(targetsOutRangeUnit[0]);
+            
+            return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> targets = GetAllTargets().ToList();
-            List<Vector2Int> result = new();
-            SortByDistanceToOwnBase(targets);
-            Vector2Int target;
+            List<Vector2Int> result = new List<Vector2Int>();
+            Vector2Int targetPosition;
 
+            targetsOutRangeUnit.Clear();
 
-            if(targets.Count > MaxUnitTargetToAttack)
-                targets.RemoveRange(MaxUnitTargetToAttack -1, targets.Count - MaxUnitTargetToAttack);
+            foreach (Vector2Int target in GetAllTargets())
+            {
+                targetsOutRangeUnit.Add(target);
+            }
 
-            target = targets[NumberUnit % targets.Count];
+            if (targetsOutRangeUnit.Count == 0)
+            {
+                result.RemoveAt(result.Count - 1);
+                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
+                targetsOutRangeUnit.Add(enemyBase);
+            }
+            else
+            {
+                SortByDistanceToOwnBase(targetsOutRangeUnit);
 
-            if (IsTargetInRange(target))
+                int targetIndex = ID % MaxUnitTargetToAttack;
+
+                if (targetIndex > (targetsOutRangeUnit.Count - 1))
                 {
-                    result.Clear();
-                    result.Add(target);
-              
-                }
-                else if (!IsTargetInRange(target))
-                {
-                    targetsOutRangeUnit.Clear();
-                    targetsOutRangeUnit.Add(target);
-                  
+                    targetPosition = targetsOutRangeUnit[0];
                 }
                 else
                 {
-                    targetsOutRangeUnit.Clear();
-                    targetsOutRangeUnit.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
-                    
+                    if (targetIndex == 0)
+                    {
+                        targetPosition = targetsOutRangeUnit[targetIndex];
+                    }
+                    else
+                    {
+                        targetPosition = targetsOutRangeUnit[targetIndex - 1];
+                    }
+
                 }
+
+                if (IsTargetInRange(targetPosition))
+                    result.Add(targetPosition);
+            }
+
             return result;
         }
 
