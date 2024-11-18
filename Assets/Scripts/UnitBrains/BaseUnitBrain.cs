@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Pathfinding;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -19,7 +21,13 @@ namespace UnitBrains
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+        protected EffectController _buffController { get; private set; }
+
+        protected BaseUnitBrain()
+        {
+            _buffController = ServiceLocator.Get<EffectController>();
+        }
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -39,7 +47,7 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new MyUnitPath(runtimeModel, unit.Pos, target, IsPlayerUnitBrain);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
