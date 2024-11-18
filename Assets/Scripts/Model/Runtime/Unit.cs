@@ -26,19 +26,15 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-
+        
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
-
-            // Получаем экземпляр RuntimeModel
-            _runtimeModel = ServiceLocator.Get<RuntimeModel>();
-
-            // Передаем только config в GetBrain
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
         public void Update(float deltaTime, float time)
@@ -69,7 +65,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-
+            
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -89,7 +85,7 @@ namespace Model.Runtime
             {
                 return;
             }
-
+            
             Pos = targetPos;
         }
 
@@ -101,16 +97,6 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
-        }
-
-        public void SetBrain(BaseUnitBrain brain)
-        {
-            _brain = brain;
-        }
-
-        public T GetBrain<T>() where T : BaseUnitBrain
-        {
-            return _brain as T;
         }
     }
 }

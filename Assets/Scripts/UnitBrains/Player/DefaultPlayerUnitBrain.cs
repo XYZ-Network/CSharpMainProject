@@ -4,14 +4,42 @@ using Model;
 using Model.Runtime.Projectiles;
 using UnitBrains.Pathfinding;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
-        protected float DistanceToOwnBase(Vector2Int fromPos) =>
-            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        private RuntimeModel runtimeModel;
+
+        protected void Awake()
+        {
+            runtimeModel = Locator.Get<RuntimeModel>(); // Инициализация runtimeModel
+            if (runtimeModel == null)
+            {
+                Debug.LogError("Failed to retrieve RuntimeModel from Locator.");
+            }
+            else
+            {
+                Debug.Log("RuntimeModel successfully initialized.");
+            }
+        }
+
+        protected float DistanceToOwnBase(Vector2Int fromPos)
+        {
+            if (runtimeModel?.RoMap?.Bases == null)
+            {
+                Debug.LogWarning("Bases array is null.");
+                return float.MaxValue; // Или любое другое значение по умолчанию
+            }
+
+            if (RuntimeModel.PlayerId < 0 || RuntimeModel.PlayerId >= runtimeModel.RoMap.Bases.Count)
+            {
+                Debug.LogWarning($"PlayerId is out of bounds. PlayerId: {RuntimeModel.PlayerId}, Bases Count: {runtimeModel.RoMap.Bases.Count}");
+                return float.MaxValue; // Или любое другое значение по умолчанию
+            }
+
+            return Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        }
 
         protected void SortByDistanceToOwnBase(List<Vector2Int> list)
         {
@@ -27,37 +55,47 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            // Получаем целевую позицию из UnitCoordinator
-            Vector2Int target = UnitCoordinator.Instance.RecommendedTarget;
-
-            // Проверяем расстояние до рекомендованной позиции
-            if (Vector2Int.Distance(unit.Pos, target) <= 3f)
+            if (unit == null)
             {
-                // Если юнит находится в пределах 3 клеток от рекомендации, не реагируем на нее
-                Debug.Log("No reaction to recommendation, within 3 cells.");
-                return unit.Pos; // Возвращаем текущее положение юнита, чтобы он не двигался
+                Debug.LogError("Unit is not initialized!");
+                return Vector2Int.zero; // Или любое значение по умолчанию
             }
 
-            // Если юнит находится дальше, чем 5 клеток от целевой позиции, можно добавить свою логику
+            var target = GetRecommendedTarget(); // Вызываем новый метод
+
             if (Vector2Int.Distance(unit.Pos, target) > 5f)
             {
-                Debug.Log("No reaction, moving to base.");
-                // Здесь вы можете определить, что делать в этом случае
-                target = base.GetNextStep(); // Можно двигаться к базе или другой логике
+                // Логика движения если цель далеко
+                target = base.GetNextStep();
+                Debug.LogWarning("No reaction");
             }
             else
             {
-                Debug.Log("Singleton reaction, moving towards target.");
+                Debug.LogWarning("Singleton reaction");
             }
 
-            // Если у юнита есть цели в пределах досягаемости, возвращаем текущее положение
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            // Создаем путь к целевой позиции
-            BaseUnitPath _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+           
+            int x = unit.Pos.x; // Используем текущие координаты юнита
+            int y = unit.Pos.y; // Используем текущие координаты юнита
+
+            BaseUnitPath _activePath = new AStarUnitPath(x, y, runtimeModel, unit.Pos, target);
+
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
+        private Vector2Int GetRecommendedTarget()
+        {
+            if (runtimeModel == null || runtimeModel.RoBotUnits == null || !runtimeModel.RoBotUnits.Any())
+            {
+                Debug.LogWarning("No enemies found or runtimeModel is not initialized!");
+                return Vector2Int.zero;
+            }
+
+            var enemies = runtimeModel.RoBotUnits.ToList();
+            return enemies.OrderBy(e => Vector2Int.Distance(unit.Pos, e.Pos)).FirstOrDefault()?.Pos ?? Vector2Int.zero;
+        }
     }
 }

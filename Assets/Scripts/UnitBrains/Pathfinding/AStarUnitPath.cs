@@ -12,22 +12,23 @@ namespace UnitBrains.Pathfinding
 {
     public class AStarUnitPath : BaseUnitPath
     {
-        private static readonly Vector2Int[] possibleSteps = {
-            new Vector2Int(-1, 0),
-            new Vector2Int(1, 0),
-            new Vector2Int(0, -1),
-            new Vector2Int(0, 1)
-        };
-
+        private int[] dx = { -1, 0, 1, 0 };
+        private int[] dy = { 0, 1, 0, -1 };
         private const int MoveCost = 10;
 
         private int MaxLength
         {
             get
             {
-                if (runtimeModel == null || runtimeModel.RoMap == null)
+                if (runtimeModel == null)
                 {
-                    Debug.LogWarning("RuntimeModel or RoMap is not initialized!");
+                    Debug.LogWarning("RuntimeModel is not initialized!");
+                    return 0; // Или любое значение по умолчанию
+                }
+
+                if (runtimeModel.RoMap == null)
+                {
+                    Debug.LogWarning("RoMap is not initialized!");
                     return 0; // Или любое значение по умолчанию
                 }
 
@@ -45,12 +46,17 @@ namespace UnitBrains.Pathfinding
             var currentPoint = startPoint;
             var result = new List<Vector2Int> { startPoint };
             var visited = new HashSet<Vector2Int> { startPoint };
+            var counter = 0;
 
-            for (int counter = 0; currentPoint != endPoint && counter < MaxLength; counter++)
+            while (currentPoint != endPoint && counter++ < MaxLength)
             {
+                var currentNode = new Nodes(currentPoint.x, currentPoint.y);
+                currentNode.CalculateEstimate(endPoint.x, endPoint.y);
+                currentNode.SetCost(10);
+
                 var nextPoint = CalcNextStepTowards(currentPoint, endPoint);
 
-                if (IsValidNextStep(nextPoint, visited))
+                if (!visited.Contains(nextPoint) && runtimeModel.IsTileWalkable(nextPoint))
                 {
                     result.Add(nextPoint);
                     visited.Add(nextPoint);
@@ -70,31 +76,35 @@ namespace UnitBrains.Pathfinding
             Debug.LogWarning($"Calculating path from {startPoint} to {endPoint}");
         }
 
-        private bool IsValidNextStep(Vector2Int nextPoint, HashSet<Vector2Int> visited)
-        {
-            return !visited.Contains(nextPoint) && runtimeModel.IsTileWalkable(nextPoint);
-        }
+        private static readonly Vector2Int[] possibleSteps = {
+             new Vector2Int(1, 0),
+             new Vector2Int(-1, 0),
+             new Vector2Int(0, 1),
+             new Vector2Int(0, -1)
+        };
 
         private bool TryStep(Vector2Int currentPoint, HashSet<Vector2Int> visited, List<Vector2Int> result)
         {
             foreach (var step in possibleSteps)
             {
-                Vector2Int newStep = currentPoint + step;
-                if (IsValid(newStep) && !visited.Contains(newStep))
+                Vector2Int newStep = new Vector2Int(currentPoint.x + step.x, currentPoint.y + step.y);
+                if (!visited.Contains(newStep) && runtimeModel.IsTileWalkable(newStep))
                 {
                     result.Add(newStep);
                     visited.Add(newStep);
                     return true;
                 }
             }
+
             return false;
         }
 
         private bool IsValid(Vector2Int cell)
         {
-            return cell.x >= 0 && cell.x < runtimeModel.RoMap.Width &&
-                   cell.y >= 0 && cell.y < runtimeModel.RoMap.Height &&
-                   runtimeModel.IsTileWalkable(cell);
+            bool isValidX = cell.x >= 0 && cell.x < runtimeModel.RoMap.Width;
+            bool isValidY = cell.y >= 0 && cell.y < runtimeModel.RoMap.Height;
+
+            return isValidX && isValidY && runtimeModel.IsTileWalkable(cell);
         }
 
         private Vector2Int CalcNextStepTowards(Vector2Int current, Vector2Int target)
@@ -118,7 +128,6 @@ namespace UnitBrains.Pathfinding
 
             return bestStep;
         }
-
         public void ExecutePathfinding()
         {
             Calculate(); // Вызов внутреннего метода

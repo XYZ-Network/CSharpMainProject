@@ -4,10 +4,6 @@ using Model.Runtime;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
-using Model.Config;
-using UnitBrains.Player;
-using Model;
-using Utilities;
 
 namespace Model
 {
@@ -15,8 +11,7 @@ namespace Model
     {
         public const int PlayerId = 0;
         public const int BotPlayerId = 1;
-        public int ID { get; private set; }
-
+        
         public IReadOnlyMap RoMap => Map;
         public IReadOnlyDictionary<int, int> RoMoney => Money;
 
@@ -86,4 +81,3 @@ namespace Model
         }
     }
 }
-

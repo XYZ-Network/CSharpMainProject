@@ -4,15 +4,12 @@ using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 using Utilities;
-using UnitBrains.Player;
-using Model.Runtime;
 
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
-        public SecondUnitBrain(Unit unit, IReadOnlyRuntimeModel runtimeModel)
-             : base(unit, runtimeModel) // Передаем параметры в конструктор базового класса 
+        public SecondUnitBrain()
         {
             Id = IdBilling++;
         }
