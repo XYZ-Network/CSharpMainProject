@@ -15,13 +15,19 @@ namespace UnitBrains.Player
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float overheatTemperature = OverheatTemperature; 
+            if (GetTemperature() >= overheatTemperature)
+                return;
+            else
+            {
+                for (int i = 0; i <= GetTemperature(); i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+                IncreaseTemperature();
+            }
+          
         }
 
         public override Vector2Int GetNextStep()
@@ -35,10 +41,26 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            float minDis = float.MaxValue;
+            Vector2Int nearTarget = Vector2Int.zero;
+
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
+
+            foreach (Vector2Int i in result)
+            {
+                float distance = DistanceToOwnBase(i);
+
+                if (distance < minDis)
+                {
+                    minDis = distance;
+                    nearTarget = i;
+                }
+            }
+            result.Clear();
+            result.Add(nearTarget);
             return result;
             ///////////////////////////////////////
         }
