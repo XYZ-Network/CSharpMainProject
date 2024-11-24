@@ -13,6 +13,7 @@ namespace UnitBrains
 {
     public abstract class BaseUnitBrain
     {
+        public virtual TargetRecommendationManager TargetRecommendationManager => unit.CurrentTargetRecommendationManager;
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual PatAStar ActivePath => _activePath;

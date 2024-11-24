@@ -9,7 +9,7 @@ using Utilities;
 
 public class TargetRecommendationManager
 {
-    public static TargetRecommendationManager Instance
+    public TargetRecommendationManager Instance
     {
         get
         {
@@ -22,7 +22,7 @@ public class TargetRecommendationManager
         }
     }
 
-    private static TargetRecommendationManager _instance;
+    private TargetRecommendationManager _instance;
 
     private IReadOnlyRuntimeModel _runtimeModel;
     private TimeUtil _timeUtil;
@@ -30,7 +30,7 @@ public class TargetRecommendationManager
     public IReadOnlyUnit RecommendationTarget { get; private set; }
     public Vector2Int RecommendationPosition { get; private set; }
 
-    private TargetRecommendationManager()
+    public TargetRecommendationManager()
     {
         _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         _timeUtil = ServiceLocator.Get<TimeUtil>();

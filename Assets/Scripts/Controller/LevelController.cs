@@ -19,6 +19,8 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private readonly TargetRecommendationManager _targetRecommendationManager;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -30,6 +32,8 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+
+            _targetRecommendationManager = new TargetRecommendationManager();
         }
 
         public void StartLevel(int level)
@@ -72,7 +76,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, _targetRecommendationManager);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
