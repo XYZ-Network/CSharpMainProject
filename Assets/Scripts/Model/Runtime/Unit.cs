@@ -17,7 +17,10 @@ namespace Model.Runtime
         public int Health { get; private set; }
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
+
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
+
+        public TargetRecommendationManager CurrentTargetRecommendationManager;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
@@ -26,8 +29,9 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+
+        public Unit(UnitConfig config, Vector2Int startPos, TargetRecommendationManager targetRecommendationManager)
         {
             Config = config;
             Pos = startPos;
@@ -35,6 +39,8 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            CurrentTargetRecommendationManager = targetRecommendationManager;
         }
 
         public void Update(float deltaTime, float time)
