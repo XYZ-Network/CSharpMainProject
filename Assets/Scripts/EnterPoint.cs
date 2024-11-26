@@ -22,3 +22,14 @@ public class EnterPoint : MonoBehaviour
         ServiceLocator.Register(rootController);
     }
 }
+
+
+
+// Hi its me
+
+
+/*/
+ * long comment
+ * 
+ * 
+ * /*/
