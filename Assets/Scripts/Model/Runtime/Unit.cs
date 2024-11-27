@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
+using Model.Effects;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
@@ -26,9 +28,16 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+        //Effects Stats
+        public float _effectMoveTimeMultiplier = 1;
+        public float _effectRangeMultiplier = 1;
+        public float _effectAttackTimeMultiplier = 1;
+        public float _effectExtraShootCount = 0;
+
+        public UnitsCoordinator Coordinator;
+        public Unit(UnitConfig config, Vector2Int startPos, UnitsCoordinator _coordinator)
         {
+            Coordinator = _coordinator;
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
@@ -41,7 +50,6 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
@@ -50,16 +58,15 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay * _effectMoveTimeMultiplier;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay * _effectAttackTimeMultiplier;
             }
         }
-
         private bool Attack()
         {
             var projectiles = _brain.GetProjectiles();
