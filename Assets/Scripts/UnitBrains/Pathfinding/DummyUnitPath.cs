@@ -8,7 +8,10 @@ namespace UnitBrains.Pathfinding
     public class DummyUnitPath : BaseUnitPath
     {
         private const int MaxLength = 100;
-        
+        protected int Cost = 10;
+        protected int Estimate;
+        protected int Value;
+
         public DummyUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
         {
         }
