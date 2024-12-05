@@ -16,6 +16,7 @@ namespace UnitBrains
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
         
+        protected SingleThing thing { get; private set; }
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
@@ -39,7 +40,7 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new A_zvezdochka(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -60,9 +61,11 @@ namespace UnitBrains
             return result;
         }
 
-        public void SetUnit(Unit unit)
+        public void SetUnit(Unit unit, SingleThing singleThing)
         {
             this.unit = unit;
+            thing = singleThing;
+            
         }
 
         public virtual void Update(float deltaTime, float time)

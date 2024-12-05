@@ -25,7 +25,17 @@ namespace Model.Config
         public float BrainUpdateInterval => _brainUpdateDelay;
         public float MoveDelay => _moveDelay;
         public float AttackDelay => _attackDelay;
-        public float AttackRange => _attackRange;
+        public float AttackRange
+        {
+            get
+            {
+                return _attackRange;
+            }
+            set
+            {
+                _attackRange = value;
+            }
+        }
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
     }

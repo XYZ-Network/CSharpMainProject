@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,25 +14,53 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+       
+        private static int Counter = 0;
+        public int UnitNumber = Counter;
+        private const  int MaxTargets = 3;
+        private List<Vector2Int> FarTargets = new List<Vector2Int>();
+        
+
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            if(GetTemperature() < overheatTemperature)
+            {
+                if (unit.sing_or_duble_bullet > 1)
+                {
+                    for (int i = 0; i < unit.sing_or_duble_bullet; i++)
+                    {
+                        var projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < _temperature + 1; i++)
+                    {
+                        var projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                    }
+                }
+                
+
+                IncreaseTemperature();
+            }   
         }
 
         public override Vector2Int GetNextStep()
         {
+
             return base.GetNextStep();
+
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
+
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
@@ -42,6 +72,8 @@ namespace UnitBrains.Player
             return result;
             ///////////////////////////////////////
         }
+
+
 
         public override void Update(float deltaTime, float time)
         {

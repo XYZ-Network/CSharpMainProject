@@ -14,8 +14,13 @@ namespace Controller
         
         private RootView _rootView;
 
+        private SystemForBuffs _systemForBuffs;
+
         public RootController(Settings settings, Canvas targetCanvas)
         {
+            _systemForBuffs = new SystemForBuffs();
+            ServiceLocator.Register(_systemForBuffs);
+
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
             ServiceLocator.Register(TimeUtil.Create());
             

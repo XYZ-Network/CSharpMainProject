@@ -14481,6 +14481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthBar: {fileID: 5156129614775452356}
+  _debugPathOutput: {fileID: 0}
 --- !u!114 &1862996400003550544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14502,8 +14503,6 @@ MonoBehaviour:
   _moveDelay: 0.25
   _attackDelay: 0.75
   _attackRange: 3.5
-  _shotsPerTarget: 1
-  _targetsInVolley: 1
   _projectileType: 0
   _damage: 15
 --- !u!1 &2026535637517591710

@@ -18,7 +18,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
-
+        private SingleThing thing;
+     
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -37,7 +38,7 @@ namespace Controller
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
             
             _rootView.HideLevelFinished();
-
+            thing = new SingleThing();
             Random.InitState(level);
             SetInitialMoney();
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
@@ -65,14 +66,14 @@ namespace Controller
             SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
             TryStartSimulation();
         }
-
+       
         private void SpawnUnit(int forPlayer, UnitConfig config)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, thing);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
