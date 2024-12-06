@@ -28,5 +28,8 @@ namespace Model.Config
         public float AttackRange => _attackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+
+        public float currentMoveDelay;
+        public float currentAttackDelay;
     }
 }
