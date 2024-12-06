@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
@@ -12,12 +13,17 @@ namespace Model.Runtime
 {
     public class Unit : IReadOnlyUnit
     {
+        public Action<Unit> RequestEffect;
+
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
+
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
+
+        public TargetRecommendationManager CurrentTargetRecommendationManager;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
@@ -26,8 +32,9 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+        private float _nextEffectTime = 0f;
+
+        public Unit(UnitConfig config, Vector2Int startPos, TargetRecommendationManager targetRecommendationManager)
         {
             Config = config;
             Pos = startPos;
@@ -35,6 +42,8 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            CurrentTargetRecommendationManager = targetRecommendationManager;
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +59,20 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.currentMoveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.currentAttackDelay;
+            }
+
+            _nextEffectTime += deltaTime;
+            if (_nextEffectTime > 3)
+            {
+                _nextEffectTime = 0;
+                StartEffects();
             }
         }
 
@@ -97,6 +113,12 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void StartEffects()
+        {
+
+            RequestEffect?.Invoke(this);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model;
 using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -20,6 +21,37 @@ namespace UnitBrains.Player
             var distanceA = DistanceToOwnBase(a);
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
+        }
+
+        public override Vector2Int GetNextStep()
+        {
+            if (HasTargetsInRange())
+            {
+                return unit.Pos;
+            }
+
+            IReadOnlyUnit recomUnit = TargetRecommendationManager.Instance.RecommendationTarget;
+            Vector2Int recomPos = TargetRecommendationManager.Instance.RecommendationPosition;
+
+            if (IsDoubleDistanceAttack(recomPos))
+            {
+                recomPos = TargetRecommendationManager.Instance.RecommendationPosition;
+            }
+
+            if (unit.Pos.Equals(recomPos))
+            {
+                return unit.Pos;
+            }
+
+            _activePath = new PatAStar(runtimeModel, unit.Pos, recomPos);
+            return _activePath.GetNextStepFrom(unit.Pos);
+        }
+
+        public bool IsDoubleDistanceAttack(Vector2Int target)
+        {
+            float distance = unit.Config.AttackRange + unit.Config.AttackRange;
+            float distanceToTarget = Vector2Int.Distance(target, unit.Pos);
+            return distance > distanceToTarget;
         }
     }
 }
