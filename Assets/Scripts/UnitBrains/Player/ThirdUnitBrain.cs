@@ -22,7 +22,7 @@ public class ThirdUnitBrain : DefaultPlayerUnitBrain
     public override Vector2Int GetNextStep()
     {
         if (!_isCooldown && _currentAction == ActionUnit.Move)
-        { 
+        {
             return base.GetNextStep();
         }
         else

@@ -13,7 +13,7 @@ namespace Model
         public IReadOnlyDictionary<int, int> RoMoney { get; }
         public IEnumerable<IReadOnlyUnit> RoUnits { get; }
         public IEnumerable<IReadOnlyProjectile> RoProjectiles { get; }
-        
+        public IEnumerable<Unit> Units { get; }
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits { get; }
         public IEnumerable<IReadOnlyUnit> RoBotUnits { get; }
         public IReadOnlyList<IReadOnlyBase> RoBases { get; }

@@ -34,6 +34,7 @@ namespace Controller
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
             _systemEffectsController = ServiceLocator.Get<SystemEffectsController>();
+            _systemEffectsController.Constructor(ServiceLocator.Get<VFXView>());
 
             _targetRecommendationManager = new TargetRecommendationManager();
         }
@@ -53,6 +54,8 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
+
+            SetInitialEffects();
 
             _gameplayView.Reinitialize();
         }
@@ -78,12 +81,12 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
 
-            config.currentAttackDelay = config.AttackDelay;
-            config.currentMoveDelay = config.MoveDelay;
+            config.CurrentAttackDelay = config.AttackDelay;
+            config.CurrentMoveDelay = config.MoveDelay;
 
             var unit = new Unit(config, pos, _targetRecommendationManager);
 
-            _systemEffectsController.AddUnits(unit, new Effect(unit.Config, 2f, Random.Range(0.1f,1.4f), Random.Range(0.1f, 1.4f)));
+            //_systemEffectsController.AddUnits(unit, new Effect(unit.Config, 2f, Random.Range(0.1f,1.4f), Random.Range(0.1f, 1.4f)));
 
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
@@ -104,6 +107,14 @@ namespace Controller
             var botMoneyAdvantage = (_runtimeModel.Level + _settings.BotMoneyAdvantageLevelShift) *
                                     _settings.BotMoneyAdvantagePerLevel;
             _runtimeModel.SetMoneyForAll(startMoney, startMoney + botMoneyAdvantage);
+        }
+
+        private void SetInitialEffects()
+        {
+            _systemEffectsController.AddEffect(NameEffects.BuffAttackSpeed, new BuffAttackSpeed());
+            _systemEffectsController.AddEffect(NameEffects.BuffMoveSpeed, new BuffMoveSpeed());
+            _systemEffectsController.AddEffect(NameEffects.DebuffAttackSpeed, new DebuffAttackSpeed());
+            _systemEffectsController.AddEffect(NameEffects.DebuffMoveSpeed, new DebuffMoveSpeed());
         }
 
         private void OnLevelFinished(bool playerWon)

@@ -35,5 +35,10 @@ public class NodePath
 
         return position.x == node.position.x && position.y == node.position.y;
     }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }
 

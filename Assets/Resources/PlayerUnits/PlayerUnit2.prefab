@@ -24385,6 +24385,10 @@ MonoBehaviour:
   _attackRange: 3.5
   _projectileType: 0
   _damage: 15
+  currentEffects: 
+  CurrentMoveDelay: 0.25
+  CurrentAttackDelay: 0.75
+  IsEffects: 0
 --- !u!114 &1963013773103935339
 MonoBehaviour:
   m_ObjectHideFlags: 0

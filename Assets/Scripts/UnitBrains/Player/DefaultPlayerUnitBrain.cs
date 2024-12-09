@@ -23,6 +23,7 @@ namespace UnitBrains.Player
             return distanceA.CompareTo(distanceB);
         }
 
+
         public override Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())

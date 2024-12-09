@@ -18,7 +18,7 @@ namespace Model
         public IEnumerable<IReadOnlyUnit> RoUnits =>
             _playersUnits[PlayerId].Concat(_playersUnits[BotPlayerId]);
         public IEnumerable<IReadOnlyProjectile> RoProjectiles => Projectiles;
-        
+        public IEnumerable<Unit> Units => _playersUnits[PlayerId];
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits => _playersUnits[PlayerId];
         public IEnumerable<IReadOnlyUnit> RoBotUnits => _playersUnits[BotPlayerId];
         public IReadOnlyList<IReadOnlyBase> RoBases => Bases;

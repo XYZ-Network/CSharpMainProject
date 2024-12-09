@@ -13,12 +13,13 @@ namespace Model.Runtime
 {
     public class Unit : IReadOnlyUnit
     {
-        public Action<Unit> RequestEffect;
-
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
+
+        public bool isBuff;
         public bool IsDead => Health <= 0;
+        public bool IsBuff => isBuff;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
 
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
@@ -32,7 +33,6 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        private float _nextEffectTime = 0f;
 
         public Unit(UnitConfig config, Vector2Int startPos, TargetRecommendationManager targetRecommendationManager)
         {
@@ -59,20 +59,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.currentMoveDelay;
+                _nextMoveTime = time + Config.CurrentMoveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.currentAttackDelay;
-            }
-
-            _nextEffectTime += deltaTime;
-            if (_nextEffectTime > 3)
-            {
-                _nextEffectTime = 0;
-                StartEffects();
+                _nextAttackTime = time + Config.CurrentAttackDelay;
             }
         }
 
@@ -113,12 +106,6 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
-        }
-
-        public void StartEffects()
-        {
-
-            RequestEffect?.Invoke(this);
         }
     }
 }

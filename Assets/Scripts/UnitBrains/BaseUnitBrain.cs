@@ -17,11 +17,13 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual PatAStar ActivePath => _activePath;
-        
+        public virtual SystemEffectsController SystemEffectsController => systemEffectsController;
+
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         protected PatAStar _activePath = null;
-        
+        protected SystemEffectsController systemEffectsController = ServiceLocator.Get<SystemEffectsController>();
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -46,8 +48,7 @@ namespace UnitBrains
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
-
-        public List<BaseProjectile> GetProjectiles()
+        public virtual List<BaseProjectile> GetProjectiles()
         {
             List<BaseProjectile> result = new ();
             foreach (var target in SelectTargets())
@@ -85,7 +86,7 @@ namespace UnitBrains
                 result.RemoveAt(result.Count - 1);
             return result;
         }
-        
+
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
             BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos, target, unit.Config.Damage);
         
@@ -132,6 +133,19 @@ namespace UnitBrains
             return false;
         }
 
+        protected bool HasUnitsInRange()
+        {
+            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            foreach (var possibleTarget in GetAllPlayerUnits())
+            {
+                var diff = possibleTarget.Pos - unit.Pos;
+                if (diff.sqrMagnitude < attackRangeSqr)
+                    return true;
+            }
+
+            return false;
+        }
+
         protected IEnumerable<IReadOnlyUnit> GetAllEnemyUnits()
         {
             return runtimeModel.RoUnits
@@ -144,6 +158,11 @@ namespace UnitBrains
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
                 .Select(u => u.Pos)
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+        }
+
+        protected IEnumerable<Unit> GetAllPlayerUnits()
+        {
+            return runtimeModel.Units;
         }
 
         protected bool IsTargetInRange(Vector2Int targetPos)
@@ -162,6 +181,30 @@ namespace UnitBrains
                 if (!IsTargetInRange(possibleTarget))
                     continue;
                 
+                result.Add(possibleTarget);
+            }
+
+            return result;
+        }
+
+        protected List<Unit> GetReachableTargetsUnit()
+        {
+            var result = new List<Unit>();
+            var allPlayerUnits = new List<Unit>();
+
+            //var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            foreach (var item in GetAllPlayerUnits())
+            {
+                if (!item.IsBuff && item.Config.Effectors == false)
+                {
+                    allPlayerUnits.Add(item);
+                }
+            }
+
+            foreach (var possibleTarget in allPlayerUnits)
+            {
+                if (!IsTargetInRange(possibleTarget.Pos))
+                    continue;
                 result.Add(possibleTarget);
             }
 
