@@ -1,4 +1,5 @@
 ﻿using Model.Runtime.Projectiles;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Model.Config
@@ -16,7 +17,9 @@ namespace Model.Config
         [SerializeField] private float _attackRange = 3.5f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
-        
+        [SerializeField] private bool _isEffectors;
+
+        [SerializeField] private List<NameEffects> currentEffects;
         public bool IsPlayerUnit => _isPlayerUnit;
         public string Name => _name;
         public Sprite Icon => _icon;
@@ -28,5 +31,10 @@ namespace Model.Config
         public float AttackRange => _attackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+        public List<NameEffects> CurrentEffects => currentEffects;
+
+        public float CurrentMoveDelay;
+        public float CurrentAttackDelay;
+        public bool Effectors => _isEffectors;
     }
 }
