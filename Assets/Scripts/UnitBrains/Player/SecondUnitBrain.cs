@@ -16,12 +16,16 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float temp = GetTemperature();
+
+            if (temp >= overheatTemperature) return;
+
+            for (int i = 0; i <= temp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
@@ -35,10 +39,27 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return new List<Vector2Int>();
             }
+            float value = float.MaxValue;
+            Vector2Int i = new Vector2Int(0, 0);
+            foreach (var target in result)
+            {
+                float distance = (float)DistanceToOwnBase(target);
+                if (distance < value)
+                {
+                    value = distance;
+                    i = target;
+                }
+            }
+            result.Clear();
+            result.Add(i);
+            ////while (result.Count > 1)
+            //{
+            //    result.RemoveAt(result.Count - 1);
+            //}
             return result;
             ///////////////////////////////////////
         }
