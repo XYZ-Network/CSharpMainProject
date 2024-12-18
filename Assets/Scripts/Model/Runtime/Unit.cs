@@ -17,14 +17,20 @@ namespace Model.Runtime
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
 
-        public bool isBuff;
+
         public bool IsDead => Health <= 0;
-        public bool IsBuff => isBuff;
+        public bool IsBuff => _isBuff;
+        public float MoveDelay => _moveDelay;
+        public float AttackDelay => _attackDelay;
+
         public BaseUnitPath ActivePath => _brain?.ActivePath;
 
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         public TargetRecommendationManager CurrentTargetRecommendationManager;
+
+        public bool IsDoubleShot => _isDoubleShot;
+        public float AttackRange => _attackRange;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
@@ -33,6 +39,12 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
+        private bool _isBuff;
+
+        private float _moveDelay;
+        private float _attackDelay;
+        private float _attackRange;
+        public bool _isDoubleShot;
 
         public Unit(UnitConfig config, Vector2Int startPos, TargetRecommendationManager targetRecommendationManager)
         {
@@ -44,6 +56,11 @@ namespace Model.Runtime
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
 
             CurrentTargetRecommendationManager = targetRecommendationManager;
+
+            SetMoveDelay(config.MoveDelay);
+            SetAttackDelay(config.AttackDelay);
+            SetDoubleShoot(false);
+            SetAttackRange(config.AttackRange);
         }
 
         public void Update(float deltaTime, float time)
@@ -59,13 +76,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.CurrentMoveDelay;
+                _nextMoveTime = time + _moveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.CurrentAttackDelay;
+                _nextAttackTime = time + _attackDelay;
             }
         }
 
@@ -106,6 +123,31 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void SetMoveDelay(float moveDelay) 
+        {
+            _moveDelay = moveDelay;
+        }
+
+        public void SetAttackDelay(float attackDelay)
+        {
+            _attackDelay = attackDelay;
+        }
+
+        public void SetBuff(bool isBuff)
+        {
+            _isBuff = isBuff;
+        }
+
+        public void SetDoubleShoot(bool isDoubleShot)
+        {
+            _isDoubleShot = isDoubleShot;
+        }
+
+        public void SetAttackRange(float attackRange)
+        {
+            _attackRange = attackRange;
         }
     }
 }

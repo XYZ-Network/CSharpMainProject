@@ -38,10 +38,17 @@ namespace UnitBrains.Player
             ///////////////////////////////////////           
             if (!_overheated)
             {
+                Debug.Log(GetTemperature());
+
                 for (float i = 0; i <= GetTemperature(); i++)
                 {
                     var projectile = CreateProjectile(forTarget);
                     AddProjectileToList(projectile, intoList);
+                    if (unit.IsDoubleShot)
+                    {
+                        var projectileDouble = CreateProjectile(forTarget);
+                        AddProjectileToList(projectileDouble, intoList);
+                    }
                 }
                 IncreaseTemperature();
             }

@@ -58,15 +58,10 @@ public class FourthUnitBrain : DefaultPlayerUnitBrain
             return true;
         }
         return false;
-
-        //while (result.Count > 1)
-        //result.RemoveAt(result.Count - 1);
     }
 
     public override void Update(float deltaTime, float time)
     {
-        Debug.Log(_isCooldown);
-
         if (_isCooldown)
         {
             _reloadTime += Time.deltaTime + 0.25f;
@@ -88,8 +83,6 @@ public class FourthUnitBrain : DefaultPlayerUnitBrain
                 }
             }
 
-            Debug.Log(_isCooldown + "   " + HasUnitsInRange());
-
             if (_isReloadBuuf && _currentAction == ActionUnit.buff)
             {
                 _currentAction = ActionUnit.Move;
@@ -106,11 +99,10 @@ public class FourthUnitBrain : DefaultPlayerUnitBrain
                 _isReloadBuuf = true;
                 _isCooldown = true;
 
-                NameEffects current = unit.Config.CurrentEffects[Random.Range(0, unit.Config.CurrentEffects.Count)];
+                NameEffects current = NameEffects.BuffAttackSpeed;
 
-                SystemEffectsController.StartEffectToUnit(targetUnit, current);
-
-                _reloadTimebuff = systemEffectsController.GetEffect(current).Reload;
+                SystemEffectsController.StartEffectToUnit(targetUnit, current, out _reloadTimebuff);
+                
                 _currentAction = ActionUnit.Move;
             }
         }

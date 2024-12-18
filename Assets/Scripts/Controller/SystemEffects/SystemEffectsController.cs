@@ -1,49 +1,60 @@
 using UnityEngine;
-using Model.Runtime;
 using System.Collections.Generic;
-using Model.Config;
-using System.Collections;
 using View;
-using Model.Runtime.ReadOnly;
+using Model.Runtime;
 
 public class SystemEffectsController : MonoBehaviour
 {
-    Dictionary<NameEffects, Effect> allEffects = new Dictionary<NameEffects, Effect>();
-    VFXView _vFXView;
+    private VFXView _vFXView;
+    private readonly Dictionary<NameEffects, Effect<Unit>> _allEffectsToUnit = new Dictionary<NameEffects, Effect<Unit>>();
 
     public void Constructor(VFXView vFXView)
     {
         _vFXView = vFXView;
+        InitDictionary();
     }
 
-    public void AddEffect(NameEffects nameEffects, Effect effect)
+    private void InitDictionary()
     {
-        if (!allEffects.ContainsKey(nameEffects))
-        {
-            allEffects.Add(nameEffects, effect);
-        }
+        _allEffectsToUnit.Add(NameEffects.BuffAttackSpeed, new BuffAttackSpeed<Unit>());
+        _allEffectsToUnit.Add(NameEffects.BuffMoveSpeed, new BuffMoveSpeed<Unit>());
+        _allEffectsToUnit.Add(NameEffects.BuffDoubleShoot, new DoubleShootingEffect<Unit>());
+        _allEffectsToUnit.Add(NameEffects.BuffAttackRange, new BuffAttackRange<Unit>());
+
+        _allEffectsToUnit.Add(NameEffects.DebuffAttackSpeed, new DebuffAttackSpeed<Unit>());
+        _allEffectsToUnit.Add(NameEffects.DebuffMoveSpeed, new DebuffMoveSpeed<Unit>());
     }
 
-    public void StartEffectToUnit(Unit unit, NameEffects nameEffects)
+    public void StartEffectToUnit(Unit unit, NameEffects nameEffects, out float reload)
     {
+        reload = 0f;
         if (unit == null)
         {
             return;
         }
 
-        StartCoroutine(allEffects[nameEffects].StartEffectToUnits(unit, _vFXView));
-    }
+        switch (unit.Config.Name)
+        {
+            case "Cobra Commando":
+                nameEffects = NameEffects.BuffDoubleShoot;
+                break;
+            case "Ironclad Behemoth":
+                nameEffects = NameEffects.BuffAttackRange;
+                break;
+        }
 
-    public Effect GetEffect(NameEffects name)
-    {
-        if (allEffects.ContainsKey(name))
-            return allEffects[name];
-        return null;
+        if (_allEffectsToUnit[nameEffects].SetEffect(unit))
+        {
+            _vFXView.PlayVFX(unit.Pos, VFXView.VFXType.BuffApplied);
+            reload = _allEffectsToUnit[nameEffects].Reload;
+        }
     }
 }
 
 public enum NameEffects
 {
+    BuffDoubleShoot,
+    BuffAttackRange,
     BuffAttackSpeed,
     BuffMoveSpeed,
     DebuffAttackSpeed,

@@ -3,7 +3,6 @@ using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
-using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
 using static UnityEngine.GraphicsBuffer;
@@ -19,7 +18,7 @@ namespace UnitBrains
         public virtual PatAStar ActivePath => _activePath;
         public virtual SystemEffectsController SystemEffectsController => systemEffectsController;
 
-        protected Unit unit { get; private set; }
+        public Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         protected PatAStar _activePath = null;
         protected SystemEffectsController systemEffectsController = ServiceLocator.Get<SystemEffectsController>();
@@ -122,7 +121,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -135,7 +134,7 @@ namespace UnitBrains
 
         protected bool HasUnitsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllPlayerUnits())
             {
                 var diff = possibleTarget.Pos - unit.Pos;
@@ -160,14 +159,14 @@ namespace UnitBrains
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
 
-        protected IEnumerable<Unit> GetAllPlayerUnits()
+        protected List<Unit> GetAllPlayerUnits()
         {
             return runtimeModel.Units;
         }
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -175,7 +174,7 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
@@ -195,7 +194,7 @@ namespace UnitBrains
             //var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
             foreach (var item in GetAllPlayerUnits())
             {
-                if (!item.IsBuff && item.Config.Effectors == false)
+                if (!item.IsBuff && item.Config.Name != "Healig Behemoth")
                 {
                     allPlayerUnits.Add(item);
                 }
