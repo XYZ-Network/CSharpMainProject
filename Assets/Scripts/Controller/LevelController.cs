@@ -18,6 +18,9 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private readonly SystemEffectsController _systemEffectsController;
+
+        private readonly TargetRecommendationManager _targetRecommendationManager;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -25,11 +28,15 @@ namespace Controller
             _rootController = rootController;
             _botController = new BotController(OnBotUnitChosen);
             _simulationController = new(runtimeModel, OnLevelFinished);
-            
+
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _systemEffectsController = ServiceLocator.Get<SystemEffectsController>();
+            _systemEffectsController.Constructor(ServiceLocator.Get<VFXView>());
+
+            _targetRecommendationManager = ServiceLocator.Get<TargetRecommendationManager>();
         }
 
         public void StartLevel(int level)
@@ -71,8 +78,9 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
-            var unit = new Unit(config, pos);
+
+            var unit = new Unit(config, pos, _targetRecommendationManager);
+
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

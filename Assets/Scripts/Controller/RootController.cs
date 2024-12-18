@@ -30,9 +30,16 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
+            var repeating = SpawnSystemEffects();
+            ServiceLocator.Register(repeating);
+
+            SpawnCoroutines();
+
+            ServiceLocator.Register(new TargetRecommendationManager());
+
             _levelController = new(_runtimeModel, this);
-            
+
             _rootView.ShowStartMenu();
         }
 
@@ -74,6 +81,18 @@ namespace Controller
         {
             var prefab = Resources.Load<VFXView>("View/VFXView");
             return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        }
+
+        private SystemEffectsController SpawnSystemEffects()
+        {
+            var prefab = new GameObject("EffectsController").AddComponent<SystemEffectsController>();
+            return prefab;
+        }
+
+        private Coroutines SpawnCoroutines()
+        {
+            var prefab = new GameObject("Coroutines").AddComponent<Coroutines>();
+            return prefab;
         }
     }
 }
