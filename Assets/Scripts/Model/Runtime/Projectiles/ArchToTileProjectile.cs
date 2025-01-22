@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -31,10 +32,16 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
 
 
+            double maxHeight = 0.6 * totalDistance;
+
+     
+            localHeight = (float)(maxHeight * (-(Math.Pow(t * 2 - 1, 2)) + 1));
+
+
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
