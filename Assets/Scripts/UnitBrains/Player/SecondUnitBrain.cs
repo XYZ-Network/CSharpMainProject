@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -17,10 +18,25 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+
+            // Проверка не перегрето ли оружие
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            
+            //Увеличиваем количество снарядов с каждым выстрелом
+            int WarmProjectiles = GetTemperature();
+            for (int i = 0; i <= WarmProjectiles; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+           
+            }
+
+            //Поднимаем температуру после выстрела
+            IncreaseTemperature();
+
             ///////////////////////////////////////
         }
 
@@ -32,13 +48,37 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            //Если целей больше, чем 1, то ищем ближайшую цель
+            if (result.Count > 1)
             {
-                result.RemoveAt(result.Count - 1);
+                
+                //Задаём максимальную дистанцию, чтобы относительно её найти ближайшую цель
+                float nearestTargetDistance = float.MaxValue;
+                    Vector2Int nearestTarget = Vector2Int.zero;
+
+                //Узнаем, какая ближайшая цель
+                foreach (Vector2Int target in result)
+                {
+                    //С помощью внешнего метода получаем дистанцию до ближайшей цели
+                    float currentTargetDistance = DistanceToOwnBase(target);
+
+                    //Обозначаем ближайшую цель
+                    if (nearestTargetDistance > currentTargetDistance)
+                    {
+                        nearestTargetDistance = currentTargetDistance;
+                        nearestTarget = target;
+                    }
+                }
+                //Очищаем список перед добавлением цели
+                result.Clear();
+                //Добавляем цель в список
+                result.Add(nearestTarget);
+
             }
+            
+            //Возвращаем список с целью
             return result;
             ///////////////////////////////////////
         }
