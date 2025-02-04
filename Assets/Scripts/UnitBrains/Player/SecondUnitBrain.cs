@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -18,9 +19,17 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////     
+            float getTemperature = GetTemperature();
+            if (getTemperature < overheatTemperature)
+            {
+                for (int i = 0; i <= getTemperature; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+                IncreaseTemperature();
+            }          
             ///////////////////////////////////////
         }
 
@@ -35,9 +44,21 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            Vector2Int target = Vector2Int.zero;
+            float dist = float.MaxValue;
+            //while (result.Count > 1)
+            for (int i = 0; i < result.Count; i++)
             {
-                result.RemoveAt(result.Count - 1);
+                if (DistanceToOwnBase(result[i]) < dist)
+                {
+                    dist = DistanceToOwnBase(result[i]);
+                    target = result[i];
+                }
+            }
+            if (dist != float.MaxValue)
+            { 
+                result.Clear();
+                result.Add(target); 
             }
             return result;
             ///////////////////////////////////////
