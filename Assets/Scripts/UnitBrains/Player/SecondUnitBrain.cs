@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Codice.Client.BaseCommands.WkStatus.Printers;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -11,38 +15,72 @@ namespace UnitBrains.Player
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
-        private bool _overheated;
-        
+        private bool _overheated;     
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if(GetTemperature() >= overheatTemperature) 
+            {
+                return;
+            }
+            
+            for (int a = 0; a <= GetTemperature(); a++) 
+                {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+                }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
-
+        private List<Vector2Int> TargetList = new List<Vector2Int>();
         public override Vector2Int GetNextStep()
         {
+            if (TargetList == null)
+            {
+                return Vector2Int.zero;
+            }
             return base.GetNextStep();
         }
 
         protected override List<Vector2Int> SelectTargets()
-        {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
-            ///////////////////////////////////////
-        }
 
+        {
+            //////////////////////DistanceToOwnBase/////////////////
+        float min = float.MaxValue;
+        List<Vector2Int> result = GetAllTargets().ToList();
+        List<Vector2Int> nextStep = new List<Vector2Int>();
+
+            if (result.Count > 0)
+            {
+                Vector2Int tar = Vector2Int.zero;
+                foreach (Vector2Int target in result)
+                {
+                    float dis = DistanceToOwnBase(target);
+                    if (dis < min)
+                    {
+                        min = dis;
+                        tar = target;
+
+                    }
+                }
+
+                result.Clear();
+                TargetList.Clear();
+                if (IsTargetInRange(tar))
+                    result.Add(tar);
+                else
+                    TargetList.Add(tar);
+            }
+            else
+            {
+                TargetList.Clear();
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId];
+                TargetList.Add(enemyBase);
+            }
+                return result;
+        }
+        /// /////////////////////////////////////////////////////////////
+     
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
