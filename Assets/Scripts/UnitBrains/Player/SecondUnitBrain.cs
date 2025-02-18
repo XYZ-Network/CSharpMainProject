@@ -6,7 +6,13 @@ namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
-        public override string TargetUnitName => "Cobra Commando";
+        
+        {
+            
+            ///////////////////////////////////////
+            // Homework 1.3 (1st block, 3rd module)
+            ///////////////////////////////////////           
+            public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
@@ -15,12 +21,20 @@ namespace UnitBrains.Player
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+         float overheatTemperature = OverheatTemperature;
+         float _temperature = GetTemperature();
+
+         if (_temperature >= overheatTemperature)
+         {
+            return;
+         }    
+
+         for (int i = 0; i < _temperature; i++); 
+         {
+          var projectile = CreateProjectile(forTarget);
+          AddProjectileToList(projectile, intoList);
+         }
+           IncreaseTemperature();
             ///////////////////////////////////////
         }
 
@@ -34,11 +48,31 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            var result = new List<Vector2Int>();
+           
+            var targets = GetAllTargets();
+            
+            var closest = new Vector2Int();
+            
+            var minDistanse = float.MaxValue;
+
+            foreach (var target in targets)
             {
-                result.RemoveAt(result.Count - 1);
+             
+             float distance = DistanceToOwnBase(target);
+              if (distance < minDistande)
+             
+              {
+                minDistande = distance;
+                closestTarget = target;
+              }
             }
+
+            if (minDistanse < float.MaxValue)
+            {
+                result.Add(closestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }
@@ -70,4 +104,5 @@ namespace UnitBrains.Player
             if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }
+}
 }
