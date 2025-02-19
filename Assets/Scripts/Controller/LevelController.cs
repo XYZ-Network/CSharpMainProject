@@ -2,6 +2,7 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using UnitBrains;
 using UnityEngine;
 using Utilities;
 using View;
@@ -18,6 +19,9 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+
+        private GroupBrain _playerGroupBrain;
+        private GroupBrain _botGroupBrain;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -49,6 +53,9 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
             _gameplayView.Reinitialize();
+
+            _playerGroupBrain = new GroupBrain(true);
+            _botGroupBrain = new GroupBrain(false);
         }
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
@@ -72,7 +79,8 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, forPlayer == RuntimeModel.PlayerId ? _playerGroupBrain : _botGroupBrain);
+
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
