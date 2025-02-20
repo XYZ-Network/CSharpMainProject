@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,35 +16,64 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private IEnumerable<Vector2Int> _allTargets;
+        private List<Vector2Int> _targetInRangeResult = new();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            var currentTemperature = GetTemperature();
+
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            do
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            } while (intoList.Count < currentTemperature);
+
+            
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (!_targetInRangeResult.Any())
+            {
+                return unit.Pos;;
+            }
+            
+            return  unit.Pos.CalcNextStepTowards(_targetInRangeResult.First());
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new();
+            _allTargets = GetAllTargets();
+            _targetInRangeResult.Clear();
+
+            if (_allTargets.Any())
             {
-                result.RemoveAt(result.Count - 1);
+                var closestEnemyToBase = GetClosestEnemyToBase(_allTargets);
+
+                if (IsTargetInRange(closestEnemyToBase))
+                {
+                    result.Add(closestEnemyToBase);
+                }
+                else
+                {
+                    _targetInRangeResult.Add(closestEnemyToBase);
+                }
             }
+            else
+            {
+                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId]);
+            }
+          
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
@@ -57,7 +90,7 @@ namespace UnitBrains.Player
                 }
             }
         }
-
+        
         private int GetTemperature()
         {
             if(_overheated) return (int) OverheatTemperature;
@@ -68,6 +101,25 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+        }
+
+        private Vector2Int GetClosestEnemyToBase(IEnumerable<Vector2Int> allTargets)
+        {
+            float minDistance = float.MaxValue;
+            Vector2Int resultClosestEnemy = new Vector2Int();
+            
+            foreach (Vector2Int target in allTargets) 
+            {
+                float targetDistance = DistanceToOwnBase(target);
+
+                if (targetDistance < minDistance) 
+                {
+                    minDistance = targetDistance;
+                    resultClosestEnemy = target;
+                }
+            }
+            
+            return resultClosestEnemy;
         }
     }
 }
