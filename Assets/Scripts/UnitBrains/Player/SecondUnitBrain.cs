@@ -16,11 +16,20 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+            float GunTemperature = GetTemperature();
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////    
+            if (GunTemperature >= overheatTemperature)
+            {
+                return;
+            }
+            for (float Multishoot = 0f; Multishoot <= GunTemperature; Multishoot++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
@@ -35,10 +44,26 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            float minDistance = float.MaxValue;
+            Vector2Int NearTarget = Vector2Int.zero;
+
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
+
+            foreach (Vector2Int Target in result)
+            {
+                float distance = DistanceToOwnBase(Target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    NearTarget = Target;
+                }
+            }
+            result.Clear();
+            result.Add(NearTarget);
             return result;
             ///////////////////////////////////////
         }
