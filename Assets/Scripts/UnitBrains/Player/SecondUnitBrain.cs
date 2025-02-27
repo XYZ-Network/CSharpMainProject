@@ -16,12 +16,16 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+                for (int i = 0; i <= GetTemperature(); i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
@@ -31,16 +35,28 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+
+            float minDistance = float.MaxValue;
+            Vector2Int closestTarget = new Vector2Int();
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            if (result.Count > 0)
             {
-                result.RemoveAt(result.Count - 1);
+
+
+
+                foreach (Vector2Int target in result)
+                {
+
+                    if (minDistance > DistanceToOwnBase(target))
+                    {
+                        minDistance = DistanceToOwnBase(target);
+                        closestTarget = target;
+                    }
+                }
+                result.Clear();
+                result.Add(closestTarget);
             }
-            return result;
-            ///////////////////////////////////////
+                return result;
         }
 
         public override void Update(float deltaTime, float time)
@@ -60,14 +76,19 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
+            
             if(_overheated) return (int) OverheatTemperature;
             else return (int)_temperature;
+            
+
+            
         }
 
         private void IncreaseTemperature()
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+           
         }
     }
 }
