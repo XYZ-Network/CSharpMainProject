@@ -1,4 +1,5 @@
-﻿using Model;
+﻿
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -11,6 +12,7 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly EffectSystem _effectSystem;
         
         private RootView _rootView;
 
@@ -21,6 +23,9 @@ namespace Controller
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
+
+            _effectSystem = GameObject.FindObjectOfType<EffectSystem>();
+            ServiceLocator.RegisterAs(_effectSystem, typeof(EffectSystem));
             
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);

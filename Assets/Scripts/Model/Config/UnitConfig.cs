@@ -1,5 +1,8 @@
 ﻿using Model.Runtime.Projectiles;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using static Model.Runtime.Unit;
+
 
 namespace Model.Config
 {
@@ -28,5 +31,8 @@ namespace Model.Config
         public float AttackRange => _attackRange;
         public ProjectileType ProjectileType => _projectileType;
         public int Damage => _damage;
+
+
+
     }
 }

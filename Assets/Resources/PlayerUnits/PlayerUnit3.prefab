@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthBar: {fileID: 178258570018206233}
+  _debugPathOutput: {fileID: 0}
 --- !u!114 &3664015912038799981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,14 +64,12 @@ MonoBehaviour:
   _isPlayerUnit: 1
   _name: Ironclad Behemoth
   _icon: {fileID: 21300000, guid: ed0ebd9a5a7925f4892864c78333b9f4, type: 3}
-  _cost: 200
+  _cost: 30
   _maxHealth: 400
   _brainUpdateDelay: 0.25
   _moveDelay: 0.25
-  _attackDelay: 0.75
+  _attackDelay: 0.15
   _attackRange: 3.5
-  _shotsPerTarget: 1
-  _targetsInVolley: 1
   _projectileType: 0
   _damage: 15
 --- !u!1 &526913648782850647

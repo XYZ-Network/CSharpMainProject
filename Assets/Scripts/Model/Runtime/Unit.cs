@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
@@ -7,6 +8,7 @@ using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Model.Runtime
 {
@@ -22,12 +24,34 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        public BaseUnitBrain Brain => _brain;
 
+        private EffectSystem _effectSystem;
+        public Coordinator _coordinator;
+
+        
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
+        private float _range;
+        public float Range => _range;
+
+        private float BrainMod = 1f;
+        private float MoveMod = 1f;
+        private float AttackMod = 1f;
+        private float RangeMod = 1f;
+        private bool _dubleStrike;
+        public bool DubleStrike => _dubleStrike;
+        public enum UnitModStats
+        {
+            BrainUpdate,
+            Move,
+            Attack,
+            Range,
+            DubleStrike
+        }
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, Vector2Int startPos, Coordinator coordinator)
         {
             Config = config;
             Pos = startPos;
@@ -35,28 +59,54 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _coordinator = coordinator;
+
+            _range = Config.AttackRange * RangeMod;
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-            
+            _range = Config.AttackRange * RangeMod;
+
             if (_nextBrainUpdateTime < time)
             {
-                _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
+                _nextBrainUpdateTime = time + (Config.BrainUpdateInterval * BrainMod);
                 _brain.Update(deltaTime, time);
             }
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + (Config.MoveDelay * MoveMod);
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + (Config.AttackDelay * AttackMod);
+            }
+        }
+        public void StatModification<T>(UnitModStats stats, T modificator)
+        {
+            switch (stats)
+            {
+                case UnitModStats.Attack:
+                    AttackMod = Convert.ToSingle(modificator);
+
+                    break;
+                case UnitModStats.Move:
+                    MoveMod = Convert.ToSingle(modificator);
+                    break;
+                case UnitModStats.BrainUpdate:
+                    BrainMod = Convert.ToSingle(modificator);
+                    break;
+                case UnitModStats.Range:
+                    RangeMod = Convert.ToSingle(modificator);
+                    break;
+                case UnitModStats.DubleStrike:
+                    _dubleStrike = Convert.ToBoolean(modificator);
+                    break;
             }
         }
 

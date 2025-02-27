@@ -9,6 +9,7 @@ namespace UnitBrains.Pathfinding
     {
         [SerializeField] private GameObject cellHighlightPrefab;
         [SerializeField] private int maxHighlights = 5;
+        [SerializeField] private float delay = 0.1f;
 
         public BaseUnitPath Path { get; private set; }
         private readonly List<GameObject> allHighlights = new();
@@ -32,10 +33,19 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
-        }
+            while (true)
+            {
+                foreach (var cell in path.GetPath())
+                {
+                    yield return new WaitForSeconds(delay);
+                    CreateHighlight(cell);
+                    if(allHighlights.Count > maxHighlights)
+                        DestroyHighlight(0);
+                }
 
+
+            }
+        }
         private void CreateHighlight(Vector2Int atCell)
         {
             var pos = Gameplay3dView.ToWorldPosition(atCell, 1f);
