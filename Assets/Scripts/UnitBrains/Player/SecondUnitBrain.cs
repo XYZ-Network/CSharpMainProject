@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,35 +15,59 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _priorityTargets = new();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            int currentTemperature = GetTemperature();
+            if (currentTemperature >= OverheatTemperature) 
+                return;
+            
+            for (int i = 0; i <= currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            var target = _priorityTargets.Any() 
+                ? _priorityTargets.First() 
+                : runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+
+            if (IsTargetInRange(target))
+                return unit.Pos;
+
+            return unit.Pos.CalcNextStepTowards(target);
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = GetAllTargets().ToList();
+            
+            Vector2Int closestTarget = result.First();
+            float closestDistance = float.MaxValue;
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float targetDistance = DistanceToOwnBase(target);
+                if (closestDistance > targetDistance)
+                {
+                    closestDistance = targetDistance;
+                    closestTarget = target;
+                }
             }
+            
+            _priorityTargets.Clear();
+            _priorityTargets.Add(closestTarget);
+            
+            result.Clear();
+            if (IsTargetInRange(closestTarget))
+                result.Add(closestTarget);
+            
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
