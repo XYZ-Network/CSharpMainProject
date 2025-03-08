@@ -1,8 +1,16 @@
-﻿using Model;
+﻿using System;
+using System.Linq;
+using Model;
 using Model.Config;
+using Model.Runtime;
+using UnitBrains;
+using UnitBrains.BuffSystem;
+using UnitBrains.Player;
 using UnityEngine;
+using UnityEngine.UI;
 using Utilities;
 using View;
+using Object = UnityEngine.Object;
 
 namespace Controller
 {
@@ -12,8 +20,9 @@ namespace Controller
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
         
+        private readonly BuffSystem _buffSystem;
         private RootView _rootView;
-
+        
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
@@ -32,8 +41,12 @@ namespace Controller
             ServiceLocator.Register(vfxView);
             
             _levelController = new(_runtimeModel, this);
+            //ServiceLocator.Register(_levelController);
+            
+            _buffSystem = new(_levelController, _runtimeModel);
             
             _rootView.ShowStartMenu();
+            
         }
 
         public void RestartGame()

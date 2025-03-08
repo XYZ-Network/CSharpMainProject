@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Model;
-using Model.Config;
+using Model;using Model.Config;
+
 using UnityEngine;
 using Utilities;
 //hello
@@ -58,7 +58,9 @@ namespace Controller
         {
             var moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
             if (_sortedUnits[0].Cost > moneyLeft)
+            {
                 return;
+            }
 
             for (int i = _sortedUnits.Count - 1; i >= 0; i--)
             {

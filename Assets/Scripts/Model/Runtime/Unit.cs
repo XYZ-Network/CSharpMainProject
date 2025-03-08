@@ -6,6 +6,7 @@ using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
+using UnityEngine.UI;
 using Utilities;
 
 namespace Model.Runtime
@@ -21,11 +22,31 @@ namespace Model.Runtime
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
+        
         private BaseUnitBrain _brain;
-
+        public BaseUnitBrain Brain => _brain;
+        
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
+
+        public float DefaultMoveDelay => Config.MoveDelay;
+        public float DefaultAttackDelay => Config.AttackDelay;
+        
+        private float _moveDelay;
+        private float _attackDelay;
+
+        public float MoveDelay
+        {
+            get => _moveDelay != 0f ? _moveDelay : DefaultMoveDelay;
+            set => _moveDelay = value;
+        }
+
+        public float AttackDelay
+        {
+            get => _attackDelay !=0 ? _attackDelay : DefaultAttackDelay;
+            set => _attackDelay = value;
+        }
         
         public Unit(UnitConfig config, Vector2Int startPos)
         {
@@ -39,6 +60,7 @@ namespace Model.Runtime
 
         public void Update(float deltaTime, float time)
         {
+            
             if (IsDead)
                 return;
             
@@ -48,15 +70,18 @@ namespace Model.Runtime
                 _brain.Update(deltaTime, time);
             }
             
-            if (_nextMoveTime < time)
+            if (_nextMoveTime < time) // скорость передвижения
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                //_nextMoveTime = time + Config.MoveDelay;
+                
+                _nextMoveTime = time + MoveDelay;
                 Move();
             }
             
-            if (_nextAttackTime < time && Attack())
+            if (_nextAttackTime < time && Attack()) // скорость атаки
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                //_nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + AttackDelay;
             }
         }
 

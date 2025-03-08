@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model;
 using Model.Runtime.Projectiles;
@@ -15,7 +16,6 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
@@ -30,7 +30,25 @@ namespace UnitBrains
             new (-0.15f, 0.15f),
             new (-0.15f, -0.15f),
         };
-
+        
+        // модификаторы
+        public float DefaultAttackRange => unit.Config.AttackRange;
+        public float DefaultShootIndex => 1;
+        
+        private float _attackRange;
+        private float _doubleShootIndex;
+        
+        public float AttackRange // Done
+        {
+            get => _attackRange != 0 ? _attackRange: DefaultAttackRange;
+            set => _attackRange = value;
+        }
+        public float DoubleShootIndex // Done
+        {
+            get => _doubleShootIndex != 0 ? _doubleShootIndex : DefaultShootIndex;
+            set => _doubleShootIndex = value;
+        }
+        
         public virtual Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())
@@ -69,9 +87,12 @@ namespace UnitBrains
         {
         }
 
-        protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
+        protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList) // тут будет индекс двойного выстрела
         {
-            AddProjectileToList(CreateProjectile(forTarget), intoList);
+            for (int i = 0; i < DoubleShootIndex ; i++) // DoubleShootIndex - индекс пуль
+            {
+                AddProjectileToList(CreateProjectile(forTarget), intoList);
+            }
         }
 
         protected virtual List<Vector2Int> SelectTargets()
@@ -115,9 +136,10 @@ namespace UnitBrains
             return units;
         }
 
-        protected bool HasTargetsInRange()
+        protected bool HasTargetsInRange() // радиус атаки
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            //var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -142,17 +164,19 @@ namespace UnitBrains
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
 
-        protected bool IsTargetInRange(Vector2Int targetPos)
+        protected bool IsTargetInRange(Vector2Int targetPos) // тут будем увеличивать радиус атаки
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            //var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
 
-        protected List<Vector2Int> GetReachableTargets()
+        protected List<Vector2Int> GetReachableTargets() 
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            //var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))

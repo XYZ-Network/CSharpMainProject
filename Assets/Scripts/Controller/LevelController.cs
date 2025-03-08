@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Model;
 using Model.Config;
 using Model.Runtime;
+using PlasticGui.WebApi.Responses;
 using UnityEngine;
 using Utilities;
 using View;
+using Random = UnityEngine.Random;
 
 namespace Controller
 {
@@ -18,6 +21,7 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        public event Action OnGameStarted;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -49,6 +53,7 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
             _gameplayView.Reinitialize();
+            
         }
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
@@ -83,7 +88,11 @@ namespace Controller
                 _runtimeModel.Money[RuntimeModel.BotPlayerId] < _settings.GetCheapestEnemyUnitCost())
             {
                 _runtimeModel.Stage = RuntimeModel.GameStage.Simulation;
+                OnGameStarted?.Invoke();
             }
+            
+            
+            //Debug.Log("Game started");
         }
 
         private void SetInitialMoney()

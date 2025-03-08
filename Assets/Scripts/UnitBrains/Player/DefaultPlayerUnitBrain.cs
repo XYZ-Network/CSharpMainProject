@@ -19,7 +19,7 @@ namespace UnitBrains.Player
         {
             var distanceA = DistanceToOwnBase(a);
             var distanceB = DistanceToOwnBase(b);
-            return distanceA.CompareTo(distanceB);
+            return distanceA.CompareTo(distanceB);//
         }
     }
 }
