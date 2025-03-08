@@ -24323,7 +24323,7 @@ GameObject:
   - component: {fileID: 3519054601885149883}
   - component: {fileID: 386171954720946930}
   - component: {fileID: 6788588721598865268}
-  - component: {fileID: 1963013773103935339}
+  - component: {fileID: -7038063052571684743}
   m_Layer: 11
   m_Name: PlayerUnit2
   m_TagString: Untagged
@@ -24361,7 +24361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthBar: {fileID: 6508540872539520193}
-  _debugPathOutput: {fileID: 1963013773103935339}
+  _debugPathOutput: {fileID: -7038063052571684743}
 --- !u!114 &6788588721598865268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24385,7 +24385,7 @@ MonoBehaviour:
   _attackRange: 3.5
   _projectileType: 0
   _damage: 15
---- !u!114 &1963013773103935339
+--- !u!114 &-7038063052571684743
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
