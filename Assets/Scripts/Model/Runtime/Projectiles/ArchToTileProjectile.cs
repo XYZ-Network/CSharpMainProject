@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -19,25 +20,21 @@ namespace Model.Runtime.Projectiles
         protected override void UpdateImpl(float deltaTime, float time)
         {
             float timeSinceStart = time - StartTime;
-            float t = timeSinceStart / _timeToTarget;
+            float timeDelta = timeSinceStart / _timeToTarget;
             
-            Pos = Vector2.Lerp(StartPoint, _target, t);
+            Pos = Vector2.Lerp(StartPoint, _target, timeDelta);
             
-            float localHeight = 0f;
             float totalDistance = _totalDistance;
+            
+            float maxHeight = totalDistance * 0.6f;
 
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
-
-
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
+            int pow = 2;
+            float localHeight = maxHeight * (-(float)Math.Pow(timeDelta * 2 - 1, pow) + 1);
             
             Height = localHeight;
-            if (time > StartTime + _timeToTarget)
+            if (time > StartTime + _timeToTarget) {
                 Hit(_target);
+            }
         }
     }
 }
