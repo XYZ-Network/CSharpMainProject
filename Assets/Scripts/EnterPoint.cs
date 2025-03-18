@@ -12,6 +12,12 @@ public class EnterPoint : MonoBehaviour
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
     
+    // Hello
+
+    /*/
+     * Life is pain
+     *  
+    /*/
     void Start()
     {
         Time.timeScale = _timeScale;
