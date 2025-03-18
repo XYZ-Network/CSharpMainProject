@@ -18,6 +18,29 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
+
+            
+            float currentTemperature = GetTemperature();
+
+            if (overheatTemperature <= currentTemperature)
+            {
+                Debug.Log("weapon is overheated");
+                return;
+            }
+
+            IncreaseTemperature();
+
+            float numberofProjectiles = currentTemperature;
+
+            for (float i = 0; i < numberofProjectiles + 1; i++)
+            {
+                Debug.Log(i);
+            }
+
+            ///////////////////////////////////////           
+            var projectile = CreateProjectile(forTarget);
+            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////
             ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
