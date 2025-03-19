@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GluonGui.Dialog;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +16,40 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        public List<Vector2Int> Outreachable = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+            float GunTemperature = GetTemperature();
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////    
+            if (GunTemperature >= overheatTemperature)
+            {
+                return;
+            }
+            for (float Multishoot = 0f; Multishoot <= GunTemperature; Multishoot++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int target = Outreachable[0];
+            if (Outreachable.Count > 0 && !IsTargetInRange(target))
+            {
+                return unit.Pos.CalcNextStepTowards(target);
+            }
+
+            else
+            {
+                return unit.Pos;
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +57,40 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> OurTarget = new List<Vector2Int>();
+            Outreachable.Clear();
+            
+            float minDistance = float.MaxValue;
+            Vector2Int NearTarget = Vector2Int.zero;
+            
+            foreach (var target in GetReachableTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                if (minDistance >= DistanceToOwnBase(target))
+                {
+                    minDistance = DistanceToOwnBase(target);
+                    NearTarget = target;
+                }
             }
-            return result;
+
+            if (IsTargetInRange(NearTarget))
+            {
+                OurTarget.Add(NearTarget);
+            }
+            else
+            {
+                Outreachable.Add(NearTarget);
+            }
+
+            if (OurTarget.Count == 0 && Outreachable.Count == 0)
+            {
+                OurTarget.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                return OurTarget;
+            }
+            else
+            {
+                return OurTarget;
+            }
+            
             ///////////////////////////////////////
         }
 
