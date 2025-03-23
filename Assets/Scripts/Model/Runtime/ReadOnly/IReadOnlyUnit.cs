@@ -6,6 +6,7 @@ namespace Model.Runtime.ReadOnly
 {
     public interface IReadOnlyUnit
     {
+        public int UnitId { get; }
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; }
         public int Health { get; }
