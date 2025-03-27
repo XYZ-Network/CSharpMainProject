@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Codice.Client.BaseCommands;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -7,6 +9,8 @@ using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Model.Runtime
 {
@@ -23,6 +27,8 @@ namespace Model.Runtime
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
 
+        private readonly TimeUtil _timeUtil;
+
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
@@ -35,6 +41,7 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _timeUtil = ServiceLocator.Get<TimeUtil>();
         }
 
         public void Update(float deltaTime, float time)
@@ -97,6 +104,95 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+    }
+
+    public class Coordinator
+    {
+        private static Coordinator _instance;
+        private IReadOnlyRuntimeModel _runtimeModel;
+        private TimeUtil _timeUtil;
+
+        private Coordinator()
+        {
+            _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _timeUtil = ServiceLocator.Get<TimeUtil>();
+        }
+
+        public static Coordinator GetInstance()
+        {
+            if (_instance == null)
+                _instance = new Coordinator();
+
+            return _instance;
+        }
+
+        public Vector2Int SuggestedAttackTarget()
+        {
+            Vector2Int? resultByDistance = null;
+            Vector2Int? resultByHealth = null;
+            float minDistance = float.MaxValue;
+            float minHealth = float.MaxValue;
+
+            var playerBase = _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId];
+
+            foreach (var enemy in _runtimeModel.RoBotUnits)
+            {
+                if (enemy.Pos.y < _runtimeModel.RoMap.Height / 2)
+                {
+                    float distance = Vector2Int.Distance(enemy.Pos, playerBase);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        resultByDistance = enemy.Pos;
+                    }
+                }
+                else
+                {
+                    float health = enemy.Health;
+                    if (enemy.Health < minHealth)
+                    {
+                        minHealth = enemy.Health;
+                        resultByHealth = enemy.Pos;
+                    }
+                }
+            }
+
+            if (resultByDistance != null)
+                return (Vector2Int)resultByDistance;
+            else if (resultByHealth != null)
+                return (Vector2Int)resultByHealth;
+            else
+                return _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+        }
+
+        public Vector2Int SuggestedMoveTarget()
+        {
+            Vector2Int? result = null;
+            float minDistance = float.MaxValue;
+            var playerBase = _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId];
+
+            foreach (var enemy in _runtimeModel.RoBotUnits)
+            {
+                if (enemy.Pos.y < _runtimeModel.RoMap.Height / 2)
+                {
+                    return playerBase;
+                }
+                else
+                {
+                    float distance = Vector2Int.Distance(enemy.Pos, playerBase);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        result = enemy.Pos;
+                    }
+                }
+            }
+
+            if (result != null)
+                return (Vector2Int)result;
+            else
+                return _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
         }
     }
 }
