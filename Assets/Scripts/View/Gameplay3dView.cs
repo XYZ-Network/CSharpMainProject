@@ -3,6 +3,7 @@ using System.Linq;
 using Model;
 using Model.Config;
 using Model.Runtime.ReadOnly;
+using Model.Runtime.StatusEffects;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -12,6 +13,7 @@ namespace View
     public class Gameplay3dView : MonoBehaviour
     {
         private IReadOnlyRuntimeModel _runtimeModel;
+        private StatusEffects _statusEffects;
         private Settings _settings;
         private VFXView _vfxView;
         
@@ -31,6 +33,7 @@ namespace View
         public void Reinitialize()
         {
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _statusEffects = ServiceLocator.Get<StatusEffects>();
             _settings = ServiceLocator.Get<Settings>();
             _vfxView = ServiceLocator.Get<VFXView>();
             LoadPrefabsIfNeeded();
@@ -38,6 +41,19 @@ namespace View
             Clear();
 
             CreateTiles();
+
+            _statusEffects.NewStatusEffect += VFXViewOnStatusEffect;
+        }
+
+        private void VFXViewOnStatusEffect(int unitId)
+        {
+            List<Vector2Int> pos = _runtimeModel.RoPlayerUnits
+                .Where(u => u.UnitId == unitId)
+                .Select(u => u.Pos)
+                .ToList();
+
+            if (pos.Count == 1)
+                _vfxView.PlayVFX(pos[0], VFXView.VFXType.BuffApplied);
         }
 
         private void Update()

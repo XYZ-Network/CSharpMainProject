@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Config;
+using Model.Runtime.StatusEffects;
 using UnityEngine;
 using Utilities;
 using View;
@@ -11,13 +12,16 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly TimeUtil _timeUtil;
         
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(TimeUtil.Create());
+
+            _timeUtil = TimeUtil.Create();
+            ServiceLocator.Register(_timeUtil);
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
@@ -30,7 +34,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
+            ServiceLocator.Register(new StatusEffects(_runtimeModel, _timeUtil));
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();

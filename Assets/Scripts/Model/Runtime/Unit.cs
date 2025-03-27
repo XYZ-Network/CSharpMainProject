@@ -2,6 +2,7 @@
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
+using Model.Runtime.StatusEffects;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
@@ -21,20 +22,27 @@ namespace Model.Runtime
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
+        private StatusEffects.StatusEffects _statusEffects;
         private BaseUnitBrain _brain;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private static int _uid = 0;
+        public int UnitId { get; private set; }
+
+        public Unit(UnitConfig config, Vector2Int startPos, GroupBrain groupBrain)
         {
+            UnitId = _uid++;
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetGroupBrain(groupBrain);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _statusEffects = ServiceLocator.Get<StatusEffects.StatusEffects>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +58,21 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime
+                    = time + Config.MoveDelay + _statusEffects.GetMoveStatusEffectModifeir(UnitId);
+
+                //Debug.Log($"Move UnitID {UnitId} Value {_statusEffects.GetMoveStatusEffectModifeir(UnitId)}");
+
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime
+                    = time + Config.AttackDelay + _statusEffects.GetAttackStatusEffectModifeir(UnitId);
+
+                //Debug.Log($"Attack UnitID {UnitId} Value {_statusEffects.GetAttackStatusEffectModifeir(UnitId)}");
+
             }
         }
 

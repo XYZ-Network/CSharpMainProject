@@ -24323,7 +24323,6 @@ GameObject:
   - component: {fileID: 3519054601885149883}
   - component: {fileID: 386171954720946930}
   - component: {fileID: 6788588721598865268}
-  - component: {fileID: 1963013773103935339}
   m_Layer: 11
   m_Name: PlayerUnit2
   m_TagString: Untagged
@@ -24361,7 +24360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _healthBar: {fileID: 6508540872539520193}
-  _debugPathOutput: {fileID: 1963013773103935339}
+  _debugPathOutput: {fileID: 0}
 --- !u!114 &6788588721598865268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24385,21 +24384,6 @@ MonoBehaviour:
   _attackRange: 3.5
   _projectileType: 0
   _damage: 15
---- !u!114 &1963013773103935339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6168324980205769227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d2c131c92340d1b6e987a53847d8f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cellHighlightPrefab: {fileID: 4141273912711956317, guid: 6b7b54fba8ef4704396fc9f540ee8aa2,
-    type: 3}
-  maxHighlights: 5
 --- !u!1 &6539454795392824391
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,8 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using Model.Runtime.StatusEffects;
+using UnitBrains;
 using UnityEngine;
 using Utilities;
 using View;
@@ -19,6 +21,10 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private GroupBrain _playerGroupBrain;
+        private GroupBrain _botGroupBrain;
+        private StatusEffects _statusEffects;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -30,6 +36,7 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _statusEffects = ServiceLocator.Get<StatusEffects>();
         }
 
         public void StartLevel(int level)
@@ -49,6 +56,9 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
             _gameplayView.Reinitialize();
+
+            _playerGroupBrain = new GroupBrain(true);
+            _botGroupBrain = new GroupBrain(false);
         }
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
@@ -72,7 +82,8 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, forPlayer == RuntimeModel.PlayerId ? _playerGroupBrain : _botGroupBrain);
+
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -83,6 +94,7 @@ namespace Controller
                 _runtimeModel.Money[RuntimeModel.BotPlayerId] < _settings.GetCheapestEnemyUnitCost())
             {
                 _runtimeModel.Stage = RuntimeModel.GameStage.Simulation;
+                _statusEffects.StartStatusEffectProcessing();
             }
         }
 
@@ -99,6 +111,7 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
+            _statusEffects.StopStatusEffectProcessing();
         }
     }
 }
