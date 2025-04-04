@@ -10,7 +10,7 @@ using Utilities;
 
 namespace Model.Runtime
 {
-    public class Unit : IReadOnlyUnit
+    public class Unit : IReadOnlyUnit, IStatsDynamic
     {
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
@@ -23,17 +23,31 @@ namespace Model.Runtime
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
 
+        private float _attackDelayDynamic = 0f;
+        private float _attackRangeExpandDynamic = 0f;
+        private int _multiplierShotDynamic = 1;
+
+        public float AttackDelayStat => Config.AttackDelay + _attackDelayDynamic;
+        public float AttackRangeStat => Config.AttackRange + _attackRangeExpandDynamic;
+        public int MultiplierShotStat => _multiplierShotDynamic;
+
+
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private static int _uid = 0;
+        public int UnitId { get; private set; }
+
+        public Unit(UnitConfig config, Vector2Int startPos, GroupBrain groupBrain)
         {
+            UnitId = _uid++;
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetGroupBrain(groupBrain);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -50,13 +64,15 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime
+                    = time + Config.MoveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime
+                    = time + AttackDelayStat;
             }
         }
 
@@ -97,6 +113,28 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void ChangeDelayAttack(float modifier)
+        {
+            _attackDelayDynamic += modifier;
+        }
+
+        public void ChangeMultiplierShot(int modifier)
+        {
+            _multiplierShotDynamic += modifier;
+
+            if (_multiplierShotDynamic < 1)
+                _multiplierShotDynamic = 1;
+        }
+        public void ChangeAttackRange(float modifier)
+        {
+            _attackRangeExpandDynamic += modifier;
+        }
+
+        public string GetName()
+        {
+            return Config.Name;
         }
     }
 }
