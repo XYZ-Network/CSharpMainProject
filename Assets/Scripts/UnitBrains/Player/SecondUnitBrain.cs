@@ -19,8 +19,20 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return; // Прекращаем стрельбу при перегреве
+            }
+
+            // Увеличиваем температуру через метод
+            IncreaseTemperature();
+
+            // Создаем снаряды (количество = текущая температура)
+            for (int i = 0; i < GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
