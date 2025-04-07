@@ -18,7 +18,7 @@ namespace UnitBrains
         
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+        protected BaseUnitPath _activePath = null;
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -36,13 +36,14 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            var target = GetNextStepTarget();
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
+        public virtual Vector2Int GetNextStepTarget() =>
+            runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+        
         public List<BaseProjectile> GetProjectiles()
         {
             List<BaseProjectile> result = new ();
@@ -147,6 +148,13 @@ namespace UnitBrains
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
+        }
+        
+        protected bool IsTargetInCoordinatorAcceptanceRange(Vector2Int targetPos)
+        {
+            var acceptanceRange = unit.Config.CoordinatorAcceptanceRange * unit.Config.CoordinatorAcceptanceRange;
+            var diff = targetPos - unit.Pos;
+            return diff.sqrMagnitude <= acceptanceRange;
         }
 
         protected List<Vector2Int> GetReachableTargets()

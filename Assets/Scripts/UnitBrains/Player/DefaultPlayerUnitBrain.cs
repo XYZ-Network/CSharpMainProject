@@ -1,12 +1,35 @@
 ﻿using System.Collections.Generic;
 using Model;
-using Model.Runtime.Projectiles;
+using UnitBrains.Pathfinding;
 using UnityEngine;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
+        
+        public override Vector2Int GetNextStep()
+        {
+            var target = GetNextStepTarget();
+            if (IsTargetInRange(target))
+                return unit.Pos;
+
+            var destination = UnitCoordinator.Instance().Destination;
+            var moveTo = IsTargetInCoordinatorAcceptanceRange(target) ? target : destination;
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, moveTo);
+            return _activePath.GetNextStepFrom(unit.Pos);
+        }
+
+        public override Vector2Int GetNextStepTarget() =>
+            UnitCoordinator.Instance().Target;
+
+        protected override List<Vector2Int> SelectTargets()
+        {
+            var suggestedTarget = UnitCoordinator.Instance().Target;
+            return IsTargetInRange(suggestedTarget)
+                ? new List<Vector2Int> {suggestedTarget} : base.SelectTargets();
+        }
+
         protected float DistanceToOwnBase(Vector2Int fromPos) =>
             Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
 
