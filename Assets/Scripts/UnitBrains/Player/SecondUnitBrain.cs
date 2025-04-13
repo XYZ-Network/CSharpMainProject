@@ -19,8 +19,20 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return; // Прекращаем стрельбу при перегреве
+            }
+
+            // Увеличиваем температуру через метод
+            IncreaseTemperature();
+
+            // Создаем снаряды (количество = текущая температура)
+            for (int i = 0; i < GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
@@ -34,12 +46,41 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
+            // Получаем список всех достижимых целей, до которых юнит может добраться
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            // Проверяем, есть ли вообще цели в списке
+            // Если список пустой (Count == 0) или равен null (ничего не найдено), просто возвращаем его без изменений
+            if (result == null || result.Count == 0)
+                return result;
+
+            // Предположим, что ближайшая цель — это самая первая в списке
+            Vector2Int closestTarget = result[0];
+
+            // Создаем переменную, в которой будем хранить минимальное расстояние до базы
+            // Начинаем с максимально возможного значения, чтобы любое реальное расстояние было меньше
+            float minDistance = float.MaxValue;
+
+            // Перебираем все цели в списке
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                // Вычисляем расстояние от текущей цели до нашей базы
+                float distance = DistanceToOwnBase(target);
+
+                // Сравниваем это расстояние с минимальным найденным ранее
+                if (distance < minDistance)
+                {
+                    // Если текущее расстояние меньше — обновляем переменные:
+                    // 1. Запоминаем новое минимальное расстояние
+                    minDistance = distance;
+
+                    // 2. Запоминаем эту цель как ближайшую
+                    closestTarget = target;
+                }
             }
-            return result;
+
+            // Возвращаем новый список, в котором только одна цель — та, что ближе всех к базе
+            return new List<Vector2Int> { closestTarget };
             ///////////////////////////////////////
         }
 
