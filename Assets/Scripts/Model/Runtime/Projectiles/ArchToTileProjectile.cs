@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Codice.Client.BaseCommands;
+using System;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -22,18 +24,12 @@ namespace Model.Runtime.Projectiles
             float t = timeSinceStart / _timeToTarget;
             
             Pos = Vector2.Lerp(StartPoint, _target, t);
-            
+
             float localHeight = 0f;
             float totalDistance = _totalDistance;
-
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
-
-
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
+            float maxHeight = 0.6f * totalDistance;
+            float tNew = t * 2 - 1;
+            localHeight = maxHeight * (- tNew * tNew + 1); 
             
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
