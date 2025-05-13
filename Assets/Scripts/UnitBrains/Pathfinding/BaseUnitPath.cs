@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Model;
+using Model.Runtime;
 using UnityEngine;
 
 namespace UnitBrains.Pathfinding
@@ -18,20 +19,24 @@ namespace UnitBrains.Pathfinding
         
         public IEnumerable<Vector2Int> GetPath()
         {
-            if (path == null)
+           if (path == null)
                 Calculate();
-            
-            return path;
+         
+                return path;
+           
         }
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
+            
             var found = false;
             foreach (var cell in GetPath())
             {
                 if (found)
+                {
+                    //Debug.Log(cell);
                     return cell;
-
+                }
                 found = cell == unitPos;
             }
 
