@@ -17,11 +17,19 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            if (!_overheated)
+            {
+                IncreaseTemperature();
+                int t = GetTemperature();
+
+                for (int i = 0; i < t; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+            }
+            
+
         }
 
         public override Vector2Int GetNextStep()
@@ -32,21 +40,59 @@ namespace UnitBrains.Player
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
+            // Данный вариант решения мне не нравится из-за сохранения цикла while, однако он был в условии.
+            // в своих проектах стараюсь его избегать т.к. легко пропустить ошибку и долго восстанавливать прогресс
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
+            float nearestEnemy = float.MaxValue;            
             while (result.Count > 1)
             {
-                result.RemoveAt(result.Count - 1);
+                Vector2Int enemyNearest = result[0]; // если мы зашли сюда - ближайшим врагом я могу задать любого противника
+                foreach (var target in result)
+                {
+                    float enemyDistance = DistanceToOwnBase(target);
+                    if (nearestEnemy > enemyDistance)
+                    {
+                        nearestEnemy = enemyDistance;
+                        enemyNearest = target;
+                    }
+             
+                }
+                result.Clear();
+                result.Add(enemyNearest);
             }
             return result;
             ///////////////////////////////////////
         }
+        //////////////////////////////////////////
+        // иное решение без данного цикла
+        //protected override List<Vector2Int> SelectTargets()
+        //{
+        //    List<Vector2Int> result = GetReachableTargets();
+        //    if (result.Count == 0)
+        //    {
+        //        return result; // заканчиваю с методом если список пуст
+        //    }
+        //    Vector2Int nearestEnemy = result[0]; // после проверки на пустоту - здесь всегда будет минимум 1 элемент
+        //    float nearestEnemyDistance = DistanceToOwnBase(nearestEnemy);
+        //    foreach (var target in result)
+        //    {
+        //        float enemyDistance = DistanceToOwnBase(target);
+        //        if (enemyDistance < nearestEnemyDistance)
+        //        {
+        //            nearestEnemy = target;
+        //            nearestEnemyDistance = enemyDistance; 
+        //        }
+        //    }
+        //    return new List<Vector2Int> { nearestEnemy }; // возвращаю новый список а не провожу изменения в старом
+        //}
+        ///////////////////////////////////////
 
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
+                Debug.Log("Я перегрет");      
                 _cooldownTime += Time.deltaTime;
                 float t = _cooldownTime / (OverheatCooldown/10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
@@ -54,6 +100,7 @@ namespace UnitBrains.Player
                 {
                     _cooldownTime = 0;
                     _overheated = false;
+                    Debug.Log("Я остыл");
                 }
             }
         }

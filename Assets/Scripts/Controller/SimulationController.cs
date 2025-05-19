@@ -6,7 +6,7 @@ using UnityEngine;
 using Utilities;
 
 namespace Controller
-{
+{//контроллер
     public class SimulationController
     {
         private readonly RuntimeModel _runtimeModel;
