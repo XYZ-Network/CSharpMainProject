@@ -15,12 +15,27 @@ namespace UnitBrains.Player
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
+            
             float overheatTemperature = OverheatTemperature;
+            float temperature = GetTemperature();
+
+            if (temperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            
+            for (int i = 0; i <= temperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
+
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+
             ///////////////////////////////////////
         }
 
@@ -34,12 +49,30 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            
+            var result = new List<Vector2Int>();
+            var targets = GetAllTargets();
+
+            var closestTarget = new Vector2Int();
+            var minDistance = float.MaxValue;
+
+            foreach (var target in targets)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
             }
+
+            if (minDistance < float.MaxValue)
+            {
+                result.Add(closestTarget);
+            }            
             return result;
+
             ///////////////////////////////////////
         }
 
