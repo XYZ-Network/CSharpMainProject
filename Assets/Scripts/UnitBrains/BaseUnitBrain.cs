@@ -43,7 +43,7 @@ namespace UnitBrains
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
-        public List<BaseProjectile> GetProjectiles()
+        public virtual List<BaseProjectile> GetProjectiles()
         {
             List<BaseProjectile> result = new ();
             foreach (var target in SelectTargets())
