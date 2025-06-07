@@ -7,3 +7,7 @@ Logs
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
 CsharpMainProject.sln
+.vs/CSharpXYZMyMainProject/v17/DocumentLayout.json
+ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
+Root.csproj
+Tests.csproj

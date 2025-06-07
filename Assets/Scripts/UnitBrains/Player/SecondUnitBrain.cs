@@ -19,8 +19,21 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            else
+            {
+                for (int i = 0; i <= GetTemperature(); i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+                IncreaseTemperature();
+            }
+
             ///////////////////////////////////////
         }
 
@@ -35,10 +48,27 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            float MinDistance = float.MinValue;
+            Vector2Int NearestTarget = new();
+
+            foreach (Vector2Int target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                if (DistanceToOwnBase(target) > MinDistance)
+                {
+                    MinDistance = DistanceToOwnBase(target);
+                    NearestTarget = target;
+                }
             }
+
+            result.Clear();
+
+            //С помошью вывода в консоль "Debug.Log(NearestTarget);" узнал что координаты по которым стреляют мои юнити это (0,0)(если они стреляют в воздух)
+            if (MinDistance != float.MaxValue & NearestTarget != new Vector2Int(0,0))// решил добавить второе условие вместе с первым которое указал проверяющий, понимаю что это костыль, но не знаю как поменять код, чтобы не было такого
+            {
+                result.Add(NearestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }
