@@ -2,6 +2,8 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using Model.Runtime.Buffs;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 using View;
@@ -18,6 +20,7 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private readonly BuffSystem _buffSystem;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -30,6 +33,7 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _buffSystem = ServiceLocator.Get<BuffSystem>();
         }
 
         public void StartLevel(int level)
@@ -72,7 +76,8 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var coordinator = new UnitCoordinator(_runtimeModel, _timeUtil);
+            var unit = new Unit(config, coordinator, pos);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -83,6 +88,17 @@ namespace Controller
                 _runtimeModel.Money[RuntimeModel.BotPlayerId] < _settings.GetCheapestEnemyUnitCost())
             {
                 _runtimeModel.Stage = RuntimeModel.GameStage.Simulation;
+                
+                // Buff System Test Block - buff all player units at start
+                // add debuff (decrease Attack and Move delay x2 times)
+                // add buff (invulnerability)
+                // for all player units for 5 sec at start of battle
+                // foreach (var u in _runtimeModel.PlayersUnits[RuntimeModel.PlayerId])
+                // {
+                //     _buffSystem.AddBuffToUnit(u, new Buff(Buff.BuffType.AttackSpeed, 5, -2));
+                //     _buffSystem.AddBuffToUnit(u, new Buff(Buff.BuffType.MoveSpeed, 5, -2));
+                //     _buffSystem.AddBuffToUnit(u, new Buff(Buff.BuffType.Invulnerability, 5, 1));
+                // }
             }
         }
 
@@ -99,6 +115,7 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
+            _buffSystem.Clear();
         }
     }
 }

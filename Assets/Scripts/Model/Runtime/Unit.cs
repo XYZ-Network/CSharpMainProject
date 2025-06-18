@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
+using Model.Runtime.Buffs;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 
@@ -18,29 +21,34 @@ namespace Model.Runtime
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
+        public BuffSystem BuffSystem { get; }
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
-
+        
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, UnitCoordinator coordinator, Vector2Int startPos)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetCoordinator(coordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            BuffSystem = ServiceLocator.Get<BuffSystem>();
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
+
+            List<Buff> buffs = BuffSystem.GetActiveBuffs(this);
             
             if (_nextBrainUpdateTime < time)
             {
@@ -50,13 +58,43 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + CalculateMoveSpeedDelay(buffs);
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + CalculateAttackSpeedDelay(buffs);
+            }
+        }
+
+        private float CalculateMoveSpeedDelay(List<Buff> buffs)
+        {
+            try
+            {
+                float moveSpeedRelativeValue = buffs.Last(b => b.Type == Buff.BuffType.MoveSpeed).Value;
+                return moveSpeedRelativeValue > 0
+                    ? Config.MoveDelay / moveSpeedRelativeValue
+                    : Config.MoveDelay * -moveSpeedRelativeValue;
+            }
+            catch (InvalidOperationException e)
+            {
+                return Config.MoveDelay;
+            }
+        }
+        
+        private float CalculateAttackSpeedDelay(List<Buff> buffs)
+        {
+            try
+            {
+                float attackSpeedRelativeValue = buffs.Last(b => b.Type == Buff.BuffType.AttackSpeed).Value;
+                return attackSpeedRelativeValue > 0
+                    ? Config.AttackDelay / attackSpeedRelativeValue
+                    : Config.AttackDelay * -attackSpeedRelativeValue;
+            }
+            catch (InvalidOperationException e)
+            {
+                return Config.AttackDelay;
             }
         }
 
@@ -96,6 +134,10 @@ namespace Model.Runtime
 
         public void TakeDamage(int projectileDamage)
         {
+            var buffs = BuffSystem.GetActiveBuffs(this);
+            if (buffs.Any(b => b.Type == Buff.BuffType.Invulnerability))
+                return;
+
             Health -= projectileDamage;
         }
     }
