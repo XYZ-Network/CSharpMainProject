@@ -11,18 +11,20 @@ namespace View
 
         public void UpdateState(IReadOnlyUnit model, Vector3 prevPosition)
         {
-            _healthBar.UpdateHealth((float) model.Health / model.Config.MaxHealth);
+            _healthBar.UpdateHealth((float)model.Health / model.Config.MaxHealth);
             var deltaPos = transform.position - prevPosition;
             if (deltaPos != Vector3.zero)
             {
                 transform.rotation = Quaternion.LookRotation(deltaPos, Vector3.up);
             }
 
-            if (_debugPathOutput != null &&
-                model.ActivePath != null &&
-                model.ActivePath?.EndPoint != _debugPathOutput.Path?.EndPoint)
+            if (_debugPathOutput != null && model.ActivePath != null)
             {
-                _debugPathOutput.HighlightPath(model.ActivePath);
+                var currentEnd = model.ActivePath.EndPoint;
+                var debugEnd = _debugPathOutput.Path?.EndPoint;
+
+                if (currentEnd != debugEnd)
+                    _debugPathOutput.HighlightPath(model.ActivePath);
             }
         }
     }

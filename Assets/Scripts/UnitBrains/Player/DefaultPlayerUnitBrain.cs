@@ -1,25 +1,18 @@
 ﻿using System.Collections.Generic;
-using Model;
-using Model.Runtime.Projectiles;
 using UnityEngine;
 
 namespace UnitBrains.Player
 {
     public class DefaultPlayerUnitBrain : BaseUnitBrain
     {
-        protected float DistanceToOwnBase(Vector2Int fromPos) =>
-            Vector2Int.Distance(fromPos, runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
+        // Здесь можно переопределять логику для конкретных юнитов
 
-        protected void SortByDistanceToOwnBase(List<Vector2Int> list)
+        public override string TargetUnitName => string.Empty; // например, пустое для всех
+
+        public override void Update(float deltaTime, float time)
         {
-            list.Sort(CompareByDistanceToOwnBase);
-        }
-        
-        private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
-        {
-            var distanceA = DistanceToOwnBase(a);
-            var distanceB = DistanceToOwnBase(b);
-            return distanceA.CompareTo(distanceB);
+            // Можно добавить дополнительную логику передвижения/атаки
+            base.Update(deltaTime, time);
         }
     }
 }

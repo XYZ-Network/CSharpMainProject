@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -26,7 +25,7 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -41,19 +40,19 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
                 _nextMoveTime = time + Config.MoveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
                 _nextAttackTime = time + Config.AttackDelay;
@@ -65,7 +64,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -74,18 +73,19 @@ namespace Model.Runtime
         {
             var targetPos = _brain.GetNextStep();
             var delta = targetPos - Pos;
+
             if (delta.sqrMagnitude > 2)
             {
                 Debug.LogError($"Brain for unit {Config.Name} returned invalid move: {delta}");
                 return;
             }
 
-            if (_runtimeModel.RoMap[targetPos] ||
-                _runtimeModel.RoUnits.Any(u => u.Pos == targetPos))
+            if (!_runtimeModel.IsTileWalkable(targetPos))
             {
+                Debug.Log($"[{Config.Name}] Path blocked at {targetPos}");
                 return;
             }
-            
+
             Pos = targetPos;
         }
 

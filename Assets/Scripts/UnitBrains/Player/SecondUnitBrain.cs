@@ -12,10 +12,10 @@ namespace UnitBrains.Player
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
-        private const int MaxTargetsToConsider = 3; // B. Константа для максимума целей
+        private const int MaxTargetsToConsider = 3;
 
-        private static int _unitCounter = 0; // A. Статический счетчик юнитов
-        private readonly int _unitNumber; // A. Номер текущего юнита
+        private static int _unitCounter = 0;
+        private readonly int _unitNumber;
 
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
@@ -24,17 +24,13 @@ namespace UnitBrains.Player
 
         public SecondUnitBrain()
         {
-            // A. Инициализация номера юнита при создании
             _unitNumber = _unitCounter++;
         }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            if (GetTemperature() >= overheatTemperature)
-            {
+            if (GetTemperature() >= OverheatTemperature)
                 return;
-            }
 
             IncreaseTemperature();
 
@@ -58,28 +54,21 @@ namespace UnitBrains.Player
             List<Vector2Int> result = new List<Vector2Int>();
             _targetsToMove.Clear();
 
-            // B. Получаем и сортируем цели по расстоянию к базе
             List<Vector2Int> allTargets = GetAllTargets().ToList();
             SortByDistanceToOwnBase(allTargets);
 
             if (allTargets.Count > 0)
             {
-                // B. Выбираем цель в зависимости от номера юнита
                 int targetIndex = Mathf.Min(_unitNumber, allTargets.Count - 1, MaxTargetsToConsider - 1);
                 Vector2Int selectedTarget = allTargets[targetIndex];
 
                 if (IsTargetInRange(selectedTarget))
-                {
                     result.Add(selectedTarget);
-                }
                 else
-                {
                     _targetsToMove.Add(selectedTarget);
-                }
             }
             else
             {
-                // C. Если целей нет - атакуем базу противника
                 int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
                 Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
                 _targetsToMove.Add(enemyBase);
@@ -88,7 +77,6 @@ namespace UnitBrains.Player
             return result;
         }
 
-        // Метод для сортировки целей по расстоянию к базе
         private void SortByDistanceToOwnBase(List<Vector2Int> targets)
         {
             targets.Sort((a, b) =>
@@ -97,6 +85,13 @@ namespace UnitBrains.Player
                 float distB = DistanceToOwnBase(b);
                 return distA.CompareTo(distB);
             });
+        }
+
+        private float DistanceToOwnBase(Vector2Int pos)
+        {
+            int ownBaseId = unit.Config.IsPlayerUnit ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+            Vector2Int ownBasePos = runtimeModel.RoMap.Bases[ownBaseId];
+            return (pos - ownBasePos).sqrMagnitude;
         }
 
         public override void Update(float deltaTime, float time)
@@ -123,7 +118,8 @@ namespace UnitBrains.Player
         private void IncreaseTemperature()
         {
             _temperature += 1f;
-            if (_temperature >= OverheatTemperature) _overheated = true;
+            if (_temperature >= OverheatTemperature)
+                _overheated = true;
         }
     }
 }
