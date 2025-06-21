@@ -1,46 +1,74 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
+        private static int _unitCounter = 0;
+        private int _unitNumber = _unitCounter++;
+        
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
+        private const int SmartTargetingFactor = 3;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _priorityTargets = new();
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            int currentTemperature = GetTemperature();
+            if (currentTemperature >= OverheatTemperature) 
+                return;
+            
+            for (int i = 0; i <= currentTemperature; i++)
+            {
+                for (int j = 0; j < unit.ProjectilesPerShot; j++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+            }
+            
+            IncreaseTemperature();
         }
 
-        public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
-        }
+        // Override only target selection to use base pathfinding
+        public override Vector2Int GetNextStepTarget() =>
+            _priorityTargets.Any() 
+                ? _priorityTargets.First() 
+                : runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
+            // Enemy base already in GetAllTargets(). No need to add it explicitly.
+            var result = GetAllTargets().ToList();
+            
+            // Remove base as possible target when we have enemy units
+            if (result.Count > _unitNumber) 
+                result.Remove(result.Last());
+            
+            SortByDistanceToOwnBase(result);
+            
+            // In case if number of targets is less than smart targeting factor
+            var divider = Math.Min(result.Count, SmartTargetingFactor);
+            var target = result[_unitNumber % divider];
+            
+            _priorityTargets.Clear();
+            _priorityTargets.Add(target);
+            
+            result.Clear();
+            if (IsTargetInRange(target))
+                result.Add(target);
+            
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)

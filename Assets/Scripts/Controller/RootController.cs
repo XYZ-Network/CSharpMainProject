@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Config;
+using Model.Runtime.Buffs;
 using UnityEngine;
 using Utilities;
 using View;
@@ -30,6 +31,8 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+            
+            ServiceLocator.Register(BuffSystem.Create());
             
             _levelController = new(_runtimeModel, this);
             
