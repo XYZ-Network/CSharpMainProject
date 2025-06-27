@@ -1,0 +1,38 @@
+﻿<Properties StartupConfiguration="{EC268356-A770-5511-F91E-CEF9E21C61F9}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs">
+    <Files>
+      <File FileName="Assets/Scripts/EnterPoint.cs" Line="13" Column="33" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" Line="33" Column="56" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="20" Column="52" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="CSharpMainProject" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Model" expanded="True">
+                  <Node name="Runtime" expanded="True">
+                    <Node name="Projectiles" expanded="True" />
+                  </Node>
+                </Node>
+                <Node name="UnitBrains" expanded="True">
+                  <Node name="Player" expanded="True">
+                    <Node name="SecondUnitBrain.cs" selected="True" />
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="06207696-c061-487d-9c65-bb34010a0961" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
