@@ -32,8 +32,34 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            // Очищаем старые подсветки
+            while (allHighlights.Count > 0)
+            {
+                Destroy(allHighlights[0]);
+                allHighlights.RemoveAt(0);
+            }
+
+            // Получаем путь и проверяем его
+            var pathCells = path?.GetPath();
+            if (pathCells == null || cellHighlightPrefab == null)
+                yield break;
+
+            // Проходим по всем клеткам пути
+            foreach (var cell in pathCells)
+            {
+                // Создаем подсветку для текущей клетки
+                CreateHighlight(cell);
+
+                // Ограничиваем количество подсветок
+                if (allHighlights.Count > maxHighlights)
+                {
+                    Destroy(allHighlights[0]);
+                    allHighlights.RemoveAt(0);
+                }
+
+                // Ждем один кадр с небольшой задержкой
+                yield return new WaitForSeconds(0.05f);
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)
