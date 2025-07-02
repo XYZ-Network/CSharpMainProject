@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using View;
 
@@ -32,11 +34,36 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+
+            foreach (var i in path.GetPath())
+            {
+
+                CreateHighlight(i);
+                if (allHighlights.Count > maxHighlights)
+                {
+                    DestroyHighlight(0);
+                }
+
+                yield return new WaitForSeconds(0.1f);
+
+            }
+            HighlightPath(path);
+
+
+            //foreach (var item in path.GetPath())
+            //{
+            //    CreateHighlight(item);
+            //    if (allHighlights.Count > maxHighlights)
+            //    {
+            //        DestroyHighlight(0);
+            //    }
+            //    yield return new WaitForSeconds(0.1f);
+
+            //}
+            //HighlightPath(path);
         }
 
-        private void CreateHighlight(Vector2Int atCell)
+        private void CreateHighlight(Vector2Int atCell) // создание ячеек
         {
             var pos = Gameplay3dView.ToWorldPosition(atCell, 1f);
             var highlight = Instantiate(cellHighlightPrefab, pos, Quaternion.identity);
@@ -44,7 +71,7 @@ namespace UnitBrains.Pathfinding
             allHighlights.Add(highlight);
         }
 
-        private void DestroyHighlight(int index)
+        private void DestroyHighlight(int index) // удаления ячеек
         {
             Destroy(allHighlights[index]);
             allHighlights.RemoveAt(index);

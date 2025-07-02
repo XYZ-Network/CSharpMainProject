@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Runtime.Projectiles;
+using Model.Runtime.ReadOnly;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -21,5 +23,22 @@ namespace UnitBrains.Player
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
         }
+
+        public override Vector2Int GetNextStep()
+        {
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            IReadOnlyUnit recomendTarget = UnitCordinator.GetInstance()._recomendTarget;
+            if (recomendTarget != null)
+            {
+                AStarUnitPath path = new AStarUnitPath(runtimeModel, unit.Pos, recomendTarget.Pos);
+                return path.GetNextStepFrom(unit.Pos);
+            }
+
+            return base.GetNextStep();
+
+        }
+
     }
 }
