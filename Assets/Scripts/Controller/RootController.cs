@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.Model.Runtime.Buffs;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -17,8 +18,13 @@ namespace Controller
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(TimeUtil.Create());
-            
+
+            var timeUtil = TimeUtil.Create();
+            ServiceLocator.Register(timeUtil);
+
+            var buffSystem = new BuffSystem(timeUtil);
+            ServiceLocator.Register(buffSystem);
+
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
             

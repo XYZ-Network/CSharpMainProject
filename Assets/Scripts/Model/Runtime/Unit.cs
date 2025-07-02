@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using Assets.Scripts.UnitBrains.Player;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System.Collections.Generic;
+using System.Linq;
 using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
@@ -19,14 +20,37 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        private float _moveSpeedMultiplier = 1f;
+        private float _attackSpeedMultiplier = 1f;
+        private int _projectileMultiplier = 1;
+        private float _attackRangeMultiplier = 1f;
+
+        internal void AddMoveSpeedMultiplier(float m) => _moveSpeedMultiplier *= m;
+        internal void RemoveMoveSpeedMultiplier(float m) => _moveSpeedMultiplier /= m;
+
+        internal void AddAttackSpeedMultiplier(float m) => _attackSpeedMultiplier *= m;
+        internal void RemoveAttackSpeedMultiplier(float m) => _attackSpeedMultiplier /= m;
+
+        internal void AddProjectileMultiplier(int k) => _projectileMultiplier *= k;
+        internal void RemoveProjectileMultiplier(int k) => _projectileMultiplier /= k;
+
+        internal void AddAttackRangeMultiplier(float m) => _attackRangeMultiplier *= m;
+        internal void RemoveAttackRangeMultiplier(float m) => _attackRangeMultiplier /= m;
+
+        public float CurrentAttackSpeedMultiplier => _attackSpeedMultiplier;
+        public int CurrentProjectileMultiplier => _projectileMultiplier;
+        public float CurrentAttackRange => Config.AttackRange * _attackRangeMultiplier;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        public BaseUnitBrain Brain => _brain;
+        public override string ToString() => Config.Name;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -41,22 +65,24 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                float moveMod = Mathf.Max(0.01f, _moveSpeedMultiplier);
+                _nextMoveTime = time + Config.MoveDelay / moveMod;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                float atkMod = Mathf.Max(0.01f, _attackSpeedMultiplier);
+                _nextAttackTime = time + Config.AttackDelay / atkMod;
             }
         }
 
@@ -65,7 +91,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,8 +111,13 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
+        }
+
+        public void SetCoordinator(IUnitCoordinator coordinator)
+        {
+            _brain.SetCoordinator(coordinator);
         }
 
         public void ClearPendingProjectiles()

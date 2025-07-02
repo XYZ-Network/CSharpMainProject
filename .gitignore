@@ -1,9 +1,41 @@
-﻿.idea
-Library
-UserSettings
-Temp
-obj
-Logs
-Assembly-CSharp.csproj
-Assembly-CSharp-Editor.csproj
-CsharpMainProject.sln
+﻿# Unity folders to ignore
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Pp]ackages/com.unity.*
+
+# Visual Studio files
+.vs/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Unity generated files
+*.pidb
+*.pidb.meta
+*.pdb
+*.mdb
+*.opendb
+
+# Crash reports
+sysinfo.txt
+
+# Build results
+*.apk
+*.aab
+*.xcodeproj
+*.xcworkspace
+*.xcuserstate
+
+# Rider
+.idea/
+*.sln.iml
+Assets/LowPoly Rocks/
+UserSettings/
