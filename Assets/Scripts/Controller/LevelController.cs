@@ -49,6 +49,8 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
             _gameplayView.Reinitialize();
+
+            UnitBrains.Coordinator.UnitCoordinator.Instance.Init(_runtimeModel, _timeUtil);
         }
 
         public void OnPlayersUnitChosen(UnitConfig unitConfig)
