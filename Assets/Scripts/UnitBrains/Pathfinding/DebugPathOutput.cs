@@ -19,9 +19,9 @@ namespace UnitBrains.Pathfinding
             Path = path;
             while (allHighlights.Count > 0)
             {
-                DestroyHighlight(0);
+                DestroyHighlight(allHighlights[0]);
             }
-            
+
             if (highlightCoroutine != null)
             {
                 StopCoroutine(highlightCoroutine);
@@ -32,22 +32,34 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            foreach (Vector2Int cell in path.GetPath())
+            {
+                var highlight = CreateHighlight(cell);
+                StartCoroutine(DestroyHighlightAfter(highlight, 0.5f));
+
+                yield return new WaitForSecondsRealtime(0.1f);
+            }                
         }
 
-        private void CreateHighlight(Vector2Int atCell)
+        private IEnumerator DestroyHighlightAfter(GameObject highlight, float delaySec)
+        {
+            yield return new WaitForSecondsRealtime(delaySec);
+            DestroyHighlight(highlight);
+        }
+
+        private GameObject CreateHighlight(Vector2Int atCell)
         {
             var pos = Gameplay3dView.ToWorldPosition(atCell, 1f);
             var highlight = Instantiate(cellHighlightPrefab, pos, Quaternion.identity);
             highlight.transform.SetParent(transform);
             allHighlights.Add(highlight);
+            return highlight;
         }
 
-        private void DestroyHighlight(int index)
+        private void DestroyHighlight(GameObject highlight)
         {
-            Destroy(allHighlights[index]);
-            allHighlights.RemoveAt(index);
+            Destroy(highlight);
+            allHighlights.Remove(highlight);
         }
     }
 }
