@@ -19,8 +19,22 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+
+            if (GetTemperature() >= overheatTemperature) // Делается проверка температуры
+            {
+                return;                                 // Если достигнут перегрев, то метод прерывается
+            }
+
+            IncreaseTemperature();                      // Если перегрева нет, то вызывается метод повышения температуры на 1
+
+            int MissileCounts = GetTemperature();       // Присваевается переменная "количество снарядов" которая равна текущей температуре
+            for (int i = 0; i < MissileCounts; i++)     // Кажется, тут запускается цикл, который увеличивает количество выпускаемых снядов
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+             
+            }
+
             ///////////////////////////////////////
         }
 
