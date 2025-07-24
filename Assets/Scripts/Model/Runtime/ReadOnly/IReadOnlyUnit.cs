@@ -9,6 +9,7 @@ namespace Model.Runtime.ReadOnly
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; }
         public int Health { get; }
+        public bool IsDead { get; }
         public BaseUnitPath ActivePath { get; }
     }
 }

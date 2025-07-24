@@ -3,6 +3,7 @@ using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using Systems.Buffs;
 using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        private BuffSystem _buffSystem = ServiceLocator.Get<BuffSystem>();
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
@@ -50,13 +52,17 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                // Speed multiplier 2 means that the delay should be 2 times less.
+                float delayCoeff = 1 / _buffSystem.GetSpeedMultiplier(this);
+                _nextMoveTime = time + Config.MoveDelay * delayCoeff;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                // Attack speed multiplier 2 means that the delay should be 2 times less.
+                float delayCoeff = 1 / _buffSystem.GetAttackSpeedMultiplier(this);
+                _nextAttackTime = time + Config.AttackDelay * delayCoeff;
             }
         }
 

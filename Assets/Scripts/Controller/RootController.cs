@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Config;
+using Systems.Buffs;
 using UnityEngine;
 using Utilities;
 using View;
@@ -30,6 +31,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+            
+            var buffSystem = SpawnBuffSystem();
+            ServiceLocator.Register(buffSystem);
             
             _levelController = new(_runtimeModel, this);
             
@@ -74,6 +78,13 @@ namespace Controller
         {
             var prefab = Resources.Load<VFXView>("View/VFXView");
             return Object.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        }
+        
+        private BuffSystem SpawnBuffSystem()
+        {
+            var go = new GameObject("BuffSystem");
+            Object.DontDestroyOnLoad(go);
+            return go.AddComponent<BuffSystem>();
         }
     }
 }
