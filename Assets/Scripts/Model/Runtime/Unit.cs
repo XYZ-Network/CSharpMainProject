@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Assets.Scripts.UnitBrains;
+using Controller;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
+using UnitBrains.Player;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 using Utilities;
 
@@ -20,13 +25,15 @@ namespace Model.Runtime
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
-        private IReadOnlyRuntimeModel _runtimeModel;
-        private BaseUnitBrain _brain;
+        private readonly IReadOnlyRuntimeModel _runtimeModel;
+        private readonly BaseUnitBrain _brain;
+        private readonly BuffSystem _buffSystem;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+        public int ID { get; private set; }
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -35,28 +42,46 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffSystem = ServiceLocator.Get<BuffSystem>();
+            if (config.Cost == 70)
+                ID = SetID();
+        }
+
+        private static int _idValue = 0;
+        private static int SetID()
+        {
+            _idValue++;
+            return _idValue - 1;
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
+            float moveModifier = 1;
+            float attackModifier = 1;
+
+            if (_buffSystem.ContainsKey(this))
+            {
+                moveModifier /= _buffSystem.GetMoveMultiplier(this);
+                attackModifier /= _buffSystem.GetAttackMultiplier(this);
+            }
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay * moveModifier;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay * attackModifier;
             }
         }
 
@@ -65,7 +90,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +110,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
@@ -97,6 +122,10 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+        public void SetUnitCoordinator(UnitCoordinator coordinator)
+        {
+            _brain._coordinator = coordinator;
         }
     }
 }
