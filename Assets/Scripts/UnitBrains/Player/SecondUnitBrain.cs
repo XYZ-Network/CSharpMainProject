@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,6 +15,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        private List<Vector2Int> _dangerousTargets = new();
+        private bool _hasTarget = false;
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -26,21 +31,48 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            var position = unit.Pos;
+            
+            if (_hasTarget || _dangerousTargets.Count == 0)
+            {
+                return position;
+            }
+            
+            return position.CalcNextStepTowards(_dangerousTargets.First());
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            _dangerousTargets.Clear();
+            
+            var targets = GetAllTargets().ToList();
+            Vector2Int resultEnemy;
+            
+            if (targets.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                var enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                var enemyBase = runtimeModel.RoMap.Bases[enemyId];
+                resultEnemy = enemyBase;
             }
-            return result;
-            ///////////////////////////////////////
+            else
+            {
+                resultEnemy = targets.OrderBy(DistanceToOwnBase).First();
+            }
+
+            if (GetReachableTargets().Contains(resultEnemy))
+            {
+                _hasTarget = true;
+                return new List<Vector2Int>()
+                {
+                    resultEnemy
+                };
+            }
+            else
+            {
+                _hasTarget = false;
+                _dangerousTargets.Add(resultEnemy);
+                return new List<Vector2Int>();
+            }
         }
 
         public override void Update(float deltaTime, float time)
