@@ -12,6 +12,7 @@ namespace UnitBrains
 {
     public abstract class BaseUnitBrain
     {
+        protected List<Vector2Int> _targetsToMove = null;
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
@@ -19,7 +20,17 @@ namespace UnitBrains
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+
+        private MonoBehaviour _coroutineRunner;
+
+        protected void StartCoroutine(System.Collections.IEnumerator routine)
+        {
+            if (_coroutineRunner != null)
+            {
+                _coroutineRunner.StartCoroutine(routine);
+            }
+        }
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -36,14 +47,24 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
+            if (_targetsToMove != null && _targetsToMove.Count > 0)
+            {
+                var path = new AStarUnitPath(runtimeModel, unit.Pos, _targetsToMove[0]);
+                _activePath = path;
+                return path.GetNextStepFrom(unit.Pos);
+            }
+
+            // fallback на базу
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            var fallbackPath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = fallbackPath;
+            return fallbackPath.GetNextStepFrom(unit.Pos);
         }
 
-        public List<BaseProjectile> GetProjectiles()
+
+        public virtual List<BaseProjectile> GetProjectiles()
         {
             List<BaseProjectile> result = new ();
             foreach (var target in SelectTargets())
@@ -115,7 +136,7 @@ namespace UnitBrains
             return units;
         }
 
-        protected bool HasTargetsInRange()
+        protected virtual bool HasTargetsInRange()
         {
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
             foreach (var possibleTarget in GetAllTargets())

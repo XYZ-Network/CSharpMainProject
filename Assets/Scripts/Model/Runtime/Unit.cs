@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Model.BuffSystem;
 using Model.Config;
+using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
+using UnitBrains.Coordinator;
 using UnitBrains.Pathfinding;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 
@@ -20,13 +23,14 @@ namespace Model.Runtime
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
-        private IReadOnlyRuntimeModel _runtimeModel;
-        private BaseUnitBrain _brain;
+        private readonly IReadOnlyRuntimeModel _runtimeModel;
+        private readonly BaseUnitBrain _brain;
+        private UnitCoordinator _coordinator;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -37,23 +41,33 @@ namespace Model.Runtime
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
+        public void SetCoordinator(UnitCoordinator coordinator)
+        {
+            _coordinator = coordinator;
+            if (_brain is DefaultPlayerUnitBrain defaultBrain)
+            {
+                defaultBrain.SetCoordinator(coordinator);
+            }
+        }
+
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
+                _coordinator?.Update(deltaTime);
             }
-            
+
             if (_nextMoveTime < time)
             {
                 _nextMoveTime = time + Config.MoveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
                 _nextAttackTime = time + Config.AttackDelay;
@@ -65,7 +79,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -74,6 +88,7 @@ namespace Model.Runtime
         {
             var targetPos = _brain.GetNextStep();
             var delta = targetPos - Pos;
+
             if (delta.sqrMagnitude > 2)
             {
                 Debug.LogError($"Brain for unit {Config.Name} returned invalid move: {delta}");
@@ -85,7 +100,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
@@ -96,7 +111,7 @@ namespace Model.Runtime
 
         public void TakeDamage(int projectileDamage)
         {
-            Health -= projectileDamage;
+            Health = Mathf.Max(0, Health - projectileDamage);
         }
     }
 }
