@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Xml.XPath;
+using Assets.Scripts.UnitBrains.Pathfinding;
 using Model;
 using UnityEngine;
 
@@ -8,25 +11,28 @@ namespace UnitBrains.Pathfinding
     {
         public Vector2Int StartPoint => startPoint;
         public Vector2Int EndPoint => endPoint;
-        
+
         protected readonly IReadOnlyRuntimeModel runtimeModel;
         protected readonly Vector2Int startPoint;
         protected readonly Vector2Int endPoint;
         protected Vector2Int[] path = null;
-
         protected abstract void Calculate();
-        
+
         public IEnumerable<Vector2Int> GetPath()
         {
             if (path == null)
                 Calculate();
-            
+
             return path;
         }
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
             var found = false;
+
+            if (!GetPath().Contains(unitPos))
+                path = null;
+
             foreach (var cell in GetPath())
             {
                 if (found)
@@ -35,7 +41,7 @@ namespace UnitBrains.Pathfinding
                 found = cell == unitPos;
             }
 
-            Debug.LogError($"Unit {unitPos} is not on the path");
+            Debug.LogError($"Unit {unitPos} is not on the path.");
             return unitPos;
         }
 

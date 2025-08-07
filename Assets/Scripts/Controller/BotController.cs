@@ -5,10 +5,8 @@ using System.Linq;
 using Model;
 using Model.Config;
 using UnityEngine;
-using Utilities;
-//hello
-//How are you?
-//i'm fine
+using Utilities; 
+
 namespace Controller
 {
     public class BotController
