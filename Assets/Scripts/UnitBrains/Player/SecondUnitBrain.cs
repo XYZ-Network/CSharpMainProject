@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
+using System.Linq;
 
 namespace UnitBrains.Player
 {
@@ -12,35 +16,78 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private List<Vector2Int> _pendingTargets = new List<Vector2Int>();//цели для движения
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            //a. Проверка перегрева оружия
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            
+            //2.a Увеличение снарядов
+            int MissileCount = GetTemperature(); // кол-во снарядов = текущей температуре
+            for (int i = 0; i < MissileCount; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            //b. Вызов метода private void IncreaseTemperature()
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int position = unit.Pos;
+
+
+            var reachableTargets = GetReachableTargets();
+            if (reachableTargets.Count > 0)//Если в зоне атаки, атакуем
+            {
+                return position;
+            }
+
+            if (_pendingTargets != null && _pendingTargets.Count > 0)//Если врагов нет
+            {
+                Vector2Int nextPosition = _pendingTargets[0];
+                Vector2Int step = position.CalcNextStepTowards(nextPosition);
+                return step;
+            }
+            return position;
         }
 
         protected override List<Vector2Int> SelectTargets()
+
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            _pendingTargets.Clear();//очистка списка целей
+            List<Vector2Int> allTarget = GetAllTargets().ToList();
+            List<Vector2Int> result = new List<Vector2Int>();
+            if (allTarget.Count > 0)
             {
-                result.RemoveAt(result.Count - 1);
+                Vector2Int target = allTarget[0];// Выбираем ближайшую цель к базе
+                float minDistance = DistanceToOwnBase(target);
+                for (int i = 1; i < allTarget.Count; i++)
+                {
+                    float distance = DistanceToOwnBase(allTarget[i]);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        target = allTarget[i];
+                    }
+                }
+                if (GetReachableTargets().Contains(target))// Проверка досягаемости
+                    result.Add(target);
+                else _pendingTargets.Add(target);
+            }
+            else
+            {
+                int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;// если мы игрок → враг бот, // если мы бот → враг игрок
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyId];//координаты базы врага
+                _pendingTargets.Add(enemyBase);//цели для движения
             }
             return result;
-            ///////////////////////////////////////
         }
 
         public override void Update(float deltaTime, float time)
