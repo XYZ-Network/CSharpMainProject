@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.UnitBrains.Player;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -13,6 +14,7 @@ namespace Controller
         private readonly LevelController _levelController;
         
         private RootView _rootView;
+        private BuffSystem _buffSystem;
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
@@ -62,6 +64,10 @@ namespace Controller
             var prefab = Resources.Load<RootView>("View/RootView");
             _rootView = Object.Instantiate(prefab, targetCanvas.transform);
             _rootView.Initialize(this);
+
+            var buffSystemGo = new GameObject("BuffSystem");
+            _buffSystem = buffSystemGo.AddComponent<BuffSystem>();
+            ServiceLocator.Register(_buffSystem);
         }
         
         private Gameplay3dView SpawnGameplayVisual()

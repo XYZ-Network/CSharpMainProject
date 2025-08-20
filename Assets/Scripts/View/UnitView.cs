@@ -22,8 +22,10 @@ namespace View
                 model.ActivePath != null &&
                 model.ActivePath?.EndPoint != _debugPathOutput.Path?.EndPoint)
             {
+                
                 _debugPathOutput.HighlightPath(model.ActivePath);
             }
+            
         }
     }
 }

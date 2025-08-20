@@ -26,14 +26,28 @@ namespace UnitBrains.Pathfinding
             {
                 StopCoroutine(highlightCoroutine);
             }
-
+            
             highlightCoroutine = StartCoroutine(HighlightCoroutine(path));
         }
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            var cells = path.GetPath();
+            int counter = 0;
+
+            foreach (var cell in cells)
+            {
+                CreateHighlight(cell);
+                counter++;
+
+                if (counter > maxHighlights)
+                {
+                    DestroyHighlight(0);
+                    counter--;
+                }
+
+                yield return new WaitForSeconds(0.2f);
+            }            
         }
 
         private void CreateHighlight(Vector2Int atCell)

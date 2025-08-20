@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using UnitBrains.Coordinator;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -12,13 +14,21 @@ namespace UnitBrains
 {
     public abstract class BaseUnitBrain
     {
+        protected List<Vector2Int> _targetsToMove = null;
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
         
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+        private BaseUnitPath _activePath;
+
+        protected UnitCoordinator _coordinator;
+
+        public virtual void SetCoordinator(UnitCoordinator coordinator)
+        {
+            _coordinator = coordinator;
+        }
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -36,11 +46,19 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
+            if (_targetsToMove != null && _targetsToMove.Count > 0)
+            {
+                var path = new AStarUnitPath(runtimeModel, unit.Pos, _targetsToMove[0]);
+                _activePath = path;
+                return path.GetNextStepFrom(unit.Pos);
+            }
+
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            var fallbackPath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = fallbackPath;
+            return fallbackPath.GetNextStepFrom(unit.Pos);
         }
 
         public List<BaseProjectile> GetProjectiles()
@@ -56,6 +74,10 @@ namespace UnitBrains
                 var proj = result[i];
                 proj.AddStartShift(_projectileShifts[i % _projectileShifts.Length]);
             }
+
+            var buffSystem = ServiceLocator.Get<BuffSystem>();
+            var speedBuff = new Buff(5f, moveMod: 1.5f); 
+            buffSystem.AddBuff(unit, speedBuff);
 
             return result;
         }
