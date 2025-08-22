@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Model;
+﻿using Model;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnitBrains.Pathfinding
@@ -26,17 +27,15 @@ namespace UnitBrains.Pathfinding
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
-            var found = false;
-            foreach (var cell in GetPath())
+            var pathArray = GetPath().ToArray();
+            for (int i = 0; i < pathArray.Length; i++)
             {
-                if (found)
-                    return cell;
-
-                found = cell == unitPos;
+                if (pathArray[i] == unitPos && i < pathArray.Length - 1)
+                    return pathArray[i + 1];
             }
 
-            Debug.LogError($"Unit {unitPos} is not on the path");
-            return unitPos;
+            var closestPoint = pathArray.OrderBy(p => (p - unitPos).sqrMagnitude).FirstOrDefault();
+            return closestPoint != default ? closestPoint : unitPos;
         }
 
         protected BaseUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint)
