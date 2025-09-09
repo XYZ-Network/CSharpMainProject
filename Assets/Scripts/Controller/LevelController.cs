@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -19,6 +20,9 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private UnitCoordinator _playerCoordinator;
+        private UnitCoordinator _botCoordinator;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -37,6 +41,9 @@ namespace Controller
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
             
             _rootView.HideLevelFinished();
+
+            _playerCoordinator = new UnitCoordinator(true);
+            _botCoordinator = new UnitCoordinator(false);
 
             Random.InitState(level);
             SetInitialMoney();
@@ -73,6 +80,16 @@ namespace Controller
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
             var unit = new Unit(config, pos);
+
+            if (forPlayer == RuntimeModel.PlayerId)
+            {
+                unit.SetCoordinator(_playerCoordinator);
+            }
+            else
+            {
+                unit.SetCoordinator(_botCoordinator);
+            }
+            
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -97,6 +114,12 @@ namespace Controller
         private void OnLevelFinished(bool playerWon)
         {
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
+
+            _playerCoordinator?.Dispose();
+            _botCoordinator?.Dispose();
+            _playerCoordinator = null;
+            _botCoordinator = null;
+
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
         }
