@@ -12,6 +12,9 @@ namespace Model.Runtime
 {
     public class Unit : IReadOnlyUnit
     {
+        public static  List<Unit> GroupUnits = new List<Unit>();
+        public static int UnitCounter  = 0;/* Счетчик по заданию*/
+        public static int NumberOfUnit { get; set; }/* номер юнита*/
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
@@ -29,12 +32,23 @@ namespace Model.Runtime
         
         public Unit(UnitConfig config, Vector2Int startPos)
         {
+            
             Config = config;
+            
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            /*unitCounter = UnitCounter;*/ /*инициализация счетчика в конструкторе*/
+            if (config.IsPlayerUnit)
+            {
+                
+                Unit.GroupUnits.Add(this);
+                NumberOfUnit = ++UnitCounter; /*прсивоение новому юниту номера*/
+                //Debug.Log(NumberOfUnit);
+            }
+            
         }
 
         public void Update(float deltaTime, float time)
@@ -85,9 +99,50 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
+        //    if (_runtimeModel?.RoMap == null)
+        //    {
+        //        Debug.LogError("Runtime model or map not initialized");
+        //        return;
+        //    }
+
+            //    Vector2Int targetPos = _brain.GetNextStep();
+            //    Vector2Int moveDelta = targetPos - Pos;
+
+            //    // 1. Проверка расстояния перемещения
+            //    if (moveDelta.sqrMagnitude > 2) // Если движение больше 1 клетки
+            //    {
+            //        // Корректируем до максимально допустимого перемещения
+            //        targetPos = Pos + new Vector2Int(
+            //            Mathf.Clamp(moveDelta.x, -1, 1),
+            //            Mathf.Clamp(moveDelta.y, -1, 1)
+            //        );
+            //        Debug.LogWarning($"Adjusted move from {targetPos} to {Pos + new Vector2Int(Mathf.Clamp(moveDelta.x, -1, 1), Mathf.Clamp(moveDelta.y, -1, 1))}");
+            //    }
+
+            //    // 2. Проверка границ карты
+            //    if (targetPos.x < 0 || targetPos.x >= _runtimeModel.RoMap.Width ||
+            //        targetPos.y < 0 || targetPos.y >= _runtimeModel.RoMap.Height)
+            //    {
+            //        Debug.LogWarning($"Position {targetPos} is out of map bounds");
+            //        return;
+            //    }
+
+            //    // 3. Проверка препятствий
+            //    if (_runtimeModel.RoMap[targetPos] ||
+            //        _runtimeModel.RoUnits.Any(u => u.Pos == targetPos && u != this))
+            //    {
+            //        Debug.Log($"Path blocked at {targetPos}");
+            //        return;
+            //    }
+
+            //    // 4. Выполняем перемещение
+            //    Pos = targetPos;
+            //    Debug.Log($"Moved successfully to {Pos}");
+            //}
+
 
         public void ClearPendingProjectiles()
         {

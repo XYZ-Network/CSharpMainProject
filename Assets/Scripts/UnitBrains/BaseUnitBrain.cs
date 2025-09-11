@@ -8,9 +8,9 @@ using UnityEngine;
 using Utilities;
 using Unit = Model.Runtime.Unit;
 
-namespace UnitBrains
+namespace UnitBrains 
 {
-    public abstract class BaseUnitBrain
+    public abstract class BaseUnitBrain 
     {
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
@@ -30,6 +30,14 @@ namespace UnitBrains
             new (-0.15f, 0.15f),
             new (-0.15f, -0.15f),
         };
+
+        public virtual string ProtectTargetName( string CurrentTargetUnitName)
+        {
+            CurrentTargetUnitName = TargetUnitName ;
+            
+            return CurrentTargetUnitName ;
+        }
+
 
         public virtual Vector2Int GetNextStep()
         {

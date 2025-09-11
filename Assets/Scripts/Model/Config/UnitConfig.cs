@@ -5,7 +5,7 @@ namespace Model.Config
 {
     public class UnitConfig : MonoBehaviour
     {
-        [SerializeField] private bool _isPlayerUnit;
+        [SerializeField] private  bool _isPlayerUnit;
         [SerializeField] private string _name;
         [SerializeField] private Sprite _icon;
         [SerializeField] private int _cost;
@@ -17,7 +17,7 @@ namespace Model.Config
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
         [SerializeField] private int _damage = 15;
         
-        public bool IsPlayerUnit => _isPlayerUnit;
+        public  bool IsPlayerUnit => _isPlayerUnit;
         public string Name => _name;
         public Sprite Icon => _icon;
         public int Cost => _cost;
