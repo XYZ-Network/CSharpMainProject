@@ -24,7 +24,7 @@ namespace UnitBrains.Pathfinding
             return path;
         }
 
-        public Vector2Int GetNextStepFrom(Vector2Int unitPos)
+        public virtual Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
             var found = false;
             foreach (var cell in GetPath())

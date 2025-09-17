@@ -26,14 +26,33 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private float baseMoveDelay;
+        private float baseAttackDelay;
+        private float baseAttackRange;
+        private bool canDoubleAttack = false;
+        private float currentMoveDelay;
+        private float currentAttackDelay;
+        private float currentAttackRange;
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitCoordinatorService unitCoordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+
+            baseMoveDelay = config.MoveDelay;
+            baseAttackDelay = config.AttackDelay;
+            baseAttackRange = config.AttackRange;
+
+            currentMoveDelay = baseMoveDelay;
+            currentAttackDelay = baseAttackDelay;
+            currentAttackRange = baseAttackRange;
+
+            if (unitCoordinator != null) _brain.SetCoordinator(unitCoordinator);
+
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -50,13 +69,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + GetModifierMoveDelay();
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + GetModifierAttackDelay();
             }
         }
 
@@ -98,5 +117,39 @@ namespace Model.Runtime
         {
             Health -= projectileDamage;
         }
+
+        public void ModifyMoveDelay(float multiplier)
+        {
+            currentMoveDelay = baseMoveDelay / multiplier;
+        }
+
+        public void ModifyAttackDelay(float multiplier)
+        {
+            currentAttackDelay = baseAttackDelay / multiplier;
+        }
+
+        public void ModifyAttackRange(float multiplier)
+        {
+            currentAttackRange = baseAttackRange * multiplier;
+        }
+
+        public void EnableDoubleAttack(bool enable)
+        {
+            canDoubleAttack = enable;
+        }
+
+        private float GetModifierMoveDelay()
+        {
+            return currentMoveDelay;
+        }
+
+        private float GetModifierAttackDelay()
+        {
+            return currentAttackDelay;
+        }
+
+        public float GetCurrentAttackRange() => currentAttackRange;
+
+        public bool CanDoubleAttack() => canDoubleAttack;
     }
 }

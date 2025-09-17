@@ -2,6 +2,7 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using UnitBrains;
 using UnityEngine;
 using Utilities;
 using View;
@@ -18,6 +19,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private UnitCoordinatorService _coordinatorService;
+        private BuffsSys _buffs;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -42,6 +45,14 @@ namespace Controller
             SetInitialMoney();
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
             var map = MapGenerator.Generate(_settings.MapWidth, _settings.MapHeight, density, level);
+
+            var runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            var timeUtil = ServiceLocator.Get<TimeUtil>();
+            _coordinatorService = new UnitCoordinatorService(runtimeModel, timeUtil);
+            var buffsSystem = new GameObject("BuffsSystem").AddComponent<BuffsSys>();
+            ServiceLocator.RegisterAs(buffsSystem, typeof(BuffsSys));
+            _buffs = buffsSystem;
+
             _runtimeModel.Clear();
             _runtimeModel.Map = new Map(map, Settings.PlayersCount);
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
@@ -72,7 +83,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, _coordinatorService);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -99,6 +110,8 @@ namespace Controller
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
+            _coordinatorService?.Dispose();
+            _coordinatorService = null;
         }
     }
 }
