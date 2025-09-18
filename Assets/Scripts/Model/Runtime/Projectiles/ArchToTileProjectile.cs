@@ -29,8 +29,10 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
-
-
+            float maxHeight = totalDistance * 0.6f;
+            //формулу (-(2t-1)*(2t-1)+ 1) надо упростить
+            // после преобразований получим выражение (4t(1-t))
+            localHeight = maxHeight * 4 * t * (1 - t);
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
