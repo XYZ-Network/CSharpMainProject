@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.Model.Runtime;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -17,11 +18,20 @@ namespace Controller
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(TimeUtil.Create());
+
+            var timeUtil = TimeUtil.Create();
+            ServiceLocator.Register(timeUtil);
             
-            _runtimeModel = new();
+            _runtimeModel = new RuntimeModel();
+            ServiceLocator.Register(_runtimeModel);
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
+            var baseAttackDetector = new BaseAttackDetector(_runtimeModel);
+            ServiceLocator.RegisterAs(baseAttackDetector, typeof(IBaseAttackDetector));
+
+            var buffsController = new BuffsController();
+            ServiceLocator.Register(buffsController);
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
             

@@ -10,5 +10,8 @@ namespace Model.Runtime.ReadOnly
         public Vector2Int Pos { get; }
         public int Health { get; }
         public BaseUnitPath ActivePath { get; }
+        float AttackRange { get; }
+        float MoveDelay {  get; }
+        float AttackDelay {  get; }
     }
 }
