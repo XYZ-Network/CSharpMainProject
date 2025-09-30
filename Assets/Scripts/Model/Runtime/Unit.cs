@@ -19,6 +19,13 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        public float AttackDelay { get; private set; }
+        public float MoveDelay { get; private set; }
+        public float AttackRange { get; private set; }
+        public bool IsBuffed { get; private set; } = false;
+        public bool DoubleAttack { get; private set; } = false;
+
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
@@ -26,7 +33,11 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
+        public UnitCoordinator UnitCoordinator;
+
+        private EffectsForUnits _effects;//
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -35,28 +46,35 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+
+            AttackDelay = config.AttackDelay;//
+            MoveDelay = config.MoveDelay; //
+            AttackRange = config.AttackRange; //
+
+
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + MoveDelay;  // изначально Config.MoveDelay
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + AttackDelay;   // изначально Config.AttackDelay
             }
         }
 
@@ -65,7 +83,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +103,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
@@ -98,5 +116,50 @@ namespace Model.Runtime
         {
             Health -= projectileDamage;
         }
+
+        //
+        //
+        //
+
+        public void ChangeAttackDelay(float attackDelay)
+        {
+            AttackDelay = attackDelay;
+        }
+
+
+        public void ChangeMoveDelay(float moveDelay)
+        {
+            MoveDelay = moveDelay;
+        }
+
+        public void ChangeAttackRange(float attackRange)
+        {
+            AttackRange = attackRange;
+        }
+
+        public void ChangeDoubleAttackStatus(bool status)
+        {
+            DoubleAttack = status;
+        }
+
+        public void ChangeIsBuffedStatus(bool status)
+        {
+            IsBuffed = status;
+        }
+
+        public string GiveUnitName()
+        {
+            return _brain.TargetUnitName;
+        }
+
+        //public enum UnitType
+        //{ 
+        // First,
+        // Second,
+        // Third,
+        // Fouth,
+        // Other
+        //}
+
     }
 }

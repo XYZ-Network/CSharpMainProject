@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Config;
+using Model.Runtime;
 using UnityEngine;
 using Utilities;
 using View;
@@ -30,7 +31,10 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+
+            var effectsForUnits = new EffectsForUnits();            //(_runtimeModel)
+            ServiceLocator.Register(effectsForUnits);              //
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();

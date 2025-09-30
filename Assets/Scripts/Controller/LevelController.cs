@@ -19,17 +19,26 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private UnitCoordinator _playerUnitCoordinator;
+        private UnitCoordinator _botPlayerUnitCoordinator;
+
+        //private EffectsForUnits _effectsForUnits;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
             _rootController = rootController;
             _botController = new BotController(OnBotUnitChosen);
             _simulationController = new(runtimeModel, OnLevelFinished);
-            
+
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+
+            _playerUnitCoordinator = new UnitCoordinator(runtimeModel, RuntimeModel.PlayerId, RuntimeModel.BotPlayerId);
+            _botPlayerUnitCoordinator = new UnitCoordinator(runtimeModel, RuntimeModel.BotPlayerId, RuntimeModel.PlayerId);
+            //_effectsForUnits = ServiceLocator.Get<EffectsForUnits>();
         }
 
         public void StartLevel(int level)
@@ -55,7 +64,7 @@ namespace Controller
         {
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
-            
+
             SpawnUnit(RuntimeModel.PlayerId, unitConfig);
             TryStartSimulation();
         }
@@ -71,8 +80,9 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
+
             var unit = new Unit(config, pos);
+            unit.UnitCoordinator = forPlayer == RuntimeModel.PlayerId ? _playerUnitCoordinator : _playerUnitCoordinator;
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -83,6 +93,8 @@ namespace Controller
                 _runtimeModel.Money[RuntimeModel.BotPlayerId] < _settings.GetCheapestEnemyUnitCost())
             {
                 _runtimeModel.Stage = RuntimeModel.GameStage.Simulation;
+                //_effectsForUnits.SetAllUnitsMoveDelay(5000, 4f);
+                //_effectsForUnits.SetAllUnitsAttackDelay(6000, 0.25f);
             }
         }
 
