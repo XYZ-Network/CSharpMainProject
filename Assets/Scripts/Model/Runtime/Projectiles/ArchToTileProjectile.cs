@@ -29,6 +29,9 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            float maxHeight = totalDistance * 0.6f; //Расчет 60% от totalDistance
+            float part = t * 2 - 1;
+            localHeight = maxHeight * (- part * part + 1); //мега-заебатая формула в которой конечно все разобрались. Ага. Спасибо.
 
 
             ///////////////////////////////////////

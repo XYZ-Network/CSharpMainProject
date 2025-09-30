@@ -9,6 +9,10 @@ using Utilities;
 //hello
 //How are you?
 //i'm fine
+//some new comment
+//How are you?
+// local changes comment i'm fine
+// another test 2
 namespace Controller
 {
     public class BotController
@@ -74,3 +78,5 @@ namespace Controller
         }
     }
 }
+
+
