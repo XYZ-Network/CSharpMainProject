@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using Assets.Scripts.Model.Runtime;
+using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
@@ -11,17 +12,27 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
+        private BuffsController _buffsController;
+
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
-            ServiceLocator.Register(TimeUtil.Create());
+
+            var timeUtil = TimeUtil.Create();
+            ServiceLocator.Register(timeUtil);
             
-            _runtimeModel = new();
+            _runtimeModel = new RuntimeModel();
+            ServiceLocator.Register(_runtimeModel);
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
-            
+
+            var baseAttackDetector = new BaseAttackDetector(_runtimeModel);
+            ServiceLocator.RegisterAs(baseAttackDetector, typeof(IBaseAttackDetector));
+
+            var buffsController = new BuffsController();
+            ServiceLocator.Register(buffsController);
+
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);
             
@@ -39,6 +50,9 @@ namespace Controller
         public void RestartGame()
         {
             _runtimeModel.Level = _persisted.Level;
+            _buffsController?.Dispose();
+            _buffsController = new BuffsController();
+            ServiceLocator.Register(_buffsController);
             _levelController.StartLevel(_persisted.Level);
         }
 
