@@ -15,6 +15,7 @@ namespace Utilities
         public static void RegisterAs<T>(T service, Type type)
         {
             _services[type] = service;
+
         }
         
         public static void Unregister<T>()

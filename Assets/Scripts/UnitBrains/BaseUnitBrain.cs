@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Pathfinding;
+using Assets.Scripts.Utilities;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -12,13 +14,17 @@ namespace UnitBrains
 {
     public abstract class BaseUnitBrain
     {
+        
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
+        protected Coordinator coordinator => ServiceLocator.Get<Coordinator>();
+        protected EffectSystem EffectSystem => ServiceLocator.Get<EffectSystem>();
         protected Unit unit { get; private set; }
+
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+
+        protected BaseUnitPath _activePath = null;
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -39,7 +45,7 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new AStar(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -48,6 +54,17 @@ namespace UnitBrains
             List<BaseProjectile> result = new ();
             foreach (var target in SelectTargets())
             {
+                //if (unit.Config.EnebledBuff == true)
+                //{
+                //    for (var i = 0; i < 2; i++)
+                //    {
+                //        GenerateProjectiles(target, result);
+                //    }
+                //}
+                //else
+                //{
+                //    GenerateProjectiles(target, result);
+                //}
                 GenerateProjectiles(target, result);
             }
 
@@ -76,6 +93,7 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
+            
             var result = GetReachableTargets();
             while (result.Count > 1)
                 result.RemoveAt(result.Count - 1);
@@ -163,5 +181,6 @@ namespace UnitBrains
 
             return result;
         }
+        
     }
 }
