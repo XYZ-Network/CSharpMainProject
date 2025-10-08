@@ -24399,7 +24399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellHighlightPrefab: {fileID: 4141273912711956317, guid: 6b7b54fba8ef4704396fc9f540ee8aa2,
     type: 3}
-  maxHighlights: 5
+  maxHighlights: 6
 --- !u!1 &6539454795392824391
 GameObject:
   m_ObjectHideFlags: 0
