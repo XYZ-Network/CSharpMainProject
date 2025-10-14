@@ -16,13 +16,25 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+                
+           
+            if (_temperature >= overheatTemperature)           //проверка на перегрев
+                return;
+
+            IncreaseTemperature();                            //повышение температуры
+
+            _temperature = GetTemperature();                 //узнаем температуру
+
+            for (int i = 0; i < _temperature; i++)          //цикл для создания снарядов равной температуре
+
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+;           
+
         }
+
 
         public override Vector2Int GetNextStep()
         {
@@ -31,16 +43,34 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+            
             List<Vector2Int> result = GetReachableTargets();
+
+            
+            Vector2Int closetTarget = result[0];
+            float minDistance = DistanceToOwnBase(closetTarget);
+
+            foreach (Vector2Int target in result)
+            {
+                if (DistanceToOwnBase(target) < minDistance)
+                {
+                    minDistance = DistanceToOwnBase(target);
+                    closetTarget = target;
+                }
+            }
             while (result.Count > 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
+            if (result.Count > 0)
+            {
+                result[0] = closetTarget;
+            }
             return result;
-            ///////////////////////////////////////
+            
+
+
+
         }
 
         public override void Update(float deltaTime, float time)
