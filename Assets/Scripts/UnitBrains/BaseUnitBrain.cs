@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Assets.Scripts.UnitBrains.Pathfinding;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System.Collections.Generic;
+using System.Linq;
+using UnitBrains.Coordinators;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -34,12 +36,21 @@ namespace UnitBrains
         public virtual Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())
+            {
                 return unit.Pos;
+            }
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var coordinator = UnitsCoordinator.Instance;
+            var recommendedTargetPos = coordinator.GetRecomendedTarget(!this.IsPlayerUnitBrain);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            if (recommendedTargetPos.HasValue &&
+                Vector2Int.Distance(unit.Pos, recommendedTargetPos.Value) <= 2 * unit.Config.AttackRange)
+            {
+                _activePath = new AStarUnitPath(runtimeModel, unit.Pos, recommendedTargetPos.Value);
+                return _activePath.GetNextStepFrom(unit.Pos);
+            }
+
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, coordinator.GetRecomendedPosition(!this.IsPlayerUnitBrain));
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
