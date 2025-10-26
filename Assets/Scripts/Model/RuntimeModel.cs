@@ -44,12 +44,16 @@ namespace Model
         {
             new (), new ()
         };
-        
+
         public bool IsTileWalkable(Vector2Int pos)
         {
-            return !Map[pos] && AllUnits.All(u => u.Pos != pos);
-        }
+            if (Map[pos])
+                return false;
 
+            bool hasUnit = AllUnits.Any(u => u.Pos == pos);
+
+            return !hasUnit;
+        }
         public void SetMoneyForAll(int startMoneyPlayer, int startMoneyBot)
         {
             Money[PlayerId] = startMoneyPlayer;

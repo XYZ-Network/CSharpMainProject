@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -30,17 +31,41 @@ namespace UnitBrains
             new (-0.15f, 0.15f),
             new (-0.15f, -0.15f),
         };
+        private float lastPathCalcTime = -1f;
+        private const float PATH_RECALC_INTERVAL = 1f; // раз в секунду
 
         public virtual Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var target = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+          
+            if (_activePath == null || Time.time - lastPathCalcTime > PATH_RECALC_INTERVAL)
+            {
+                _activePath = new SmartMoveUnitBrain(runtimeModel, unit.Pos, target, unit.Pos);
+                _activePath.Calculate();
+                lastPathCalcTime = Time.time;
+            }
+
+            var next = _activePath.GetNextStepFrom(unit.Pos);
+
+           
+            if (IsCellOccupied(next) && next != target)
+            {
+                _activePath = new SmartMoveUnitBrain(runtimeModel, unit.Pos, target, unit.Pos);
+                _activePath.Calculate();
+                lastPathCalcTime = Time.time;
+                next = _activePath.GetNextStepFrom(unit.Pos);
+            }
+
+            return next;
+        }
+        private bool IsCellOccupied(Vector2Int pos)
+        {
+            if (pos == unit.Pos) return false;
+            return runtimeModel.RoUnits.Any(u => u.Pos == pos);
         }
 
         public List<BaseProjectile> GetProjectiles()

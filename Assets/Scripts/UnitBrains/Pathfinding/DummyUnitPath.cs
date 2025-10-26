@@ -13,7 +13,7 @@ namespace UnitBrains.Pathfinding
         {
         }
 
-        protected override void Calculate()
+        public override void Calculate()
         {
             var currentPoint = startPoint;
             var result = new List<Vector2Int> { startPoint };

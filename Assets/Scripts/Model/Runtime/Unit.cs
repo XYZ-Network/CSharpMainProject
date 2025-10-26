@@ -19,6 +19,9 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        public DebugPathOutput PathDebugger { get; private set; }
+
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
@@ -35,7 +38,26 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            InitializePathDebugger();
+
         }
+
+        private void InitializePathDebugger()
+        {
+           
+            GameObject debugObject = new GameObject($"PathDebugger_{Config.Name}");
+            PathDebugger = debugObject.AddComponent<DebugPathOutput>();
+            // PathDebugger.cellHighlightPrefab = Resources.Load<GameObject>("PathHighlightPrefab");
+        }
+        public void Dispose()
+        {
+            if (PathDebugger != null && PathDebugger.gameObject != null)
+            {
+                Object.Destroy(PathDebugger.gameObject);
+            }
+        }
+
 
         public void Update(float deltaTime, float time)
         {
