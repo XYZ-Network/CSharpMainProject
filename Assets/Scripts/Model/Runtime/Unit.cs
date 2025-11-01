@@ -4,6 +4,7 @@ using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
+using UnitBrains.Coordinators;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -17,24 +18,28 @@ namespace Model.Runtime
         public int Health { get; private set; }
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
+        public UnitsCoordinator UnitsCoordinator { get; set; }
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        private BuffDebuffSystem _buffDebuffSystem;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, Vector2Int startPos, UnitsCoordinator unitsCoordinator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
+            UnitsCoordinator = unitsCoordinator;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffDebuffSystem = ServiceLocator.Get<BuffDebuffSystem>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +55,15 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                var modifiedMoveDelay = _buffDebuffSystem.GetModifiedMoveSpeedDelay(this);
+                _nextMoveTime = time + modifiedMoveDelay;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                var modifiedAttackDelay = _buffDebuffSystem.GetModifiedAttackSpeedDelay(this);
+                _nextAttackTime = time + modifiedAttackDelay;
             }
         }
 
