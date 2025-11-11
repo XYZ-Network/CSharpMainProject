@@ -2,6 +2,7 @@
 using Model;
 using Model.Config;
 using Model.Runtime;
+using UnitBrains.Coordinators;
 using UnityEngine;
 using Utilities;
 using View;
@@ -71,8 +72,25 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
+
+            var unitsCoordinator = new UnitsCoordinator(
+                    _runtimeModel,
+                    _timeUtil,
+                    RuntimeModel.PlayerId != forPlayer
+                );
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, unitsCoordinator);
+
+            // =================================================================
+            if (config.Name == "Sky Serpent") 
+            {
+                var buffSystem = ServiceLocator.Get<BuffDebuffSystem>();
+
+                var hasteBuff = new MoveBuffDebuff(500f, 4f); 
+                buffSystem.ApplyBuff(unit, hasteBuff);
+            }
+            // =================================================================
+
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Assets.Scripts.UnitBrains.Pathfinding;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System.Collections.Generic;
+using System.Linq;
+using UnitBrains.Coordinators;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -34,16 +36,25 @@ namespace UnitBrains
         public virtual Vector2Int GetNextStep()
         {
             if (HasTargetsInRange())
+            {
                 return unit.Pos;
+            }
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var coordinator = unit.UnitsCoordinator;
+            var recommendedTargetPos = coordinator.GetRecomendedTarget(!this.IsPlayerUnitBrain);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            if (recommendedTargetPos.HasValue &&
+                Vector2Int.Distance(unit.Pos, recommendedTargetPos.Value) <= 2 * unit.AttackRange)
+            {
+                _activePath = new AStarUnitPath(runtimeModel, unit.Pos, recommendedTargetPos.Value);
+                return _activePath.GetNextStepFrom(unit.Pos);
+            }
+
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, coordinator.GetRecomendedPosition(!this.IsPlayerUnitBrain));
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
-        public List<BaseProjectile> GetProjectiles()
+        public virtual List<BaseProjectile> GetProjectiles()
         {
             List<BaseProjectile> result = new ();
             foreach (var target in SelectTargets())
@@ -117,7 +128,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -144,7 +155,7 @@ namespace UnitBrains
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -152,7 +163,7 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
