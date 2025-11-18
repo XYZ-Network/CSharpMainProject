@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -18,12 +19,21 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
             ///////////////////////////////////////
+
+            if (GetTemperature() >= overheatTemperature) return;
+            for (int i = 0; i <= GetTemperature(); i++)
+                ProjectileSpawner(forTarget, intoList, overheatTemperature);
+            IncreaseTemperature();
         }
 
+        private void ProjectileSpawner(Vector2Int forTarget, List<BaseProjectile> intoList, float overheatTemperature)
+        {
+            Debug.Log(GetTemperature());
+            var projectile = CreateProjectile(forTarget);
+            AddProjectileToList(projectile, intoList);
+        }
+///////////////////////////////////////////////////////////////////////////////
         public override Vector2Int GetNextStep()
         {
             return base.GetNextStep();
@@ -34,12 +44,35 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> reachable = GetReachableTargets();
+            List<float> discance = new List<float> {};
+            float minDistance = float.MaxValue;
+            int i = 0;
+            foreach (var target in reachable)
             {
-                result.RemoveAt(result.Count - 1);
+                discance.Add(DistanceToOwnBase(reachable[i]));
+                i++;
             }
-            return result;
+
+            foreach (var target in discance)
+            {
+                if(target < minDistance) minDistance = target;
+            }
+            i = 0;
+            foreach (var target in discance)
+            {
+                if (target == minDistance) break;
+                i++;
+            }
+            int j = 0;
+            Vector2Int result = Vector2Int.zero;
+            foreach (var target in reachable)
+            {
+                result = target;
+                if(j == i) break;
+                j++;
+            }
+            return new List<Vector2Int> { result };
             ///////////////////////////////////////
         }
 
