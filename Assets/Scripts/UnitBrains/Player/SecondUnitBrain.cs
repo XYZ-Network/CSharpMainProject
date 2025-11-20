@@ -12,7 +12,7 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -21,8 +21,24 @@ namespace UnitBrains.Player
             ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            int t = GetTemperature();
+
+            if (t < overheatTemperature)
+            {
+                for (int i = 1; i <= t; i++)
+                {
+                    projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+
+                }
+                IncreaseTemperature();
+            }
+
+
         }
+            ///////////////////////////////////////
+        
 
         public override Vector2Int GetNextStep()
         {
@@ -35,13 +51,32 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            if (result.Count <= 1)
+                return result;
+
+            Vector2Int closestTarget = result[0];
+            float minDistance = DistanceToOwnBase(closestTarget);
+
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
             }
+
+            result.Clear();
+            result.Add(closestTarget);
+
             return result;
-            ///////////////////////////////////////
-        }
+
+        }    
+            //////////////////////////////////////
+            
+       
 
         public override void Update(float deltaTime, float time)
         {
