@@ -15,11 +15,11 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
+
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
             new (0f, 0f),
@@ -36,16 +36,17 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
-
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            var target = GetNextStepTarget();
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
+        public virtual Vector2Int GetNextStepTarget() =>
+            runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+
         public List<BaseProjectile> GetProjectiles()
         {
-            List<BaseProjectile> result = new ();
+            List<BaseProjectile> result = new();
             foreach (var target in SelectTargets())
             {
                 GenerateProjectiles(target, result);
@@ -81,10 +82,10 @@ namespace UnitBrains
                 result.RemoveAt(result.Count - 1);
             return result;
         }
-        
+
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
             BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos, target, unit.Config.Damage);
-        
+
         protected void AddProjectileToList(BaseProjectile projectile, List<BaseProjectile> list) =>
             list.Add(projectile);
 
@@ -96,7 +97,7 @@ namespace UnitBrains
             var units = new List<IReadOnlyUnit>();
             var pos = unit.Pos;
             var distanceSqr = radius * radius;
-            
+
             foreach (var otherUnit in runtimeModel.RoUnits)
             {
                 if (otherUnit == unit)
@@ -157,7 +158,7 @@ namespace UnitBrains
             {
                 if (!IsTargetInRange(possibleTarget))
                     continue;
-                
+
                 result.Add(possibleTarget);
             }
 
