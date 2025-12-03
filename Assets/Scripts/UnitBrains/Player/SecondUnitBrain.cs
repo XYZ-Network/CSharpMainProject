@@ -42,14 +42,32 @@ namespace UnitBrains.Player
         }
 
         protected override List<Vector2Int> SelectTargets()
+{
+    List<Vector2Int> result = GetReachableTargets();
+
+    if (result.Count == 0)
+        return result;
+
+    Vector2Int closestTarget = result[0];
+    float closestDistance = DistanceToOwnBase(closestTarget);
+
+    // Ищем цель с минимальным расстоянием
+    foreach (var target in result)
+    {
+        float distance = DistanceToOwnBase(target);
+        if (distance < closestDistance)
         {
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
+            closestDistance = distance;
+            closestTarget = target;
         }
+    }
+
+        // Очищаем и оставляем только ближайшую цель
+        result.Clear();
+        result.Add(closestTarget);
+
+        return result;
+    }
 
         public override void Update(float deltaTime, float time)
         {
