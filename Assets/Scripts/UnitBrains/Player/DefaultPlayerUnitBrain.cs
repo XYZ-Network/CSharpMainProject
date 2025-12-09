@@ -2,6 +2,7 @@
 using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using UnitBrains.Player;
 
 namespace UnitBrains.Player
 {
@@ -14,12 +15,17 @@ namespace UnitBrains.Player
         {
             list.Sort(CompareByDistanceToOwnBase);
         }
-        
+
         private int CompareByDistanceToOwnBase(Vector2Int a, Vector2Int b)
         {
             var distanceA = DistanceToOwnBase(a);
             var distanceB = DistanceToOwnBase(b);
             return distanceA.CompareTo(distanceB);
         }
+
+        // Используем рекомендованную координатором точку как цель движения (если координатор доступен)
+        public override Vector2Int GetNextStepTarget() =>
+            (PlayerUnitsCoordinatorSingleton.Instance != null) ? PlayerUnitsCoordinatorSingleton.Instance.RecommendedPoint
+                                                                 : base.GetNextStepTarget();
     }
 }
