@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Assets.Scripts.Model.Runtime;
+using Assets.Scripts.UnitBrains;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -19,24 +21,34 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private UnitCoordinator _playerCoordinator;
+        private UnitCoordinator _botCoordinator;
+        private BuffsController _buffsController;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
             _rootController = rootController;
             _botController = new BotController(OnBotUnitChosen);
             _simulationController = new(runtimeModel, OnLevelFinished);
-            
+
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+            _buffsController = ServiceLocator.Get<BuffsController>();
         }
 
         public void StartLevel(int level)
         {
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
-            
+
             _rootView.HideLevelFinished();
+
+            _buffsController.ClearAllBuffs();
+
+            _playerCoordinator = new UnitCoordinator(true);
+            _botCoordinator = new UnitCoordinator(false);
 
             Random.InitState(level);
             SetInitialMoney();
@@ -55,7 +67,7 @@ namespace Controller
         {
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
-            
+
             SpawnUnit(RuntimeModel.PlayerId, unitConfig);
             TryStartSimulation();
         }
@@ -71,8 +83,18 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
+
             var unit = new Unit(config, pos);
+
+            if (forPlayer == RuntimeModel.PlayerId)
+            {
+                unit.SetCoordinator(_playerCoordinator);
+            }
+            else
+            {
+                unit.SetCoordinator(_botCoordinator);
+            }
+
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
@@ -97,6 +119,14 @@ namespace Controller
         private void OnLevelFinished(bool playerWon)
         {
             _runtimeModel.Stage = RuntimeModel.GameStage.Finished;
+
+            _playerCoordinator?.Dispose();
+            _botCoordinator?.Dispose();
+            _playerCoordinator = null;
+            _botCoordinator = null;
+
+            _buffsController.ClearAllBuffs();
+
             _rootView.ShowLevelFinished(playerWon);
             _timeUtil.RunDelayed(5f, () => _rootController.OnLevelFinished(playerWon));
         }

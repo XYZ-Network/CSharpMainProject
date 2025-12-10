@@ -17,7 +17,7 @@ namespace View
             {
                 transform.rotation = Quaternion.LookRotation(deltaPos, Vector3.up);
             }
-
+            
             if (_debugPathOutput != null &&
                 model.ActivePath != null &&
                 model.ActivePath?.EndPoint != _debugPathOutput.Path?.EndPoint)
