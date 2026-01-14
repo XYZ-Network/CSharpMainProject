@@ -13,6 +13,10 @@ namespace Controller
 {
     public class BotController
     {
+
+        // new comment
+        // second comment for example
+        // thirst comment for another example and more
         private readonly TimeUtil _timeUtil;
         private readonly IReadOnlyRuntimeModel _runtimeModel;
         private readonly List<UnitConfig> _sortedUnits;
@@ -74,3 +78,5 @@ namespace Controller
         }
     }
 }
+
+
