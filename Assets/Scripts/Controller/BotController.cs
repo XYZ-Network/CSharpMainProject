@@ -16,7 +16,7 @@ namespace Controller
 
         // new comment
         // second comment for example
-        // thirst comment for another example
+        // thirst comment for another example and more
         private readonly TimeUtil _timeUtil;
         private readonly IReadOnlyRuntimeModel _runtimeModel;
         private readonly List<UnitConfig> _sortedUnits;
