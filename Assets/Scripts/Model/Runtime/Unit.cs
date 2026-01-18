@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains.Player;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -19,6 +20,8 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        public RecommendatedTarget CurrentRecommendatedTarget;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
@@ -27,7 +30,7 @@ namespace Model.Runtime
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, Vector2Int startPos, RecommendatedTarget recommendatedTarget)
         {
             Config = config;
             Pos = startPos;
@@ -35,6 +38,8 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            CurrentRecommendatedTarget = recommendatedTarget;
         }
 
         public void Update(float deltaTime, float time)

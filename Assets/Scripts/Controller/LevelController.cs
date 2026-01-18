@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.UnitBrains.Player;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -19,6 +20,8 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private readonly RecommendatedTarget _recommendatedTarget;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
@@ -30,6 +33,9 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+
+            RecommendatedTarget recommendatedTarget = new RecommendatedTarget(_runtimeModel, _timeUtil);
+            _recommendatedTarget = recommendatedTarget;
         }
 
         public void StartLevel(int level)
@@ -72,7 +78,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, _recommendatedTarget);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
