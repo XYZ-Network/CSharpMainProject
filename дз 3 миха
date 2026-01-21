@@ -1,0 +1,243 @@
+using System;
+using static MyApp.Program;
+namespace MyApp
+{
+    internal class Program
+    {
+        public enum AttackType
+        {
+            Damage,
+            Self,
+            Heal
+        }
+
+    static void Main(string[] args)
+        {
+            string? name;
+            float maxPlayerHealth = 1000f;
+            float maxEnemyHealth = 2000f;
+
+            float currentPlayerHealth = maxPlayerHealth;
+            float currentEnemyHealth = maxEnemyHealth;
+
+            float playerDamage = 50f;
+            float enemyDamage = 55f;
+
+            float fireballDamage = 200f;
+            float enemyHaelDamage = 100f;
+
+
+
+            string? input;
+
+            int commandCount = 3;
+            int enemySecondAbilityModifier = 3;
+
+
+
+            Random rindomizer = new Random();
+
+            Dictionary<AttackType, List<float>> damagesToPlayer = new(); 
+            Dictionary<AttackType, List<float>> damagesToEnemy = new();
+
+
+
+            damagesToPlayer[AttackType.Damage] = new List<float>();
+            damagesToPlayer[AttackType.Self] = new List<float>();
+            damagesToPlayer[AttackType.Heal] = new List<float>();
+        
+
+            damagesToEnemy[AttackType.Damage] = new List<float>();
+            damagesToEnemy[AttackType.Self] = new List<float>();
+            damagesToEnemy[AttackType.Heal] = new List<float>();
+            
+
+
+            Console.Write("Введите ваше имя:");
+            name = Console.ReadLine();
+
+            Console.Clear();
+            Console.WriteLine($"Добро пожаловать в игру, {name}\n");
+
+            while (currentPlayerHealth > 0 && currentEnemyHealth
+                > 0)
+            {
+                Console.WriteLine($"Ваше здоровье: {currentPlayerHealth}");
+                Console.WriteLine($"Здоровье противника: {currentEnemyHealth}");
+
+                Console.WriteLine($"{name}! Выберите действие:\n" +
+                    $"1. Ударить оружием (урон  {playerDamage})\n" +
+                    $"2. Щит: следующая атака противника не наносит урона\n" +
+                    $"3. Огненный шар: наносит урон в размере {fireballDamage}\n");
+
+                input = Console.ReadLine();
+                bool playerShield = false;
+                bool playerDamageWithWeapon = false;
+
+                switch (input)
+                {
+                    case "1":
+                        playerDamageWithWeapon = true;
+                        currentPlayerHealth -= playerDamage;
+                        damagesToEnemy[AttackType.Damage].Add(playerDamage);
+                        break;
+                    case "2":
+                        playerShield = true;
+                        break;
+                    case "3":
+                        currentPlayerHealth -= fireballDamage;
+                        damagesToEnemy[AttackType.Damage].Add(fireballDamage);
+                        break;
+                    case "4":
+                        if(!playerDamageWithWeapon)
+                        {
+                            currentPlayerHealth = maxPlayerHealth;
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Команда не распознана");
+                        break;
+
+
+                }
+                int enemyCommand = rindomizer.Next(1, commandCount + 1);
+                switch (enemyCommand)
+                {
+                    case 1:
+                        if (!playerShield) 
+                        {
+                            currentPlayerHealth -= enemyDamage;
+                            damagesToPlayer[AttackType.Damage].Add(enemyDamage);
+                        }
+                        break;
+                    case 2:
+                        if (!playerShield)
+                        {
+                            currentPlayerHealth -= enemyDamage;
+                            currentPlayerHealth -= enemyDamage * enemySecondAbilityModifier;
+                            damagesToPlayer[AttackType.Self].Add(enemyDamage);
+                            damagesToPlayer[AttackType.Damage].Add(enemyDamage * enemySecondAbilityModifier);
+                        }
+                        break;
+                    case 3:
+                        if (playerDamageWithWeapon)
+                        {
+                            currentEnemyHealth -= enemyHaelDamage;
+                            damagesToPlayer[AttackType.Self].Add(enemyHaelDamage);
+                        }
+                        else
+                        {
+                            currentEnemyHealth += enemyHaelDamage;
+                            damagesToPlayer[AttackType.Heal].Add(enemyHaelDamage);
+                            if (currentEnemyHealth > maxEnemyHealth)
+                                currentEnemyHealth = maxEnemyHealth;
+                        }
+
+
+                        break;
+                    default:
+                        Console.WriteLine("Команда не распознана");
+                        break;
+
+
+                }
+                WriteDamagesFromTo(damagesToEnemy, name, "Enemy");
+                WriteDamagesFromTo(damagesToPlayer, "Enemy", name);
+
+                
+
+            }      
+
+                void EndTurn()
+                {
+                    Console.WriteLine("\nДля продолжения нажмите любую клавишу");
+                    Console.ReadKey();
+                    Console.Clear();
+
+                }
+
+
+
+
+                void DamageMessage(string damager, string defender, float damage)
+
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Игрок {damager} наносит игроку {defender} урон в размере {damage} единиц.");
+                }
+
+                void HealMessage(string healer, float healValue)
+                {
+                  Console.BackgroundColor = ConsoleColor.Green;
+                  Console.WriteLine($"Игрок {healer} восстановил себе здоровье в размере {healValue} единиц.");
+                }
+            void DisplayHealthStatus(float currentHealth, float maxHealth, float threshold = 10f)
+            {
+              
+                float healthPercentage = (currentHealth / maxHealth) * 100;
+
+               
+                ConsoleColor originalColor = Console.BackgroundColor;
+
+                try
+                {
+                    
+                    if (healthPercentage < threshold)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Red;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Green;
+                    }
+
+                    
+                    Console.WriteLine($"Текущее здоровье: {currentHealth}/{maxHealth} ({healthPercentage:0.0}%)");
+                }
+                finally
+                {
+                   
+                    Console.BackgroundColor = originalColor;
+                }
+            }
+
+            void WriteDamageWithType(AttackType AttackType, string damagerName, string defenderName, List<float> damages)
+                {
+                    foreach (var damage in damages)
+                    {
+                        switch (AttackType)
+                        {
+                            case AttackType.Damage:
+                                DamageMessage(damagerName, defenderName, damage);
+                                break;
+                            case AttackType.Self:
+                                DamageMessage(defenderName, defenderName, damage);
+                                break;
+                            case AttackType.Heal:
+                                HealMessage(damagerName, damage);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                damages.Clear();
+                
+                
+                
+                }
+
+                void WriteDamagesFromTo(Dictionary<AttackType, List<float>> damages, string damagerName, string defenderName)
+                {
+                  foreach(var damage in damages)
+                  {
+                            WriteDamageWithType(damage.Key, damagerName, defenderName, damage.Value);
+                  }
+                }
+                
+
+
+            }
+        
+    }
+}
+
