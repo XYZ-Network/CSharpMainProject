@@ -6,9 +6,9 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
-//How are you?
-//i'm fine
+//hellohello
+//How are you?How are you?
+//i'm fineI'm Fine
 namespace Controller
 {
     public class BotController
@@ -74,3 +74,5 @@ namespace Controller
         }
     }
 }
+
+
