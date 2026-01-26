@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
@@ -35,6 +36,14 @@ namespace Model.Runtime
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            // Если в ServiceLocator есть IBuffSystem, регистрировать себя не требуется,
+            // Unit будет запрашивать множители при обновлениях.
+        }
+
+        public void SetBrainCoordinator(UnitBrains.Player.IPlayerUnitsCoordinator coordinator)
+        {
+            _brain?.SetCoordinator(coordinator);
         }
 
         public void Update(float deltaTime, float time)
@@ -50,13 +59,42 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                // учитываем баффы/дебаффы на скорость передвижения
+                var moveMultiplier = 1f;
+
+                var ibuffType = Type.GetType("Utilities.IBuffSystem");
+                if (ibuffType != null && ServiceLocator.TryGet(ibuffType, out var ibuffObj) && ibuffObj != null)
+                {
+                    var method = ibuffType.GetMethod("GetMovementMultiplier");
+                    if (method != null)
+                    {
+                        var res = method.Invoke(ibuffObj, new object[] { this });
+                        if (res is float f)
+                            moveMultiplier = f;
+                    }
+                }
+
+                _nextMoveTime = time + Config.MoveDelay * moveMultiplier;
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                var attackMultiplier = 1f;
+
+                var ibuffType = Type.GetType("Utilities.IBuffSystem");
+                if (ibuffType != null && ServiceLocator.TryGet(ibuffType, out var ibuffObj) && ibuffObj != null)
+                {
+                    var method = ibuffType.GetMethod("GetAttackMultiplier");
+                    if (method != null)
+                    {
+                        var res = method.Invoke(ibuffObj, new object[] { this });
+                        if (res is float f)
+                            attackMultiplier = f;
+                    }
+                }
+
+                _nextAttackTime = time + Config.AttackDelay * attackMultiplier;
             }
         }
 

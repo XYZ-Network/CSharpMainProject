@@ -1,0 +1,142 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+using Utilities;
+using View;
+using Model.Runtime;
+
+namespace UnitBrains.Player
+{
+    public class FourthUnitBrain : DefaultPlayerUnitBrain
+    {
+        public override string TargetUnitName => "Buffer";
+
+        private enum BuffState { Idle, PrePause, PostPause }
+        private BuffState _state = BuffState.Idle;
+        private float _stateEndTime = 0f;
+
+        private readonly float _buffInterval = 4f;
+        private readonly float _buffDuration = 5f;
+        private const float PauseLength = 0.5f;
+
+        private float _nextBuffTime = 2f;
+
+        public override Vector2Int GetNextStep()
+        {
+            if (_state != BuffState.Idle)
+                return unit.Pos;
+
+            return base.GetNextStep();
+        }
+
+        public override void Update(float deltaTime, float time)
+        {
+            if (_state == BuffState.Idle)
+            {
+                if (time >= _nextBuffTime)
+                {
+                    _state = BuffState.PrePause;
+                    _stateEndTime = time + PauseLength;
+                }
+            }
+            else if (_state == BuffState.PrePause)
+            {
+                if (time >= _stateEndTime)
+                {
+                    TryApplyBuff();
+
+                    if (ServiceLocator.Contains<VFXView>())
+                    {
+                        var vfx = ServiceLocator.Get<VFXView>();
+                        vfx?.PlayVFX(unit.Pos, VFXView.VFXType.BuffApplied);
+                    }
+
+                    _state = BuffState.PostPause;
+                    _stateEndTime = time + PauseLength;
+
+                    _nextBuffTime = time + _buffInterval;
+                }
+            }
+            else if (_state == BuffState.PostPause)
+            {
+                if (time >= _stateEndTime)
+                {
+                    _state = BuffState.Idle;
+                }
+            }
+        }
+
+        private void TryApplyBuff()
+        {
+            var allies = GetUnitsInRadius(unit.Config.AttackRange, enemies: false);
+            if (allies == null || allies.Count == 0)
+                return;
+
+            object targetUnit = null;
+
+            var ibuffType = System.Type.GetType("Utilities.IBuffSystem");
+            object ibuffObj = null;
+
+            if (ibuffType != null && ServiceLocator.TryGet(ibuffType, out ibuffObj) && ibuffObj != null)
+            {
+                var getMove = ibuffType.GetMethod("GetMovementMultiplier");
+                var getAttack = ibuffType.GetMethod("GetAttackMultiplier");
+
+                foreach (var a in allies)
+                {
+                    if (a == unit)
+                        continue;
+
+                    bool hasBuff = false;
+                    if (getMove != null)
+                    {
+                        var mv = getMove.Invoke(ibuffObj, new object[] { a });
+                        if (mv is float mvf && Mathf.Abs(mvf - 1f) > 0.0001f)
+                            hasBuff = true;
+                    }
+
+                    if (!hasBuff && getAttack != null)
+                    {
+                        var at = getAttack.Invoke(ibuffObj, new object[] { a });
+                        if (at is float atf && Mathf.Abs(atf - 1f) > 0.0001f)
+                            hasBuff = true;
+                    }
+
+                    if (!hasBuff)
+                    {
+                        targetUnit = a;
+                        break;
+                    }
+                }
+
+                if (targetUnit != null)
+                {
+                    var addSpeed = ibuffType.GetMethod("AddSpeedBuff");
+                    if (addSpeed != null)
+                    {
+                        addSpeed.Invoke(ibuffObj, new object[] { targetUnit, _buffDuration });
+                        return;
+                    }
+
+                    var addBuff = ibuffType.GetMethod("AddBuff");
+                    if (addBuff != null)
+                    {
+                        var buffType = System.Type.GetType("Utilities.Buff");
+                        if (buffType != null)
+                        {
+                            var ctor = buffType.GetConstructor(new System.Type[] { typeof(float), typeof(float), typeof(float), typeof(string) });
+                            if (ctor != null)
+                            {
+                                var buff = ctor.Invoke(new object[] { _buffDuration, 0.5f, 1f, "FourthUnitBuff" });
+                                addBuff.Invoke(ibuffObj, new object[] { targetUnit, buff });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        protected override void GenerateProjectiles(Vector2Int forTarget, List<Model.Runtime.Projectiles.BaseProjectile> intoList)
+        {
+        }
+    }
+}

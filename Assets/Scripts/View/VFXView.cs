@@ -31,7 +31,10 @@ namespace View
         public void PlayVFX(Vector2Int cell, VFXType type)
         {
             if (!_vfxConfigsByType.TryGetValue(type, out var config))
+            {
+                Debug.LogWarning($"VFXView: requested effect '{type}' is not configured on the VFXView prefab. Open 'Assets/Resources/View/VFXView' and add a VFXConfig for this type (assign a particle prefab).\nRequested at cell {cell}.");
                 return;
+            }
 
             var vfx = SetupInstanceAt(type, cell);
             if (vfx != null)
@@ -40,9 +43,22 @@ namespace View
         
         private void Awake()
         {
-            foreach (var vfxConfig in _vfxConfigs)
+            if (_vfxConfigs != null)
             {
-                _vfxConfigsByType[vfxConfig.Type] = vfxConfig;
+                foreach (var vfxConfig in _vfxConfigs)
+                {
+                    if (vfxConfig != null)
+                        _vfxConfigsByType[vfxConfig.Type] = vfxConfig;
+                }
+            }
+
+            // warn if some types are not configured (e.g. BuffApplied)
+            foreach (VFXType t in Enum.GetValues(typeof(VFXType)))
+            {
+                if (!_vfxConfigsByType.ContainsKey(t))
+                {
+                    Debug.LogWarning($"VFXView: missing VFXConfig for type '{t}'. Add it to the VFXView prefab at Assets/Resources/View/VFXView.");
+                }
             }
         }
 

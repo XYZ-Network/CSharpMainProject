@@ -1,0 +1,15 @@
+using Model.Runtime;
+
+namespace Utilities
+{
+    public interface IBuffSystem
+    {
+        void AddBuff(Unit unit, Buff buff);
+        float GetMovementMultiplier(Unit unit);
+        float GetAttackMultiplier(Unit unit);
+        void AddSpeedBuff(Unit unit, float duration);
+        void AddSlowDebuff(Unit unit, float duration);
+        void AddAttackSpeedBuff(Unit unit, float duration);
+        void AddAttackSlowDebuff(Unit unit, float duration);
+    }
+}

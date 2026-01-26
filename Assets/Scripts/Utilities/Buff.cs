@@ -1,0 +1,31 @@
+using System;
+
+namespace Utilities
+{
+    // Простая модель баффа/дебаффа
+    // movementMultiplier and attackMultiplier are multiplicative factors applied to delays.
+    // For example: movementMultiplier = 0.5 => move delay is halved (unit moves faster).
+    public class Buff
+    {
+        public float RemainingTime { get; private set; }
+        public float MovementMultiplier { get; }
+        public float AttackMultiplier { get; }
+
+        public string Source { get; }
+
+        public Buff(float durationSeconds, float movementMultiplier = 1f, float attackMultiplier = 1f, string source = null)
+        {
+            RemainingTime = Math.Max(0f, durationSeconds);
+            MovementMultiplier = movementMultiplier;
+            AttackMultiplier = attackMultiplier;
+            Source = source;
+        }
+
+        public void Tick(float delta)
+        {
+            RemainingTime -= delta;
+        }
+
+        public bool IsExpired => RemainingTime <= 0f;
+    }
+}
