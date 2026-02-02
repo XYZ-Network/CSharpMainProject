@@ -1,0 +1,53 @@
+﻿using System;
+using Model.Runtime;
+
+namespace Utilities
+{
+    public interface IBuff
+    {
+        float RemainingTime { get; }
+        void Tick(float delta);
+        bool IsExpired { get; }
+        bool CanApplyTo(Unit unit);
+        void ApplyTo(Unit unit);
+        void RemoveFrom(Unit unit);
+    }
+
+    public abstract class Buff<TUnit> : IBuff where TUnit : Unit
+    {
+        public float RemainingTime { get; private set; }
+        protected readonly float Duration;
+
+        protected Buff(float durationSeconds)
+        {
+            RemainingTime = Math.Max(0f, durationSeconds);
+            Duration = RemainingTime;
+        }
+
+        public void Tick(float delta)
+        {
+            RemainingTime -= delta;
+        }
+
+        public bool IsExpired => RemainingTime <= 0f;
+
+        void IBuff.ApplyTo(Unit unit)
+        {
+            if (unit is TUnit tu)
+                Apply(tu);
+        }
+
+        void IBuff.RemoveFrom(Unit unit)
+        {
+            if (unit is TUnit tu)
+                Remove(tu);
+        }
+
+        bool IBuff.CanApplyTo(Unit unit) => CanApplyTo(unit as TUnit);
+
+        protected virtual bool CanApplyTo(TUnit unit) => true;
+
+        protected abstract void Apply(TUnit unit);
+        protected abstract void Remove(TUnit unit);
+    }
+}

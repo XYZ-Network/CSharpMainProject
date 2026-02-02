@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using UnitBrains.Pathfinding;
+using UnityEngine;
+using Utilities;
+
+namespace UnitBrains.Player
+{
+    // Мозг второго юнита: использует рекомендацию координатора как цель движения,
+    // но добавляет небольшой уникальный оффсет, чтобы снизить толпление.
+    public class SecondUnitBrain : DefaultPlayerUnitBrain
+    {
+        public override string TargetUnitName => string.Empty;
+
+        public override Vector2Int GetNextStep()
+        {
+            // Если есть непосредственные цели в радиусе — остаёмся и стреляем
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            // Получаем координатор через ServiceLocator, если он зарегистрирован
+            IPlayerUnitsCoordinator coord = null;
+            if (ServiceLocator.Contains<IPlayerUnitsCoordinator>())
+                coord = ServiceLocator.Get<IPlayerUnitsCoordinator>();
+
+            Vector2Int coordPoint = (coord != null) ? coord.RecommendedPoint : PlayerUnitsCoordinatorSingletonFallback.RecommendedPoint;
+
+            // создаём небольшой детерминированный оффсет, зависящий от позиции юнита,
+            // чтобы юниты распределялись вокруг рекомендованной точки
+            int offsetX = (unit.Pos.x % 3) - 1; // -1,0,1
+            int offsetY = (unit.Pos.y % 3) - 1;
+
+            var target = coordPoint + new Vector2Int(offsetX, offsetY);
+
+            // используем A* локально (не пишем в приватный _activePath базового класса),
+            // чтобы получить следующий шаг к целевой позиции
+            var path = new AStarUnitPath(runtimeModel, unit.Pos, target);
+            return path.GetNextStepFrom(unit.Pos);
+        }
+
+        protected override List<Vector2Int> SelectTargets()
+        {
+            // По умолчанию — используем логику базового мозга,
+            // но можно расширить поведение под SecondUnit (в будущем).
+            return base.SelectTargets();
+        }
+    }
+
+    // Ведём лёгкую совместимость: если код ещё обращается к старому синглтону через класс,
+    // предоставим fallback-статик, использующий ServiceLocator при доступности, иначе
+    // возвращающий /0. Это временная мера, чтобы рефакторинг был постепенным.
+    internal static class PlayerUnitsCoordinatorSingletonFallback
+    {
+        public static Vector2Int RecommendedPoint
+        {
+            get
+            {
+                if (ServiceLocator.Contains<IPlayerUnitsCoordinator>())
+                    return ServiceLocator.Get<IPlayerUnitsCoordinator>().RecommendedPoint;
+                return Vector2Int.zero;
+            }
+        }
+
+        public static Model.Runtime.ReadOnly.IReadOnlyUnit RecommendedTargetUnit
+        {
+            get
+            {
+                if (ServiceLocator.Contains<IPlayerUnitsCoordinator>())
+                    return ServiceLocator.Get<IPlayerUnitsCoordinator>().RecommendedTargetUnit;
+                return null;
+            }
+        }
+    }
+}

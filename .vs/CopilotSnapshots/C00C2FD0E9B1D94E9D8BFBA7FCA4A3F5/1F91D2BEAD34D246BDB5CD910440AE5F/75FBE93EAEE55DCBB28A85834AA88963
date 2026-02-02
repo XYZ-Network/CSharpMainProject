@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Utilities
+{
+    public static class ServiceLocator
+    {
+        private static readonly Dictionary<Type, object> _services = new();
+        private static readonly object _lock = new();
+        
+        public static void Register<T>(T service)
+        {
+            lock (_lock)
+            {
+                _services[typeof(T)] = service;
+            }
+        }
+        
+        public static void RegisterAs<T>(T service, Type type)
+        {
+            lock (_lock)
+            {
+                _services[type] = service;
+            }
+        }
+        
+        public static void Unregister<T>()
+        {
+            lock (_lock)
+            {
+                _services.Remove(typeof(T));
+            }
+        }
+        
+        public static bool Contains<T>()
+        {
+            lock (_lock)
+            {
+                return _services.ContainsKey(typeof(T));
+            }
+        }
+
+        public static bool TryGet<T>(out T service)
+        {
+            lock (_lock)
+            {
+                if (_services.TryGetValue(typeof(T), out var obj) && obj is T typed)
+                {
+                    service = typed;
+                    return true;
+                }
+
+                service = default;
+                return false;
+            }
+        }
+        
+        public static T Get<T>()
+        {
+            lock (_lock)
+            {
+                return (T) _services[typeof(T)];
+            }
+        }
+        
+        public static void Clear()
+        {
+            lock (_lock)
+            {
+                _services.Clear();
+            }
+        }
+    }
+}

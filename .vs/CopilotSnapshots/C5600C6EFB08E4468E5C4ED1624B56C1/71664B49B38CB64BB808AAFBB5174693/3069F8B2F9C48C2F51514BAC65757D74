@@ -1,0 +1,214 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Model.Runtime;
+using System;
+
+namespace Utilities
+{
+    public class BuffSystem : MonoBehaviour, IBuffSystem
+    {
+        private readonly Dictionary<Unit, List<IBuff>> _buffs = new();
+        private Coroutine _tickCoroutine;
+
+        public static BuffSystem Create()
+        {
+            var go = new GameObject("BuffSystem");
+            DontDestroyOnLoad(go);
+            return go.AddComponent<BuffSystem>();
+        }
+
+        private void Awake()
+        {
+            _tickCoroutine = StartCoroutine(TickCoroutine());
+        }
+
+        private IEnumerator TickCoroutine()
+        {
+            var wait = new WaitForSeconds(0.1f);
+            while (true)
+            {
+                Tick(0.1f);
+                yield return wait;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_tickCoroutine != null)
+                StopCoroutine(_tickCoroutine);
+        }
+
+        private void Tick(float delta)
+        {
+            var toRemoveUnits = new List<Unit>();
+            foreach (var kv in _buffs)
+            {
+                var unit = kv.Key;
+                var list = kv.Value;
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    list[i].Tick(delta);
+                    if (list[i].IsExpired)
+                    {
+                        list[i].RemoveFrom(unit);
+                        list.RemoveAt(i);
+                    }
+                }
+
+                if (list.Count == 0)
+                    toRemoveUnits.Add(unit);
+            }
+
+            foreach (var u in toRemoveUnits)
+                _buffs.Remove(u);
+        }
+
+        public void AddBuff(Unit unit, IBuff buff)
+        {
+            if (!buff.CanApplyTo(unit))
+                return;
+
+            if (!_buffs.TryGetValue(unit, out var list))
+            {
+                list = new List<IBuff>();
+                _buffs[unit] = list;
+            }
+
+            list.Add(buff);
+            buff.ApplyTo(unit);
+        }
+
+        public float GetMovementMultiplier(Unit unit)
+        {
+            if (!_buffs.TryGetValue(unit, out var list) || list.Count == 0)
+                return 1f;
+
+            float result = 1f;
+            foreach (var b in list)
+            {
+                if (b is MovementBuff mb)
+                    result *= mb.MovementMultiplier;
+            }
+            return result;
+        }
+
+        public float GetAttackMultiplier(Unit unit)
+        {
+            if (!_buffs.TryGetValue(unit, out var list) || list.Count == 0)
+                return 1f;
+
+            float result = 1f;
+            foreach (var b in list)
+            {
+                if (b is AttackBuff ab)
+                    result *= ab.AttackMultiplier;
+            }
+            return result;
+        }
+
+        public void AddSpeedBuff(Unit unit, float duration)
+        {
+            AddBuff(unit, new MovementBuff(duration, movementMultiplier: 0.5f));
+        }
+
+        public void AddSlowDebuff(Unit unit, float duration)
+        {
+            AddBuff(unit, new MovementBuff(duration, movementMultiplier: 1.5f));
+        }
+
+        public void AddAttackSpeedBuff(Unit unit, float duration)
+        {
+            AddBuff(unit, new AttackBuff(duration, attackMultiplier: 0.5f));
+        }
+
+        public void AddAttackSlowDebuff(Unit unit, float duration)
+        {
+            AddBuff(unit, new AttackBuff(duration, attackMultiplier: 1.5f));
+        }
+    }
+
+    public class MovementBuff : Buff<Unit>
+    {
+        public float MovementMultiplier { get; }
+        public MovementBuff(float durationSeconds, float movementMultiplier = 1f) : base(durationSeconds)
+        {
+            MovementMultiplier = movementMultiplier;
+        }
+
+        protected override void Apply(Unit unit)
+        {
+            unit.SetMoveDelayMultiplier(MovementMultiplier);
+        }
+
+        protected override void Remove(Unit unit)
+        {
+            unit.SetMoveDelayMultiplier(1f);
+        }
+    }
+
+    public class AttackBuff : Buff<Unit>
+    {
+        public float AttackMultiplier { get; }
+        public AttackBuff(float durationSeconds, float attackMultiplier = 1f) : base(durationSeconds)
+        {
+            AttackMultiplier = attackMultiplier;
+        }
+
+        protected override void Apply(Unit unit)
+        {
+            unit.SetAttackDelayMultiplier(AttackMultiplier);
+        }
+
+        protected override void Remove(Unit unit)
+        {
+            unit.SetAttackDelayMultiplier(1f);
+        }
+    }
+
+    public class DoubleShotBuff : Buff<Model.Runtime.Unit>
+    {
+        public DoubleShotBuff(float durationSeconds) : base(durationSeconds)
+        {
+        }
+
+        protected override bool CanApplyTo(Model.Runtime.Unit unit)
+        {
+            return unit.Config.Name == "Second" || unit.Config.Name == "SecondUnit" || unit.Config.Name == "Second Unit" || unit.Config.Name == string.Empty;
+        }
+
+        protected override void Apply(Model.Runtime.Unit unit)
+        {
+            unit.SetExtraShots(1);
+        }
+
+        protected override void Remove(Model.Runtime.Unit unit)
+        {
+            unit.SetExtraShots(0);
+        }
+    }
+
+    public class AttackRangeBuff : Buff<Model.Runtime.Unit>
+    {
+        private readonly float _multiplier;
+        public AttackRangeBuff(float durationSeconds, float multiplier) : base(durationSeconds)
+        {
+            _multiplier = multiplier;
+        }
+
+        protected override bool CanApplyTo(Model.Runtime.Unit unit)
+        {
+            return unit.Config.Name == "Third" || unit.Config.Name == "ThirdUnit" || unit.Config.Name == "Third Unit" || unit.Config.Name == "Ironclad Behemoth";
+        }
+
+        protected override void Apply(Model.Runtime.Unit unit)
+        {
+            unit.SetAttackRangeMultiplier(_multiplier);
+        }
+
+        protected override void Remove(Model.Runtime.Unit unit)
+        {
+            unit.SetAttackRangeMultiplier(1f);
+        }
+    }
+}

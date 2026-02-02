@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
@@ -26,7 +27,12 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
+        private float _moveDelayMultiplier = 1f;
+        private float _attackDelayMultiplier = 1f;
+        private float _attackRangeMultiplier = 1f;
+        private int _extraShots = 0;
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -37,26 +43,31 @@ namespace Model.Runtime
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
+        public void SetBrainCoordinator(UnitBrains.Player.IPlayerUnitsCoordinator coordinator)
+        {
+            _brain?.SetCoordinator(coordinator);
+        }
+
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + GetMoveDelay();
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + GetAttackDelay();
             }
         }
 
@@ -65,7 +76,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +96,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
@@ -98,5 +109,30 @@ namespace Model.Runtime
         {
             Health -= projectileDamage;
         }
+
+        public void SetMoveDelayMultiplier(float mult)
+        {
+            _moveDelayMultiplier = mult;
+        }
+
+        public void SetAttackDelayMultiplier(float mult)
+        {
+            _attackDelayMultiplier = mult;
+        }
+
+        public void SetAttackRangeMultiplier(float mult)
+        {
+            _attackRangeMultiplier = mult;
+        }
+
+        public void SetExtraShots(int extra)
+        {
+            _extraShots = extra;
+        }
+
+        public float GetMoveDelay() => Config.MoveDelay * _moveDelayMultiplier;
+        public float GetAttackDelay() => Config.AttackDelay * _attackDelayMultiplier;
+        public float GetAttackRange() => Config.AttackRange * _attackRangeMultiplier;
+        public int GetShotsCount() => Math.Max(1, 1 + _extraShots);
     }
 }

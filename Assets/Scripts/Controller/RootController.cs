@@ -1,8 +1,12 @@
 ﻿using Model;
 using Model.Config;
+using System;
 using UnityEngine;
 using Utilities;
 using View;
+
+// Alias UnityEngine.Object to avoid ambiguity with System.Object
+using Object = UnityEngine.Object;
 
 namespace Controller
 {
@@ -30,6 +34,27 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+
+            // Try to create and register BuffSystem without a compile-time dependency on its interface
+            try
+            {
+                var buffSystemType = Type.GetType("Utilities.BuffSystem");
+                if (buffSystemType != null)
+                {
+                    var go = new GameObject("BuffSystem");
+                    Object.DontDestroyOnLoad(go);
+                    var comp = go.AddComponent(buffSystemType);
+                    if (comp != null)
+                    {
+                        // register under the concrete type
+                        ServiceLocator.Register(buffSystemType, comp);
+                    }
+                }
+            }
+            catch
+            {
+                // ignore if type not found or can't be created in editor contexts
+            }
             
             _levelController = new(_runtimeModel, this);
             
