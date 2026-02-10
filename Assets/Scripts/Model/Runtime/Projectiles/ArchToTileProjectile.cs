@@ -29,12 +29,17 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            float maxHeight = totalDistance * 0.6f;
 
+            // Преобразуем t из [0..1] в [-1..1]
+            float normalizedT = t * 2f - 1f;
 
+            // Парабола с пиком в середине полёта
+            localHeight = maxHeight * (-(normalizedT * normalizedT) + 1f);
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
