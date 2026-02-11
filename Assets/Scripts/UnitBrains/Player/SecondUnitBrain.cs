@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using GluonGui.Dialog;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static Unity.IO.LowLevel.Unsafe.AsyncReadManagerMetrics;
 
 namespace UnitBrains.Player
 {
@@ -16,12 +19,17 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            if (GetTemperature() >= OverheatTemperature)
+                return;
+            
+            IncreaseTemperature();
+            
+            int projectileCount = GetTemperature();
+            for (int i = 0; i < projectileCount; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
 
         public override Vector2Int GetNextStep()
@@ -31,17 +39,31 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            if (result.Count == 0)
+                return result;
+
+            Vector2Int closestTarget = result[0];
+            float minDistance = DistanceToOwnBase(closestTarget);
+
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
             }
+
+            result.Clear();
+            result.Add(closestTarget);
+
             return result;
-            ///////////////////////////////////////
         }
+
 
         public override void Update(float deltaTime, float time)
         {
@@ -60,14 +82,17 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
-            else return (int)_temperature;
+            if(_overheated) 
+                return (int) OverheatTemperature;
+            else 
+                return (int)_temperature;
         }
 
         private void IncreaseTemperature()
         {
             _temperature += 1f;
-            if (_temperature >= OverheatTemperature) _overheated = true;
+            if (_temperature >= OverheatTemperature) 
+                _overheated = true;
         }
     }
 }
