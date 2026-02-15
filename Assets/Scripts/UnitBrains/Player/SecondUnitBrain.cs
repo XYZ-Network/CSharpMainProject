@@ -18,7 +18,35 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+             //подзадание а.
+             
+
+ void GetTemperature(float OverheatTempirature, float _temperature)
+ {
+     float Temperature = _temperature + OverheatTempirature;
+
+     for (int a = 0; a <= 1; a++)
+         if (Temperature >= overheatTemperature)
+             return;
+
+     void GenerateP();
+     float Temperature = GetTemperature();
+     if (Temperature >= overheatTemperature)
+         return;
+ }
+ ///////////////////////////////////////
+   IncreaseTemperature();//вызов
+ //2 задание. 
+     int projectilenumber = (int)Temperature;
+   
+     {
+     for (int i = 1; i == projectilenumber; i++)
+
+
+     //у меня был ваниант for (int i = 1; i == Temperature; i++), но с этим вариантом и тот, что в итоге не получилось. Не очень понятно как приписать кол-во снорядов = температуре. 
+         
+     }
+                 ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
             AddProjectileToList(projectile, intoList);
             ///////////////////////////////////////
@@ -70,4 +98,8 @@ namespace UnitBrains.Player
             if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }
+
 }
+
+
+
