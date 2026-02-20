@@ -4,85 +4,73 @@ using UnityEngine;
 
 namespace UnitBrains.Player
 {
-    
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
-        private List<Vector2Int> _targetsToMove = new List<Vector2Int>();
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+
+        private static int _unitCounter = 0;
+        private int _unitNumber;
+        private const int MaxSmartTargets = 3;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _unitNumber = _unitCounter;
+            _unitCounter++;
+        }
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
-    {
-        float overheatTemperature = OverheatTemperature;
-
-        if (GetTemperature() >= overheatTemperature)
-            return;
-        IncreaseTemperature();
-        int currentTemp = (int)GetTemperature();
-        if (currentTemp < 1)
-            currentTemp = 1;
-        for (int i = 0; i < currentTemp; i++)
         {
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            float overheatTemperature = OverheatTemperature;
+
+            if (GetTemperature() >= overheatTemperature)
+                return;
+
+            IncreaseTemperature();
+            int currentTemp = (int)GetTemperature();
+
+            if (currentTemp < 1)
+                currentTemp = 1;
+
+            for (int i = 0; i < currentTemp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
-    }
+
         public override Vector2Int GetNextStep()
         {
-            if (_targetsToMove.Count == 0)
-                return Position;
-
-            Vector2Int target = _targetsToMove[0];
-
-            if (IsTargetReachable(target))
-                return Position;
-
-            return Position.CalcNextStepTowards(target);
+            return base.GetNextStep();
         }
-        
+
         protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> allTargets = GetAllTargets();
             List<Vector2Int> result = new List<Vector2Int>();
-            _targetsToMove.Clear();
+            List<Vector2Int> allTargets = GetReachableTargets();
 
-            if (allTargets.Count > 0)
-            { 
-                Vector2Int mostDangerous = allTargets[0];
-                float closestDistance = DistanceToOwnBase(mostDangerous);
-
-                foreach (var target in allTargets)
-                {
-                    float distance = DistanceToOwnBase(target);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        mostDangerous = target;
-                    }
-                }
-
-                _targetsToMove.Add(mostDangerous);
-
-                if (IsTargetReachable(mostDangerous))
-                    result.Add(mostDangerous);
-            }
-            else
+            if (allTargets.Count == 0)
             {
-                var enemyBase = runtimeModel.RoMap.Bases[
-                    IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerID
-                ];
-
-                Vector2Int basePos = enemyBase.Position;
-
-                _targetsToMove.Add(basePos);
-
-                if (IsTargetReachable(basePos))
-                    result.Add(basePos);
+                result.Add(GetEnemyBasePosition());
+                return result;
             }
+
+            SortByDistanceToOwnBase(allTargets);
+
+            int smartIndex = _unitNumber % MaxSmartTargets;
+
+            if (smartIndex >= allTargets.Count)
+                smartIndex = 0;
+
+            Vector2Int selectedTarget = allTargets[smartIndex];
+
+            if (IsTargetInAttackRange(selectedTarget))
+                result.Add(selectedTarget);
 
             return result;
         }
@@ -92,8 +80,9 @@ namespace UnitBrains.Player
             if (_overheated)
             {              
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
+
                 if (t >= 1)
                 {
                     _cooldownTime = 0;
@@ -104,16 +93,18 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
-            else return (int)_temperature;
+            if (_overheated)
+                return (int)OverheatTemperature;
+            else
+                return (int)_temperature;
         }
 
         private void IncreaseTemperature()
         {
             _temperature += 1f;
-            if (_temperature >= OverheatTemperature) _overheated = true;
+
+            if (_temperature >= OverheatTemperature)
+                _overheated = true;
         }
     }
-
 }
-
