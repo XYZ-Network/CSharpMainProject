@@ -100,7 +100,7 @@ namespace UnitBrains.Player
         }
 
         private void IncreaseTemperature()
-        {
+        { 
             _temperature += 1f; 
 
             if (_temperature >= OverheatTemperature)
