@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
+using Model.Runtime;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +16,30 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        public List<Vector2Int> UnreachableTargets = new List<Vector2Int>();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature) return;
+            IncreaseTemperature();
+            for (int i = 1; i <= (int)GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (UnreachableTargets.Count > 0) 
+                return unit.Pos.CalcNextStepTowards(UnreachableTargets[0]);
+            else
+                return unit.Pos;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +47,33 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new();
+            var allTargets = GetAllTargets();
+            float min = float.MaxValue;
+            int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+            var bestTarget = result.First();
+            if (result.Any())
             {
-                result.RemoveAt(result.Count - 1);
+                foreach (var target in result)
+                {
+                    if (min > DistanceToOwnBase(target))
+                    {
+                        min = DistanceToOwnBase(target);
+                        bestTarget = target;
+                    }
+                }
             }
-            return result;
+            result.Clear();
+            if (min < float.MaxValue)
+            {
+                if (!GetReachableTargets().Contains(bestTarget))
+                    UnreachableTargets.Add(bestTarget);
+                else
+                    result.Add(bestTarget);
+            }
+            else
+                result.Add(runtimeModel.RoMap.Bases[enemyId]);
+                return result;
             ///////////////////////////////////////
         }
 
