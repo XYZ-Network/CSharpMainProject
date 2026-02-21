@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -18,9 +19,19 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////      
+            int currentTemperature = GetTemperature();
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            for (int i = -1; i < currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
@@ -34,12 +45,23 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> targetPositions = GetReachableTargets();
+            if (!targetPositions.Any())
             {
-                result.RemoveAt(result.Count - 1);
+                return targetPositions;
             }
-            return result;
+            Vector2Int target = targetPositions[0];
+            float minRangeToBase = float.MaxValue;
+            foreach (var t in targetPositions)
+            {
+                var rangeToBase = DistanceToOwnBase(t);
+                if (minRangeToBase > rangeToBase)
+                {
+                    minRangeToBase = rangeToBase;
+                    target = t;
+                }
+            }
+            return new List<Vector2Int> { target };
             ///////////////////////////////////////
         }
 
