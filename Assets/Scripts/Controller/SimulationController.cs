@@ -1,7 +1,8 @@
 ﻿
+using Model;
+using Model.Runtime;
 using System;
 using System.Linq;
-using Model;
 using UnityEngine;
 using Utilities;
 
@@ -27,6 +28,9 @@ namespace Controller
             if (_runtimeModel.Stage != RuntimeModel.GameStage.Simulation)
                 return;
 
+            var buffSystem = ServiceLocator.Get<BuffSystem>();
+            buffSystem.Update(deltaTime);
+
             foreach (var unitList in _runtimeModel.PlayersUnits)
                 foreach (var unit in unitList)
                 {
@@ -48,6 +52,7 @@ namespace Controller
                     if (hitUnit.Health <= 0)
                     {
                         _runtimeModel.RemoveUnit(hitUnit);
+                        buffSystem.RemoveUnit(hitUnit);
                     }
                 }
                 

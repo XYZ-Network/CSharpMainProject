@@ -39,7 +39,10 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            //_activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+
+            UnityEngine.Object.FindObjectOfType<UnitBrains.Pathfinding.DebugPathOutput>()?.HighlightPath(_activePath);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -117,14 +120,14 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var range = unit.Config.AttackRange * unit.AttackRangeModifier;
+            var attackRangeSqr = range * range;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
                 if (diff.sqrMagnitude < attackRangeSqr)
                     return true;
             }
-
             return false;
         }
 
@@ -144,7 +147,8 @@ namespace UnitBrains
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var range = unit.Config.AttackRange * unit.AttackRangeModifier;
+            var attackRangeSqr = range * range;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -152,15 +156,13 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
                     continue;
-                
+
                 result.Add(possibleTarget);
             }
-
             return result;
         }
     }

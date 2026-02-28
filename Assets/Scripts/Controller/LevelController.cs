@@ -1,7 +1,8 @@
-﻿using System.Linq;
-using Model;
+﻿using Model;
 using Model.Config;
 using Model.Runtime;
+using System.Linq;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 using View;
@@ -18,6 +19,9 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+
+        private UnitCoordinator _playerCoordinator;
+        private UnitCoordinator _botCoordinator;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -37,6 +41,9 @@ namespace Controller
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
             
             _rootView.HideLevelFinished();
+
+            _playerCoordinator = new UnitCoordinator();
+            _botCoordinator = new UnitCoordinator();
 
             Random.InitState(level);
             SetInitialMoney();
@@ -75,6 +82,14 @@ namespace Controller
             var unit = new Unit(config, pos);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
+
+            if (unit.Brain is DefaultPlayerUnitBrain brain)
+            {
+                var coordinator = forPlayer == RuntimeModel.PlayerId
+                    ? _playerCoordinator
+                    : _botCoordinator;
+                brain.SetCoordinator(coordinator);
+            }
         }
 
         private void TryStartSimulation()

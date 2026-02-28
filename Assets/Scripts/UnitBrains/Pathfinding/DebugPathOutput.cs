@@ -16,6 +16,7 @@ namespace UnitBrains.Pathfinding
 
         public void HighlightPath(BaseUnitPath path)
         {
+            //Debug.Log("HighlightPath called!", this);  // Проверка на то вызывается ли хайлайт
             Path = path;
             while (allHighlights.Count > 0)
             {
@@ -33,7 +34,39 @@ namespace UnitBrains.Pathfinding
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
             // TODO Implement me
-            yield break;
+            //yield break;
+
+            // Очистка старых хайлайтов
+            while (allHighlights.Count > 0)
+            {
+                Destroy(allHighlights[0]);
+                allHighlights.RemoveAt(0);
+            }
+
+            // Проверка пути 
+            var pathCells = path?.GetPath();
+            if (pathCells == null || cellHighlightPrefab == null)
+            {
+                yield break;
+            }
+                
+
+            // Идём по всем клеткам
+            foreach (var cell in pathCells)
+            {
+                // Подсвечиваем тек. клетку
+                CreateHighlight(cell);
+
+                // Ограничиваем количество подсветок
+                if (allHighlights.Count > maxHighlights)
+                {
+                    Destroy(allHighlights[0]);
+                    allHighlights.RemoveAt(0);
+                }
+
+                // Задержка
+                yield return new WaitForSeconds(0.05f);
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)

@@ -3,6 +3,7 @@ using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using Model.Runtime;
 using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        public BaseUnitBrain Brain => _brain;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
@@ -26,7 +29,21 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+        private float _moveSpeedModifier = 1f;
+        private float _attackSpeedModifier = 1f;
+
+        private bool _doubleShot = false;
+        private float _attackRangeModifier = 1f;
+
+        public bool DoubleShot => _doubleShot;
+        public float AttackRangeModifier => _attackRangeModifier;
+
+        public void SetMoveSpeedModifier(float modifier) => _moveSpeedModifier = modifier;
+        public void SetAttackSpeedModifier(float modifier) => _attackSpeedModifier = modifier;
+
+        public void SetDoubleShot(bool value) => _doubleShot = value;
+        public void SetAttackRangeModifier(float modifier) => _attackRangeModifier = modifier;
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -47,16 +64,18 @@ namespace Model.Runtime
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                var adjustedMoveDelay = Config.MoveDelay / _moveSpeedModifier;
+                _nextMoveTime = time + adjustedMoveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                var adjustedAttackDelay = Config.AttackDelay / _attackSpeedModifier;
+                _nextAttackTime = time + adjustedAttackDelay;
             }
         }
 
