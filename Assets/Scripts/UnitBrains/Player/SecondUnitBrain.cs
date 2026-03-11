@@ -12,16 +12,22 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float currentTemperature = GetTemperature();
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+            IncreaseTemperature();
+            currentTemperature = GetTemperature();
+            for (int i = 0; i < currentTemperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
 
         public override Vector2Int GetNextStep()
@@ -31,16 +37,31 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            Vector2Int closestTarget = default;
+            float minDistance = float.MaxValue;
+
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
             }
+
+            if (minDistance != float.MaxValue)
+            {
+                result.Clear();
+                result.Add(closestTarget);
+            }
+
             return result;
-            ///////////////////////////////////////
+
+            /////////////////////////////////////// помогала нееросеть.
         }
 
         public override void Update(float deltaTime, float time)
@@ -70,4 +91,5 @@ namespace UnitBrains.Player
             if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }
+
 }
