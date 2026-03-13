@@ -1,6 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading;
+using JetBrains.Annotations;
+using log4net.Util;
+using Model;
 using Model.Runtime.Projectiles;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,33 +20,60 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        private readonly List<Vector2Int> _currTarget = new();
+
+        private const int ClosestTargetsToAttack = 4;
+        private static int _instanceCounter = 0;
+        private int _unitNumber = _instanceCounter++;
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            float temp = GetTemperature();
+
+            if (temp >= overheatTemperature) return;
+
+            for (int i = 0; i <= temp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            var target = _currTarget.Count > 0 ? _currTarget[0] : unit.Pos;
+            return IsTargetInRange(target) ? unit.Pos : unit.Pos.CalcNextStepTowards(target); 
         }
+        
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>();
+            _currTarget.Clear();
+            foreach (var target in GetAllTargets())
             {
-                result.RemoveAt(result.Count - 1);
+                _currTarget.Add(target);
             }
+
+            if (_currTarget.Count == 0)
+            {
+                _currTarget.Add(runtimeModel.RoMap.Bases[
+                    IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+            }
+            SortByDistanceToOwnBase(_currTarget);
+
+
+            var myTargetNum = _unitNumber % ClosestTargetsToAttack;
+            var targetNum = Mathf.Min(myTargetNum, _currTarget.Count - 1);
+            var bestTarget = _currTarget[targetNum];
+            if (IsTargetInRange(bestTarget))
+            {
+                result.Add(bestTarget);
+            }
+
             return result;
             ///////////////////////////////////////
         }
