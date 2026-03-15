@@ -56,9 +56,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Analyzer Include="D:\VisualStudio\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
-    <Analyzer Include="D:\Fork\ThisIsMyCSharpMainProject\Library\PackageCache\com.unity.collab-proxy@b26119cdd155\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll" />
-    <Analyzer Include="D:\Fork\ThisIsMyCSharpMainProject\Library\PackageCache\com.unity.collab-proxy@b26119cdd155\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll" />
-    <Analyzer Include="D:\Fork\ThisIsMyCSharpMainProject\Library\PackageCache\com.unity.collab-proxy@b26119cdd155\Lib\Editor\PlasticSCM\log4netPlastic.dll" />
     <Analyzer Include="D:\Unity Hub\installs\6000.0.68f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="D:\Unity Hub\installs\6000.0.68f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="D:\Unity Hub\installs\6000.0.68f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
