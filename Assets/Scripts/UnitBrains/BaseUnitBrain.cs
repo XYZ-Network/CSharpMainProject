@@ -18,7 +18,7 @@ namespace UnitBrains
         
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+        protected BaseUnitPath _activePath = null;
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
