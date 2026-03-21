@@ -14,6 +14,7 @@ namespace UnitBrains
     {
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
+        public virtual float RadiusForSearchTarget => 2;
         public virtual BaseUnitPath ActivePath => _activePath;
         
         protected Unit unit { get; private set; }
@@ -36,10 +37,9 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var target = ActionGenerator.GetInstance().GetRecomendedStep(IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId, unit);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new AstarUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -76,7 +76,15 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
-            var result = GetReachableTargets();
+            var target = ActionGenerator.GetInstance().GetRecomendedTarget(IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId);
+            List<Vector2Int> result = new List<Vector2Int>();
+            if (GetUnitsInRadius(RadiusForSearchTarget * unit.Config.AttackRange, true).Contains(target))
+            {
+                result.Add(target.Pos);
+                return result; 
+            }
+
+            result = GetReachableTargets();
             while (result.Count > 1)
                 result.RemoveAt(result.Count - 1);
             return result;
