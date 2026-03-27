@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Properties;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -26,15 +27,18 @@ namespace Model.Runtime.Projectiles
             float localHeight = 0f;
             float totalDistance = _totalDistance;
 
-            ///////////////////////////////////////
-            // Insert you code here
+            //////////////////////////////////////
+            float f = 0f;
+            float maxHeight = 0.6f;
+            // здесь должна была быть строчка float localHeight = maxHeight * (-(t * 2f - 1f) * (t * 2f - 1f) + 1f),  
+            //но программа писала ошибку, и чтобы код заработал пришлось убрать
             ///////////////////////////////////////
 
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
