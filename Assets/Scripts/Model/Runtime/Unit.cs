@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.UnitBrains;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -22,19 +23,22 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        private readonly BuffManager _buffManager;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
         
-        public Unit(UnitConfig config, Vector2Int startPos)
+        public Unit(UnitConfig config, Vector2Int startPos, ActionGenerator actionGenerator)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetActionGenerator(actionGenerator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+            _buffManager = ServiceLocator.Get<BuffManager>();
         }
 
         public void Update(float deltaTime, float time)
@@ -50,14 +54,34 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + GetMoveDelay();
                 Move();
             }
             
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + GetAttackDelay();
             }
+        }
+
+        private float GetMoveDelay()
+        {
+            return Config.MoveDelay + GetBuffModifier(BuffType.MoveSpeed);
+        }
+
+        private float GetAttackDelay()
+        {
+            return Config.AttackDelay + GetBuffModifier(BuffType.AttackSpeed);
+        }
+
+        private float GetBuffModifier(BuffType type)
+        {
+            var buff = _buffManager.GetBuff(this, type);
+            if (buff == null)
+            {
+                return 0;
+            }
+            return buff.Modifier;
         }
 
         private bool Attack()
