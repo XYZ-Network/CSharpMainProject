@@ -1,14 +1,16 @@
-﻿using Model.Config;
+﻿using Assets.Scripts.Model.Runtime;
+using Model.Config;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 
 namespace Model.Runtime.ReadOnly
 {
-    public interface IReadOnlyUnit
+    public interface IReadOnlyUnit : IWriteUnit
     {
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; }
         public int Health { get; }
         public BaseUnitPath ActivePath { get; }
+        public System.Type GetBrainType { get; }
     }
 }
