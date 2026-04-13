@@ -1,6 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Codice.Client.BaseCommands;
+using Codice.CM.WorkspaceServer.Tree.GameUI.HeadTree;
+using Model;
 using Model.Runtime.Projectiles;
+using PlasticGui.WorkspaceWindow.Diff;
+using UnitBrains.Pathfinding;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,36 +20,101 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+        
+            int temp = GetTemperature();
+            
+            if (temp >= overheatTemperature) 
+            {
+                return;
+            }
+ 
+            IncreaseTemperature();
+            int CurrentTemp = GetTemperature();
+            for (int i = 0; i <= CurrentTemp; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
         }
-
+                ///////////////////////////////////////
         public override Vector2Int GetNextStep()
+            
         {
-            return base.GetNextStep();
-        }
+            if (SelectTargets().Any())
+            {
+                return unit.Pos;
+            }
+ 
+            
+            if (targetsOutOfRange.Count > 0)
+            {
+              
+                return unit.Pos.CalcNextStepTowards(targetsOutOfRange[0]);
+            }
+            return unit.Pos;
+        }    
 
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>();
+            targetsOutOfRange.Clear();
+
+            List<Vector2Int> allTargets = GetAllTargets().ToList(); 
+         
+
+            if (allTargets.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.BotPlayerId;
+                allTargets.Add(runtimeModel.RoMap.Bases[enemyId]);
+
+            }
+
+            float minDistance = float.MaxValue;
+            Vector2Int nearestTarget = allTargets[0];
+
+            foreach (var target in allTargets)
+
+            {
+                float distance = DistanceToOwnBase(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestTarget = target;
+                }
+
+            }
+            if (IsTargetInRange(nearestTarget))
+            {
+                result.Add(nearestTarget);
+            }
+            else
+            {
+                targetsOutOfRange.Add(nearestTarget);
             }
             return result;
             ///////////////////////////////////////
+
+
         }
+        private List<Vector2Int> targetsOutOfRange = new List<Vector2Int>();
+        private List<Vector2Int> targetsInfRange = new List<Vector2Int>();
+        
+
+       
+        
+        
+            
+        
 
         public override void Update(float deltaTime, float time)
         {
@@ -57,7 +130,6 @@ namespace UnitBrains.Player
                 }
             }
         }
-
         private int GetTemperature()
         {
             if(_overheated) return (int) OverheatTemperature;
