@@ -12,6 +12,7 @@ namespace Model.Runtime
 {
     public class Unit : IReadOnlyUnit
     {
+        private Commander _commander;
         public UnitConfig Config { get; }
         public Vector2Int Pos { get; private set; }
         public int Health { get; private set; }
@@ -26,37 +27,81 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private float _baseMoveDelay;
+        private float _baseAttackDelay;
+        private float _baseAttackRange;
+
+        private float _currentMoveDelay;
+        private float _currentAttackDelay;
+        private float _currentAttackRange;
+
+        public float CurrentAttackRange => _currentAttackRange;
+
+        public Unit(UnitConfig config, Vector2Int startPos, Commander commander)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
+            _commander = commander;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+           
+            _baseMoveDelay = config.MoveDelay;
+            _baseAttackDelay = config.AttackDelay;
+            _baseAttackRange = config.AttackRange;
+
+            _currentMoveDelay = _baseMoveDelay;
+            _currentAttackDelay = _baseAttackDelay;
+            _currentAttackRange = _baseAttackRange;
+            Debug.Log($"<color=cyan>[Unit] {Config.Name} создан. MoveDelay: {_currentMoveDelay}, AttackDelay: {_currentAttackDelay}</color>");
+        }
+        public BaseUnitBrain GetBrain()
+        {
+            return _brain;
+        }
+        public void ModifyMoveSpeed(float multiplier)
+        {
+            _currentMoveDelay = _baseMoveDelay / multiplier;
         }
 
+        public void ModifyAttackSpeed(float multiplier)
+        {
+            _currentAttackDelay = _baseAttackDelay / multiplier;
+        }
+
+        public void ModifyAttackRange(float multiplier)
+        {
+            _currentAttackRange = _baseAttackRange * multiplier;
+        }
+        public Commander GetCommander()
+        {
+            return _commander;
+        }
         public void Update(float deltaTime, float time)
         {
+            
             if (IsDead)
                 return;
-            
+            if (_currentMoveDelay <= 0) _currentMoveDelay = _baseMoveDelay;
+            if (_currentAttackDelay <= 0) _currentAttackDelay = _baseAttackDelay;
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                Debug.Log($"[Unit] {Config.Name} движение. Задержка: {_currentMoveDelay}, Время: {time}");
+                _nextMoveTime = time + _currentMoveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + _currentAttackDelay;
             }
         }
 
@@ -65,7 +110,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -74,9 +119,9 @@ namespace Model.Runtime
         {
             var targetPos = _brain.GetNextStep();
             var delta = targetPos - Pos;
+            Debug.Log($"[Unit] {Config.Name} пытается двигаться с {Pos} на {targetPos}");
             if (delta.sqrMagnitude > 2)
             {
-                Debug.LogError($"Brain for unit {Config.Name} returned invalid move: {delta}");
                 return;
             }
 
@@ -85,8 +130,9 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
+            Debug.Log($"<color=green>[Unit] {Config.Name} переместился на {Pos}</color>");
         }
 
         public void ClearPendingProjectiles()
@@ -99,4 +145,5 @@ namespace Model.Runtime
             Health -= projectileDamage;
         }
     }
-}
+    
+  }

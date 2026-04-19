@@ -19,13 +19,22 @@ namespace Controller
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
 
+        private Commander _playerCommander;
+        private Commander _botCommander;
+
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
             _runtimeModel = runtimeModel;
             _rootController = rootController;
+            GameObject playerCommanderGO = new GameObject("PlayerCommander");
+            _playerCommander = playerCommanderGO.AddComponent<Commander>();
+            GameObject botCommanderGO = new GameObject("BotCommander");
+            _botCommander = botCommanderGO.AddComponent<Commander>();
+            _playerCommander.Init(_runtimeModel);
+            _botCommander.Init(_runtimeModel);
             _botController = new BotController(OnBotUnitChosen);
             _simulationController = new(runtimeModel, OnLevelFinished);
-            
+
             _rootView = ServiceLocator.Get<RootView>();
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
@@ -35,7 +44,7 @@ namespace Controller
         public void StartLevel(int level)
         {
             ServiceLocator.RegisterAs(this, typeof(IPlayerUnitChoosingListener));
-            
+
             _rootView.HideLevelFinished();
 
             Random.InitState(level);
@@ -55,7 +64,7 @@ namespace Controller
         {
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
-            
+
             SpawnUnit(RuntimeModel.PlayerId, unitConfig);
             TryStartSimulation();
         }
@@ -71,8 +80,9 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
-            var unit = new Unit(config, pos);
+            Commander commanderForUnit = forPlayer == RuntimeModel.PlayerId ? _playerCommander : _botCommander;
+
+            var unit = new Unit(config, pos, commanderForUnit);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

@@ -17,13 +17,13 @@ namespace View
         [SerializeField] private UnitCardView _unitCardPrefab;
 
         private IReadOnlyRuntimeModel _model;
-        
+
         private void Start()
         {
             _model = ServiceLocator.Get<IReadOnlyRuntimeModel>();
             SetupCards(ServiceLocator.Get<Settings>());
         }
-        
+
         private void Update()
         {
             var visible = _model.Stage == RuntimeModel.GameStage.ChooseUnit;
