@@ -16,13 +16,28 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
+
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////
+            if (GetTemperature() >= OverheatTemperature)
+                return;
+
+            IncreaseTemperature();
+
+            for (int i = 0; i < GetTemperature(); i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+                IncreaseTemperature();
+
+            }
+            
+
             ///////////////////////////////////////
         }
+
+        
 
         public override Vector2Int GetNextStep()
         {
@@ -34,13 +49,28 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> targets = GetReachableTargets();
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            float minDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+
+            foreach (Vector2Int target in targets)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
+            }
+            if (targets.Count > 0)
+            {
+                result.Add(closestTarget);
             }
             return result;
-            ///////////////////////////////////////
+
+
         }
 
         public override void Update(float deltaTime, float time)

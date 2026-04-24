@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\ForkProjects\\CSharpMainProjectMyFork\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|d:\\forkprojects\\csharpmainprojectmyfork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C12C09C7-888C-7364-148B-3BC33A05AB3F}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|d:\\forkprojects\\csharpmainprojectmyfork\\assets\\script\\myfirstc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF148AF5-0DF0-FFD6-354A-FB3465FEF81D}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\myfirstc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SecondUnitBrain.cs",
+              "DocumentMoniker": "D:\\ForkProjects\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "D:\\ForkProjects\\CSharpMainProjectMyFork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAAqwEEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-24T17:55:34.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MyFirstC.cs",
+              "DocumentMoniker": "D:\\ForkProjects\\CSharpMainProjectMyFork\\Assets\\Script\\MyFirstC.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\MyFirstC.cs",
+              "ToolTip": "D:\\ForkProjects\\CSharpMainProjectMyFork\\Assets\\Script\\MyFirstC.cs",
+              "RelativeToolTip": "Assets\\Script\\MyFirstC.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAwA4AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-05T23:42:19.494Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
