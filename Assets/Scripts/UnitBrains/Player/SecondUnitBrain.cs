@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Model;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -18,15 +22,32 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////
+            if (GetTemperature() < overheatTemperature)
+            {
+                for (int i = 0; i < GetTemperature() + 1; i++)
+                {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+                }
+                IncreaseTemperature();
+            }
+            else
+            {
+                return;
+            }
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int position = unit.Pos;
+            Vector2Int nextPosition = GetAllTargets().ToList()[0];
+            if (IsTargetInRange(nextPosition))
+            {
+                return position;
+            }
+            return position.CalcNextStepTowards(nextPosition);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,10 +55,42 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = GetAllTargets().ToList();
+            List<Vector2Int> BodiesNotInRange = new List<Vector2Int>();
+
+            float minima = float.MaxValue;
+
+
+            if (result.Count() == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                int enemyId = IsPlayerUnitBrain ? RuntimeModel.PlayerId : RuntimeModel.BotPlayerId;
+                result.Clear();
+                if (IsTargetInRange(runtimeModel.RoMap.Bases[enemyId]))
+                    result.Add(runtimeModel.RoMap.Bases[enemyId]);
+                return result;
+            }
+            else
+            {
+                Vector2Int MinBody = new Vector2Int();
+                foreach (Vector2Int Body in result)
+                {
+                    if (!IsTargetInRange(Body))
+                    {
+                        BodiesNotInRange.Add(Body);
+                    }
+                    if (IsTargetInRange(Body) && (DistanceToOwnBase(Body) < minima || MinBody == new Vector2Int()))
+                    {
+                        MinBody = Body;
+                        minima = DistanceToOwnBase(Body);
+                    }
+                }
+                result.Clear();
+                if (MinBody != new Vector2Int())
+                {
+                    result.Add(MinBody);
+                }
+                
+
             }
             return result;
             ///////////////////////////////////////
