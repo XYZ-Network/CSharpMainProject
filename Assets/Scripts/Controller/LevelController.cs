@@ -18,6 +18,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private UnitBrains.ArmyBrain _playerArmyBrain;
+        private UnitBrains.ArmyBrain _botArmyBrain;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -43,6 +45,8 @@ namespace Controller
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
             var map = MapGenerator.Generate(_settings.MapWidth, _settings.MapHeight, density, level);
             _runtimeModel.Clear();
+            _playerArmyBrain = new UnitBrains.ArmyBrain();
+            _botArmyBrain = new UnitBrains.ArmyBrain();
             _runtimeModel.Map = new Map(map, Settings.PlayersCount);
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
@@ -73,6 +77,8 @@ namespace Controller
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
             var unit = new Unit(config, pos);
+            var armyBrain = forPlayer == RuntimeModel.PlayerId ? _playerArmyBrain : _botArmyBrain;
+            unit.SetArmyBrain(armyBrain);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

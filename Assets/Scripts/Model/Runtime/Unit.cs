@@ -89,6 +89,8 @@ namespace Model.Runtime
             Pos = targetPos;
         }
 
+        public void SetArmyBrain(UnitBrains.ArmyBrain armyBrain) => _brain?.SetArmyBrain(armyBrain);
+
         public void ClearPendingProjectiles()
         {
             _pendingProjectiles.Clear();
