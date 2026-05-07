@@ -30,11 +30,13 @@ namespace Model.Runtime.Projectiles
             // Insert you code here
             ///////////////////////////////////////
 
+            float maxHeight = totalDistance * 0.6f; //60% от totalDistance
+            localHeight = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1); //Формула для траектории
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);

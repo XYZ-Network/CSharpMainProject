@@ -7,6 +7,7 @@ using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
 using Unit = Model.Runtime.Unit;
+using Controller;
 
 namespace UnitBrains
 {
@@ -15,7 +16,7 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
+        protected UnitCoordinator unitCoordinator {  get; private set; }
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
@@ -36,10 +37,9 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var target = unitCoordinator.GetRecomendedPos(IsPlayerUnitBrain);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new NewUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -60,6 +60,11 @@ namespace UnitBrains
             return result;
         }
 
+        public void SetCoordinator(UnitCoordinator coordinator)
+        {
+            this.unitCoordinator = coordinator;
+        }
+
         public void SetUnit(Unit unit)
         {
             this.unit = unit;
@@ -76,10 +81,21 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
-            var result = GetReachableTargets();
-            while (result.Count > 1)
-                result.RemoveAt(result.Count - 1);
-            return result;
+            var result = new List<Vector2Int>();
+            var attackRange = this.unit.AttackRange;
+            var target = unitCoordinator.GetRecomendedTarget(IsPlayerUnitBrain);
+            if (GetUnitsInRadius(attackRange, false).Contains(target))
+            {
+                result.Add(target.Pos);
+                return result;
+            }
+            else
+            {
+                result = GetReachableTargets();
+                while (result.Count > 1)
+                    result.RemoveAt(result.Count - 1);
+                return result;
+            }
         }
         
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
@@ -117,7 +133,7 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
@@ -144,7 +160,7 @@ namespace UnitBrains
 
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -152,7 +168,7 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = unit.AttackRange * unit.AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))

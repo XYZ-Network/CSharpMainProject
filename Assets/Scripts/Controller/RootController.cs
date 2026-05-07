@@ -3,6 +3,7 @@ using Model.Config;
 using UnityEngine;
 using Utilities;
 using View;
+using BuffSystem;
 
 namespace Controller
 {
@@ -11,7 +12,6 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
@@ -34,6 +34,9 @@ namespace Controller
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();
+
+            //var buffSystem = new BuffManager();
+            //ServiceLocator.Register<IBuffSystem>(buffSystem);
         }
 
         public void RestartGame()

@@ -32,8 +32,23 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            while (true)
+            {
+                foreach (var atCell in path.GetPath())
+                {
+                    CreateHighlight(atCell);
+                    if (allHighlights.Count >= maxHighlights)
+                    {
+                        DestroyHighlight(0);
+                    }
+                    yield return new WaitForSeconds(0.1f);
+                }
+                while (allHighlights.Count > 0)
+                {
+                    DestroyHighlight(0);
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)
