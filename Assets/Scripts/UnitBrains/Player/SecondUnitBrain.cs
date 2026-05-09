@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Model;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
+using UnitBrains.Pathfinding;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +18,37 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        Vector2Int mostDangerousTarget;
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////  
+            
+            if (GetTemperature() >= overheatTemperature)
+                    return;
+
+            IncreaseTemperature();
+            
+            for (int i = 0; i < _temperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (IsTargetInRange(mostDangerousTarget))
+                return unit.Pos;
+
+            var target = new DummyUnitPath(runtimeModel, unit.Pos, mostDangerousTarget);
+            return target.GetNextStepFrom(unit.Pos);
+            // return unit.Pos.CalcNextStepTowards(mostDangerousTarget);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +56,32 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            var allTargets = GetAllTargets();
+
+            if (!allTargets.Any())
+                return new List<Vector2Int> { runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId] };
+
+            float closestEnemyDistance = float.MaxValue;
+            Vector2Int closestEnemy = Vector2Int.zero;
+
+            foreach (var target in allTargets)
             {
-                result.RemoveAt(result.Count - 1);
+                float checkEnemyDistance = DistanceToOwnBase(target);
+                if (checkEnemyDistance < closestEnemyDistance)
+                {
+                    closestEnemyDistance = checkEnemyDistance;
+                    closestEnemy = target;
+                }
             }
-            return result;
+
+            mostDangerousTarget = closestEnemy;
+
+            if (IsTargetInRange(closestEnemy)) 
+                return new List<Vector2Int> { closestEnemy };
+            else
+                return new List<Vector2Int>();
+
             ///////////////////////////////////////
         }
 
