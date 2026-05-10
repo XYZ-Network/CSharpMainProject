@@ -18,11 +18,26 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            ///////////////////////////////////////  
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            
+
+
+
+
+            for (int a = 0; a <= GetTemperature(); a++)
+            {
+                    var projectile = CreateProjectile(forTarget);
+                    AddProjectileToList(projectile, intoList);
+            }
+
+                IncreaseTemperature();
+            }
             ///////////////////////////////////////
-        }
+        
 
         public override Vector2Int GetNextStep()
         {
@@ -35,10 +50,25 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+            if (result.Count == 0) 
+                return result;
+
+            Vector2Int closestTarget = result[0];
+            float closestDistance = DistanceToOwnBase(closestTarget);
+
+            foreach (var target in result)
             {
-                result.RemoveAt(result.Count - 1);
+                float distance = DistanceToOwnBase(target);
+                if (distance < closestDistance)
+                {
+                    closestTarget = target;
+                    closestDistance = distance;
+                }
             }
+            
+            result.Clear();
+            result.Add(closestTarget);
             return result;
             ///////////////////////////////////////
         }
