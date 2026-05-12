@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Config;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
 using View;
@@ -21,6 +22,7 @@ namespace Controller
             
             _runtimeModel = new();
             ServiceLocator.RegisterAs(_runtimeModel, typeof(IReadOnlyRuntimeModel));
+            PlayerUnitsCoordinator.Create(_runtimeModel, ServiceLocator.Get<TimeUtil>());
             
             SpawnRootVisual(targetCanvas);
             ServiceLocator.Register(_rootView);

@@ -19,9 +19,15 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        public float AttackRange => Config.AttackRange + _attackRangeBonus;
+        public int ExtraProjectiles => _extraProjectiles;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+
+        private float _attackRangeBonus;
+        private int _extraProjectiles;
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
@@ -97,6 +103,16 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void AddAttackRangeBonus(float bonus)
+        {
+            _attackRangeBonus += bonus;
+        }
+
+        public void AddExtraProjectiles(int count)
+        {
+            _extraProjectiles += count;
         }
     }
 }
