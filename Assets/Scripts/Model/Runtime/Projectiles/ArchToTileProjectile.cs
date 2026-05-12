@@ -8,7 +8,7 @@ namespace Model.Runtime.Projectiles
         private readonly Vector2Int _target;
         private readonly float _timeToTarget;
         private readonly float _totalDistance;
-        
+
         public ArchToTileProjectile(Unit unit, Vector2Int target, int damage, Vector2Int startPoint) : base(damage, startPoint)
         {
             _target = target;
@@ -20,9 +20,9 @@ namespace Model.Runtime.Projectiles
         {
             float timeSinceStart = time - StartTime;
             float t = timeSinceStart / _timeToTarget;
-            
+
             Pos = Vector2.Lerp(StartPoint, _target, t);
-            
+
             float localHeight = 0f;
             float totalDistance = _totalDistance;
 
@@ -30,11 +30,13 @@ namespace Model.Runtime.Projectiles
             // Insert you code here
             ///////////////////////////////////////
 
+            float maxHeight = totalDistance * 0.6f;
+            localHeight = maxHeight * (-(t * 2 - 1) * (t * 2 - 1) + 1);
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
