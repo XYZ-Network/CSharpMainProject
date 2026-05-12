@@ -39,8 +39,7 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
-            return _activePath.GetNextStepFrom(unit.Pos);
+            return GetNextStepTo(target);
         }
 
         public List<BaseProjectile> GetProjectiles()
@@ -72,6 +71,12 @@ namespace UnitBrains
         protected virtual void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             AddProjectileToList(CreateProjectile(forTarget), intoList);
+        }
+
+        protected Vector2Int GetNextStepTo(Vector2Int target)
+        {
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+            return _activePath.GetNextStepFrom(unit.Pos);
         }
 
         protected virtual List<Vector2Int> SelectTargets()
@@ -134,7 +139,7 @@ namespace UnitBrains
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain);
         }
 
-        protected IEnumerable<Vector2Int> GetAllTargets()
+        protected IEnumerable<Vector2Int> GetAllTargets()  
         {
             return runtimeModel.RoUnits
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
