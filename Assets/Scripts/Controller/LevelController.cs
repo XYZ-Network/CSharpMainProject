@@ -43,6 +43,7 @@ namespace Controller
             var density = Random.Range(_settings.MapMinDensity, _settings.MapMaxDensity);
             var map = MapGenerator.Generate(_settings.MapWidth, _settings.MapHeight, density, level);
             _runtimeModel.Clear();
+            UnitBrains.ArmyBrain.Reset();
             _runtimeModel.Map = new Map(map, Settings.PlayersCount);
             _runtimeModel.Stage = RuntimeModel.GameStage.ChooseUnit;
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
