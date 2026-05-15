@@ -15,20 +15,20 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
-        
+
         protected Unit unit { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
-        
+
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
-            new (0f, 0f),
-            new (0.15f, 0f),
-            new (0f, 0.15f),
-            new (0.15f, 0.15f),
-            new (0.15f, -0.15f),
-            new (-0.15f, 0.15f),
-            new (-0.15f, -0.15f),
+            new Vector2(0f, 0f),
+            new Vector2(0.15f, 0f),
+            new Vector2(0f, 0.15f),
+            new Vector2(0.15f, 0.15f),
+            new Vector2(0.15f, -0.15f),
+            new Vector2(-0.15f, 0.15f),
+            new Vector2(-0.15f, -0.15f),
         };
 
         public virtual Vector2Int GetNextStep()
@@ -39,17 +39,19 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            if (IsPlayerUnitBrain)
+                target = GetCoordinatorPointOrDefault(target);
+
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
         public List<BaseProjectile> GetProjectiles()
         {
-            List<BaseProjectile> result = new ();
+            List<BaseProjectile> result = new List<BaseProjectile>();
+
             foreach (var target in SelectTargets())
-            {
                 GenerateProjectiles(target, result);
-            }
 
             for (int i = 0; i < result.Count; i++)
             {
@@ -76,15 +78,19 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
+            if (TryGetCoordinatorTarget(out Vector2Int recommendedTarget))
+                return new List<Vector2Int> { recommendedTarget };
+
             var result = GetReachableTargets();
             while (result.Count > 1)
                 result.RemoveAt(result.Count - 1);
+
             return result;
         }
-        
+
         protected BaseProjectile CreateProjectile(Vector2Int target) =>
             BaseProjectile.Create(unit.Config.ProjectileType, unit, unit.Pos, target, unit.Config.Damage);
-        
+
         protected void AddProjectileToList(BaseProjectile projectile, List<BaseProjectile> list) =>
             list.Add(projectile);
 
@@ -96,7 +102,7 @@ namespace UnitBrains
             var units = new List<IReadOnlyUnit>();
             var pos = unit.Pos;
             var distanceSqr = radius * radius;
-            
+
             foreach (var otherUnit in runtimeModel.RoUnits)
             {
                 if (otherUnit == unit)
@@ -118,10 +124,11 @@ namespace UnitBrains
         protected bool HasTargetsInRange()
         {
             var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
-                if (diff.sqrMagnitude < attackRangeSqr)
+                if (diff.sqrMagnitude <= attackRangeSqr)
                     return true;
             }
 
@@ -139,7 +146,8 @@ namespace UnitBrains
             return runtimeModel.RoUnits
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
                 .Select(u => u.Pos)
-                .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                .Append(runtimeModel.RoMap.Bases[
+                    IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
 
         protected bool IsTargetInRange(Vector2Int targetPos)
@@ -152,16 +160,98 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
                     continue;
-                
+
                 result.Add(possibleTarget);
             }
 
             return result;
+        }
+
+        protected bool TryGetCoordinatorTarget(out Vector2Int target)
+        {
+            target = unit.Pos;
+
+            if (!IsPlayerUnitBrain)
+                return false;
+
+            PlayerCoordinator.Instance.Recalculate();
+
+            if (!PlayerCoordinator.Instance.HasRecommendedTarget)
+                return false;
+
+            float doubleAttackRange = unit.Config.AttackRange * 2f;
+            var diff = PlayerCoordinator.Instance.RecommendedTarget - unit.Pos;
+
+            if (diff.sqrMagnitude > doubleAttackRange * doubleAttackRange)
+                return false;
+
+            target = PlayerCoordinator.Instance.RecommendedTarget;
+            return true;
+        }
+
+        protected Vector2Int GetCoordinatorPointOrDefault(Vector2Int fallback)
+        {
+            if (!IsPlayerUnitBrain)
+                return fallback;
+
+            PlayerCoordinator.Instance.Recalculate();
+
+            if (!PlayerCoordinator.Instance.HasRecommendedTarget)
+                return fallback;
+
+            return GetDistributedCoordinatorPoint(PlayerCoordinator.Instance.RecommendedPoint, fallback);
+        }
+
+        protected Vector2Int GetDistributedCoordinatorPoint(Vector2Int center, Vector2Int fallback)
+        {
+            var playerUnits = runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit)
+                .OrderBy(u => u.Pos.x)
+                .ThenBy(u => u.Pos.y)
+                .ToList();
+
+            int unitIndex = playerUnits.FindIndex(u => u == unit);
+            if (unitIndex < 0)
+                return fallback;
+
+            List<Vector2Int> candidates = new List<Vector2Int>
+            {
+                center,
+                center + new Vector2Int(1, 0),
+                center + new Vector2Int(-1, 0),
+                center + new Vector2Int(0, 1),
+                center + new Vector2Int(0, -1),
+                center + new Vector2Int(1, 1),
+                center + new Vector2Int(1, -1),
+                center + new Vector2Int(-1, 1),
+                center + new Vector2Int(-1, -1),
+                center + new Vector2Int(2, 0),
+                center + new Vector2Int(-2, 0),
+                center + new Vector2Int(0, 2),
+                center + new Vector2Int(0, -2),
+            };
+
+            List<Vector2Int> available = new List<Vector2Int>();
+
+            foreach (var cell in candidates)
+            {
+                bool occupiedByOtherUnit = runtimeModel.RoUnits.Any(u => u != unit && u.Pos == cell);
+
+                if (!runtimeModel.IsTileWalkable(cell) && !occupiedByOtherUnit)
+                    continue;
+
+                available.Add(cell);
+            }
+
+            if (available.Count == 0)
+                return fallback;
+
+            return available[unitIndex % available.Count];
         }
     }
 }
