@@ -11,6 +11,7 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
+        private readonly BuffSystemController _buffSystemController;
         
         private RootView _rootView;
 
@@ -30,6 +31,9 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+            
+            _buffSystemController = new BuffSystemController();
+            ServiceLocator.Register(_buffSystemController);
             
             _levelController = new(_runtimeModel, this);
             
