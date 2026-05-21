@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Model.Runtime.Projectiles
 {
@@ -20,7 +21,7 @@ namespace Model.Runtime.Projectiles
         {
             float timeSinceStart = time - StartTime;
             float t = timeSinceStart / _timeToTarget;
-            
+                        
             Pos = Vector2.Lerp(StartPoint, _target, t);
             
             float localHeight = 0f;
@@ -29,12 +30,18 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
+            ///
+            //задание полета снаряда по дуге
+            // Объявляем и вычисляем maxHeight (60% от totalDistance)
+          double maxHeight = totalDistance * 0.6;
 
+            // Вычисляем localHeight по формуле: maxHeight * (-(t*2-1)*(t*2-1) + 1)
+           localHeight = (float)(maxHeight * (-Math.Pow((t * 2) - 1, 2) + 1));
 
             ///////////////////////////////////////
             // End of the code to insert
             ///////////////////////////////////////
-            
+
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
                 Hit(_target);
