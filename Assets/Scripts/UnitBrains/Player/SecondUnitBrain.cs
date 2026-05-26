@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Model;
+using Model.Runtime;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
+using UnitBrains.Pathfinding;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,33 +18,85 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        private List<Vector2Int> _targetsToChase = new List<Vector2Int>();
+        private static int _unitCounter = 0;
+        private readonly int _unitID;
+        private const int MaxTargets = 3;
+
+
+        public SecondUnitBrain()
+        {
+            _unitID = _unitCounter++;
+        }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+
+            int shotsCount = GetTemperature() + 1;
+
+            for (int i = 0; i < shotsCount; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (_targetsToChase.Count > 0)
+            {
+                return unit.Pos.CalcNextStepTowards(_targetsToChase[0]);
+            }
+            else
+            {
+                return unit.Pos;
+            }
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
+            // Homework 5
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> result = new List<Vector2Int>();
+            var allTargets = GetAllTargets().ToList();
+            var enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+
+            result.Clear();
+            _targetsToChase.Clear();
+
+
+            if (allTargets.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                if (IsTargetInRange(enemyBase))
+                    result.Add(enemyBase);
+                else
+                    _targetsToChase.Add(enemyBase);
+                return result;
             }
+
+            SortByDistanceToOwnBase(allTargets);
+
+            int enemyIndex = _unitID % Mathf.Min(allTargets.Count, MaxTargets);
+            Vector2Int assignedTarget = allTargets[enemyIndex];
+
+            if (IsTargetInRange(assignedTarget))
+                result.Add(assignedTarget);
+            else
+                _targetsToChase.Add(assignedTarget);
+
             return result;
             ///////////////////////////////////////
         }
