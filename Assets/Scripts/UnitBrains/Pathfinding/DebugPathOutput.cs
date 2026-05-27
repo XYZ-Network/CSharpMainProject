@@ -30,11 +30,17 @@ namespace UnitBrains.Pathfinding
             highlightCoroutine = StartCoroutine(HighlightCoroutine(path));
         }
 
-        private IEnumerator HighlightCoroutine(BaseUnitPath path)
+        
+        
+           private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            foreach (var cell in path.GetPath())
+            {
+                CreateHighlight(cell);
+                yield return null;
+            }
         }
+        
 
         private void CreateHighlight(Vector2Int atCell)
         {

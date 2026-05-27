@@ -1,7 +1,7 @@
-﻿using System;
-using Controller;
+﻿using Controller;
 using Model;
 using Model.Config;
+using Model.Runtime.ReadOnly;
 using TMPro;
 using UnityEngine;
 using Utilities;
@@ -17,28 +17,60 @@ namespace View
         [SerializeField] private UnitCardView _unitCardPrefab;
 
         private IReadOnlyRuntimeModel _model;
-        
+        private bool _cardsCreated;
+
         private void Start()
         {
-            _model = ServiceLocator.Get<IReadOnlyRuntimeModel>();
-            SetupCards(ServiceLocator.Get<Settings>());
+            TryInitialize();
         }
-        
+
         private void Update()
         {
-            var visible = _model.Stage == RuntimeModel.GameStage.ChooseUnit;
-            if (visible != _root.gameObject.activeSelf)
+            if (!TryInitialize())
+                return;
+
+            bool visible = _model.Stage == RuntimeModel.GameStage.ChooseUnit;
+
+            if (_root != null && visible != _root.gameObject.activeSelf)
                 _root.gameObject.SetActive(visible);
 
-            if (visible)
-            {
+            if (!visible)
+                return;
+
+            if (_balanceText != null)
                 _balanceText.text = $"Balance: {_model.RoMoney[RuntimeModel.PlayerId]}";
+
+            if (_levelText != null)
                 _levelText.text = $"Level: {_model.Level}";
+        }
+
+        private bool TryInitialize()
+        {
+            if (_model == null)
+                _model = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            if (_model == null)
+                return false;
+
+            if (!_cardsCreated)
+            {
+                Settings settings = ServiceLocator.Get<Settings>();
+
+                if (settings == null)
+                    return false;
+
+                SetupCards(settings);
+                _cardsCreated = true;
             }
+
+            return true;
         }
 
         private void SetupCards(Settings settings)
         {
+            if (_unitCardPrefab == null || _unitListParent == null)
+                return;
+
             foreach (var unitConfig in settings.PlayerUnits.Keys)
             {
                 var card = Instantiate(_unitCardPrefab, _unitListParent);
@@ -48,7 +80,12 @@ namespace View
 
         private void OnUnitChosen(UnitConfig unit)
         {
-            ServiceLocator.Get<IPlayerUnitChoosingListener>().OnPlayersUnitChosen(unit);
+            var listener = ServiceLocator.Get<IPlayerUnitChoosingListener>();
+
+            if (listener == null)
+                return;
+
+            listener.OnPlayersUnitChosen(unit);
         }
     }
 }
