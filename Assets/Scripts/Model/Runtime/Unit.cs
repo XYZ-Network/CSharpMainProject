@@ -22,11 +22,12 @@ namespace Model.Runtime
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        private bool _isInvincible = false;  // <--- ДОБАВЛЕНО
 
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -41,19 +42,19 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
                 _nextMoveTime = time + Config.MoveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
                 _nextAttackTime = time + Config.AttackDelay;
@@ -65,7 +66,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -85,7 +86,7 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
@@ -96,7 +97,16 @@ namespace Model.Runtime
 
         public void TakeDamage(int projectileDamage)
         {
+            if (_isInvincible) return;  
             Health -= projectileDamage;
         }
+
+        // ========== ДОБАВЛЕННЫЕ МЕТОДЫ ==========
+        public void SetInvincible(bool invincible)
+        {
+            _isInvincible = invincible;
+        }
+
+        public bool IsInvincible => _isInvincible;
     }
 }
