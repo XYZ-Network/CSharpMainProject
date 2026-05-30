@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Model.Runtime.Projectiles;
+﻿using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UnitBrains.Player
@@ -34,12 +35,27 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> reachableTargets = GetReachableTargets();
+
+            if (reachableTargets.Count == 0) return reachableTargets;
+
+            Vector2Int nearestToBaseTarget = reachableTargets.FirstOrDefault();
+
+            foreach (Vector2Int target in reachableTargets)
             {
-                result.RemoveAt(result.Count - 1);
+                if (DistanceToOwnBase(target) < DistanceToOwnBase(nearestToBaseTarget))
+                {
+                    nearestToBaseTarget = target;
+                }
             }
-            return result;
+
+            while (reachableTargets.Count > 0)
+            {
+                reachableTargets.RemoveAt(reachableTargets.Count - 1);
+            }
+            reachableTargets.Add(nearestToBaseTarget);
+
+            return reachableTargets;
             ///////////////////////////////////////
         }
 
