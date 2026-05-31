@@ -34,6 +34,11 @@ namespace UnitBrains.Pathfinding
 
                 found = cell == unitPos;
             }
+            if (found == true)
+            {
+                Debug.LogWarning("Unit is on the last node");
+                return unitPos;
+            }
 
             Debug.LogError($"Unit {unitPos} is not on the path");
             return unitPos;
