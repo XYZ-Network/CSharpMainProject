@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Model;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
         public override string TargetUnitName => "Cobra Commando";
+        private List<Vector2Int> moveTarget = new List<Vector2Int>();
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
         private float _temperature = 0f;
@@ -26,21 +30,54 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            if (moveTarget.Count == 0 || IsTargetInRange(moveTarget[0]))
+            {
+                return unit.Pos;
+            }
+            
+            return unit.Pos.CalcNextStepTowards(moveTarget[0]);
+        }
+
+        public List<Vector2Int> SelectEnemyBaseAsTarget() {
+            RuntimeModel runtimeModel = new RuntimeModel();
+            Vector2Int enemyBase = runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            moveTarget.Add(enemyBase);
+            return new List<Vector2Int> { enemyBase };
+        }
+
+        public Vector2Int FindNearestTobaseTarget(List<Vector2Int> attackTargets)
+        {
+            Vector2Int nearestToBaseTarget = attackTargets.FirstOrDefault();
+
+            foreach (Vector2Int target in attackTargets)
+            {
+                if (DistanceToOwnBase(target) < DistanceToOwnBase(nearestToBaseTarget))
+                {
+                    nearestToBaseTarget = target;
+                }
+            }
+
+            return nearestToBaseTarget;
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
+            moveTarget.Clear();
+            List<Vector2Int> attackTargets = GetAllTargets().ToList();
+            if (attackTargets.Count() == 0) {
+                return SelectEnemyBaseAsTarget(); 
             }
-            return result;
-            ///////////////////////////////////////
+
+            Vector2Int nearestToBaseTarget = FindNearestTobaseTarget(attackTargets);
+
+            attackTargets.Clear();
+
+            if (IsTargetInRange(nearestToBaseTarget)) {
+                attackTargets.Add(nearestToBaseTarget);
+            }
+            moveTarget.Add(nearestToBaseTarget);
+
+            return attackTargets;
         }
 
         public override void Update(float deltaTime, float time)
