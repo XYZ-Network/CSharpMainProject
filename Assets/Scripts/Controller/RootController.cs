@@ -3,6 +3,7 @@ using Model.Config;
 using UnityEngine;
 using Utilities;
 using View;
+using Baffs;
 
 namespace Controller
 {
@@ -16,6 +17,8 @@ namespace Controller
 
         public RootController(Settings settings, Canvas targetCanvas)
         {
+            TimeUtil timeManager = TimeUtil.Create();
+
             _persisted = PersistanceUtils.LoadSingleton(new PersistedModel());
             ServiceLocator.Register(TimeUtil.Create());
             
@@ -30,6 +33,8 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
+
+            timeManager.AddUpdateAction(BuffsData.Update);
             
             _levelController = new(_runtimeModel, this);
             

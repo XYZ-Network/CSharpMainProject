@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Model;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
+using UnitBrains.Pathfinding;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +18,73 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
+        public static int ID = 0;
+        private int _id = ID++;
+        public bool SecondBullet { get; private set; } = false;
         
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            if (!SecondBullet)
+            {
+                float overheatTemperature = OverheatTemperature;
+                ///////////////////////////////////////
+                // Homework 1.3 (1st block, 3rd module)
+                ///////////////////////////////////////
+                if (GetTemperature() < overheatTemperature)
+                {
+                    for (int i = 0; i < GetTemperature() + 1; i++)
+                    {
+                        var projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                    }
+                    IncreaseTemperature();
+                }
+                else
+                {
+                    return;
+                }
+                ///////////////////////////////////////
+
+            }
+            else
+            {
+                float overheatTemperature = OverheatTemperature;
+                if (GetTemperature() < overheatTemperature)
+                {
+                    for (int i = 0; i < GetTemperature() + 1; i++)
+                    {
+                        var projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                        projectile = CreateProjectile(forTarget);
+                        AddProjectileToList(projectile, intoList);
+                    }
+                    IncreaseTemperature();
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
 
         public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
+        {   
+            Vector2Int position = unit.Pos;
+            int numberOfEnemy = GetAllTargets().Count();
+            int EnemyNumber = (_id - 1) % numberOfEnemy;
+            List <Vector2Int> targets = new List<Vector2Int>();
+            targets = GetAllTargets().ToList();
+            SortByDistanceToOwnBase(targets);
+            Vector2Int target = targets[EnemyNumber];
+
+            _activePath = new UnitPath(runtimeModel, position, target);
+
+            if (IsTargetInRange(target))
+            {
+                return position;
+            }
+
+            return _activePath.GetNextStepFrom(position);
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +92,21 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> targets = GetAllTargets().ToList();
+            SortByDistanceToOwnBase(targets);
+
+            List <Vector2Int> Result = new List<Vector2Int>();
+
+            int numberOfEnemy = GetAllTargets().Count();
+            int EnemyNumber = (_id - 1) % numberOfEnemy;
+
+
+            if (IsTargetInRange(targets[EnemyNumber]))
             {
-                result.RemoveAt(result.Count - 1);
+                Result.Add(targets[EnemyNumber]);
             }
-            return result;
+            
+            return Result;
             ///////////////////////////////////////
         }
 
@@ -68,6 +135,11 @@ namespace UnitBrains.Player
         {
             _temperature += 1f;
             if (_temperature >= OverheatTemperature) _overheated = true;
+        }
+
+        public void SetSecondBullet(bool value)
+        {
+            SecondBullet = value;
         }
     }
 }
