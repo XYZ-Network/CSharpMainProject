@@ -7,7 +7,7 @@ namespace View
     public class UnitView : MonoBehaviour
     {
         [SerializeField] private HealthBar _healthBar;
-        [SerializeField] private DebugPathOutput _debugPathOutput;
+        [SerializeField] private DebugPathOutput _debugPathOutput = new DebugPathOutput();
 
         public void UpdateState(IReadOnlyUnit model, Vector3 prevPosition)
         {

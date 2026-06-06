@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Model;
+﻿using Model;
+using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using Tactics;
 using UnitBrains.Pathfinding;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
+using Baffs;
+using static UnityEngine.GraphicsBuffer;
 using Unit = Model.Runtime.Unit;
 
 namespace UnitBrains
@@ -17,8 +24,12 @@ namespace UnitBrains
         public virtual BaseUnitPath ActivePath => _activePath;
         
         protected Unit unit { get; private set; }
+
+        protected DefaultPlayerUnitTactics tactic;
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
-        private BaseUnitPath _activePath = null;
+        protected private BaseUnitPath _activePath = null;
+
+        public float AttackRange { get; set; }
         
         private readonly Vector2[] _projectileShifts = new Vector2[]
         {
@@ -33,13 +44,34 @@ namespace UnitBrains
 
         public virtual Vector2Int GetNextStep()
         {
-            if (HasTargetsInRange())
-                return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            PositionWithDanger targetPos = tactic.GetPriorityTarget(IsPlayerUnitBrain);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+
+            Vector2Int target;
+
+            if (targetPos.Danger == 1)
+            {
+                if (IsTargetInRange(targetPos.Position))
+                {
+                    target = unit.Pos;
+                }
+                else
+                {
+                    target = targetPos.Position;
+
+                }
+            }
+            else if (HasTargetsInRange())
+            {
+                target =  unit.Pos;
+            }
+            else
+            {
+                target = targetPos.Position;
+            }
+
+            _activePath = new UnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -63,8 +95,15 @@ namespace UnitBrains
         public void SetUnit(Unit unit)
         {
             this.unit = unit;
+            this.AttackRange = unit.Config.AttackRange;
         }
 
+        public Unit GetUnit() { return unit; }
+
+        public void SetTactic(DefaultPlayerUnitTactics tactic)
+        {
+            this.tactic = tactic;
+        }
         public virtual void Update(float deltaTime, float time)
         {
         }
@@ -76,9 +115,30 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
-            var result = GetReachableTargets();
-            while (result.Count > 1)
-                result.RemoveAt(result.Count - 1);
+            PositionWithDanger targetPos = tactic.GetPriorityTarget(IsPlayerUnitBrain);
+            List<Vector2Int> result = new List<Vector2Int>();
+            if (targetPos.Danger == 1)
+            {
+                if (IsTargetInRange(targetPos.Position))
+                {
+                    result.Add(targetPos.Position);
+                    return result;
+                }
+                return result;
+            }
+            else if (HasTargetsInRange())
+            {
+                if (GetReachableTargetsWithoutBases().OrderBy(x => GetUnitAt(x).Health).FirstOrDefault() == null)
+                {
+                    result.Add(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
+                }
+                else
+                {
+                    result.Add(GetReachableTargetsWithoutBases().OrderBy(x => GetUnitAt(x).Health).FirstOrDefault());
+                }
+                return result;
+            }
+
             return result;
         }
         
@@ -117,11 +177,23 @@ namespace UnitBrains
 
         protected bool HasTargetsInRange()
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 var diff = possibleTarget - unit.Pos;
-                if (diff.sqrMagnitude < attackRangeSqr)
+                if (diff.sqrMagnitude <= attackRangeSqr)
+                    return true;
+            }
+
+            return false;
+        }
+        protected bool HasAlliesInRange()
+        {
+            var attackRangeSqr = AttackRange * AttackRange;
+            foreach (var possibleAlly in GetAllAllies())
+            {
+                var diff = possibleAlly - unit.Pos;
+                if (diff.sqrMagnitude <= attackRangeSqr)
                     return true;
             }
 
@@ -142,9 +214,21 @@ namespace UnitBrains
                 .Append(runtimeModel.RoMap.Bases[IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId]);
         }
 
+        protected IEnumerable<Vector2Int> GetAllTargetsWithoutBases()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
+                .Select(u => u.Pos);
+        }
+        protected IEnumerable<Vector2Int> GetAllAllies()
+        {
+            return runtimeModel.RoUnits
+                .Where(u => u.Config.IsPlayerUnit == IsPlayerUnitBrain && u.Pos != unit.Pos)
+                .Select(u => u.Pos);
+        }
         protected bool IsTargetInRange(Vector2Int targetPos)
         {
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             var diff = targetPos - unit.Pos;
             return diff.sqrMagnitude <= attackRangeSqr;
         }
@@ -152,7 +236,7 @@ namespace UnitBrains
         protected List<Vector2Int> GetReachableTargets()
         {
             var result = new List<Vector2Int>();
-            var attackRangeSqr = unit.Config.AttackRange * unit.Config.AttackRange;
+            var attackRangeSqr = AttackRange * AttackRange;
             foreach (var possibleTarget in GetAllTargets())
             {
                 if (!IsTargetInRange(possibleTarget))
@@ -162,6 +246,52 @@ namespace UnitBrains
             }
 
             return result;
+        }
+
+        protected List<Vector2Int> GetReachableTargetsWithoutBases()
+        {
+            var result = new List<Vector2Int>();
+            var attackRangeSqr = AttackRange * AttackRange;
+            foreach (var possibleTarget in GetAllTargetsWithoutBases())
+            {
+                if (!IsTargetInRange(possibleTarget))
+                    continue;
+
+                result.Add(possibleTarget);
+            }
+
+            return result;
+        }
+
+        protected List<Vector2Int> GetReachableAllies()
+        {
+            var result = new List<Vector2Int>();
+            var attackRangeSqr = AttackRange * AttackRange;
+            foreach (var possibleAlly in GetAllAllies())
+            {
+                if (!IsTargetInRange(possibleAlly))
+                    continue;
+
+                result.Add(possibleAlly);
+            }
+
+            return result;
+        }
+
+        public bool TryApplyEffect(BaseStatusEffect status)
+        {
+            try
+            {
+                status.Effect(this);
+                Debug.Log("buff!!!");
+                status.StartStatus(this);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex.ToString());
+                return false;
+            }
+            return true;
         }
     }
 }

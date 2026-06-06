@@ -5,6 +5,8 @@ using Model.Runtime;
 using UnityEngine;
 using Utilities;
 using View;
+using Tactics;
+using Baffs;
 
 namespace Controller
 {
@@ -48,6 +50,8 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
+            BuffsData.Clear();
+
             _gameplayView.Reinitialize();
         }
 
@@ -71,8 +75,8 @@ namespace Controller
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
-            
-            var unit = new Unit(config, pos);
+            var tactic = new DefaultPlayerUnitTactics();
+            var unit = new Unit(config, pos, tactic);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
