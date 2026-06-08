@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Assets.Scripts.Model.Runtime;
 using Model;
 using Model.Config;
 using Model.Runtime;
@@ -18,6 +19,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private readonly UnitManager _playerUnitManager;
+        private readonly UnitManager _botUnitManager;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -30,6 +33,9 @@ namespace Controller
             _gameplayView = ServiceLocator.Get<Gameplay3dView>();
             _settings = ServiceLocator.Get<Settings>();
             _timeUtil = ServiceLocator.Get<TimeUtil>();
+
+            _playerUnitManager = new UnitManager();
+            _botUnitManager = new UnitManager();
         }
 
         public void StartLevel(int level)
@@ -72,7 +78,7 @@ namespace Controller
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, forPlayer == RuntimeModel.PlayerId ? _playerUnitManager : _botUnitManager);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }

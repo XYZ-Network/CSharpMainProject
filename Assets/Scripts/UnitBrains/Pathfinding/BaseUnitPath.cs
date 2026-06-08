@@ -26,6 +26,7 @@ namespace UnitBrains.Pathfinding
 
         public Vector2Int GetNextStepFrom(Vector2Int unitPos)
         {
+
             var found = false;
             foreach (var cell in GetPath())
             {
@@ -35,7 +36,8 @@ namespace UnitBrains.Pathfinding
                 found = cell == unitPos;
             }
 
-            Debug.LogError($"Unit {unitPos} is not on the path");
+            Debug.LogWarning($"Unit {unitPos} is not on the path");
+
             return unitPos;
         }
 

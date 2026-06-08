@@ -11,7 +11,7 @@ namespace Model
     {
         public const int PlayerId = 0;
         public const int BotPlayerId = 1;
-        
+
         public IReadOnlyMap RoMap => Map;
         public IReadOnlyDictionary<int, int> RoMoney => Money;
 

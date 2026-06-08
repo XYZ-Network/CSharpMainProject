@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Model.Runtime;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -18,6 +19,7 @@ namespace Model.Runtime
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
+        public bool HasBuff => _hasBuff;
 
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
@@ -26,14 +28,20 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+
+        private bool _hasBuff = false;
+        private float _buffTimeRemaining = 0f;
+        private const float BuffDuration = 5f;    
+        private const float BuffMoveDelayMultiplier = 0.5f;
+
+        public Unit(UnitConfig config, Vector2Int startPos, UnitManager manager)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetUnitManager(manager);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -41,19 +49,29 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
+            if (_hasBuff)
+            {
+                _buffTimeRemaining -= deltaTime;
+                if (_buffTimeRemaining <= 0f)
+                    _hasBuff = false;
+            }
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                float moveDelay = _hasBuff
+                    ? Config.MoveDelay * BuffMoveDelayMultiplier
+                    : Config.MoveDelay;
+                _nextMoveTime = time + moveDelay;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
                 _nextAttackTime = time + Config.AttackDelay;
@@ -97,6 +115,12 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void ApplyBuff()
+        {
+            _hasBuff = true;
+            _buffTimeRemaining = BuffDuration;
         }
     }
 }
