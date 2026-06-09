@@ -11,7 +11,8 @@ namespace Controller
         private readonly PersistedModel _persisted;
         private readonly RuntimeModel _runtimeModel;
         private readonly LevelController _levelController;
-        
+        private readonly BuffService _buffService = new();
+
         private RootView _rootView;
 
         public RootController(Settings settings, Canvas targetCanvas)
@@ -30,7 +31,8 @@ namespace Controller
 
             var vfxView = SpawnVFXView();
             ServiceLocator.Register(vfxView);
-            
+            ServiceLocator.Register(_buffService);
+
             _levelController = new(_runtimeModel, this);
             
             _rootView.ShowStartMenu();

@@ -27,6 +27,8 @@ namespace Controller
             if (_runtimeModel.Stage != RuntimeModel.GameStage.Simulation)
                 return;
 
+            ServiceLocator.Get<BuffService>().Update(deltaTime);
+
             foreach (var unitList in _runtimeModel.PlayersUnits)
                 foreach (var unit in unitList)
                 {
