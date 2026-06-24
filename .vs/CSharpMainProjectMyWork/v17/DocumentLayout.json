@@ -3,11 +3,11 @@
   "WorkspaceRootPath": "D:\\Fork\\CSharpMainProjectMyWork\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|D:\\Fork\\CSharpMainProjectMyWork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|d:\\fork\\csharpmainprojectmywork\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|d:\\fork\\csharpmainprojectmywork\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|D:\\Fork\\CSharpMainProjectMyWork\\assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{14E404C2-637D-FA14-EF93-9755B5BE1D18}|Root.csproj|solutionrelative:assets\\scripts\\model\\runtime\\projectiles\\archtotileprojectile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -28,7 +28,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "ToolTip": "D:\\Fork\\CSharpMainProjectMyWork\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
-              "ViewState": "AgIAACAAAAAAAAAAAAA9wDgAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowD0AAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-12T05:21:00.943Z",
               "EditorCaption": ""
@@ -43,8 +43,7 @@
               "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\Projectiles\\ArchToTileProjectile.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAUwCAAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T05:36:58.505Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T05:36:58.505Z"
             }
           ]
         }
