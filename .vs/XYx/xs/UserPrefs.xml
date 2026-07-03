@@ -1,0 +1,40 @@
+﻿<Properties StartupConfiguration="{6BA3E430-C1DB-B53E-7C27-41F2EDC2C301}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Controller/LevelController.cs">
+    <Files>
+      <File FileName="Assets/UnityTechnologies/Effect/EfectsRa.cs" Line="27" Column="35" />
+      <File FileName="Assets/UnityTechnologies/Effect/Buff.cs" Line="19" Column="1" />
+      <File FileName="Assets/UnityTechnologies/Effect/BuffSystem.cs" Line="21" Column="6" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/ThirdUnitBrain.cs" Line="49" Column="23" />
+      <File FileName="Assets/UnityTechnologies/TowerDefenseTemplate/PostProcessing/Editor/PropertyDrawers/TrackballGroupDrawer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Controller/IPlayerUnitChoosingListener.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/View/ChooseUnitView.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/DefaultPlayerUnitBrain.cs" Line="24" Column="1" />
+      <File FileName="Assets/Scripts/Model/Config/Settings.cs" />
+      <File FileName="Assets/Scripts/UnitBrains/Player/SecondUnitBrain.cs" Line="16" Column="22" />
+      <File FileName="Assets/Scripts/Model/Runtime/Projectiles/ArchToTileProjectile.cs" />
+      <File FileName="Assets/Resources/PlayerUnits/UnitP.cs" Line="32" Column="1" />
+      <File FileName="Assets/Scripts/Model/Runtime/Unit.cs" Line="55" Column="38" />
+      <File FileName="Assets/Scripts/Model/Config/UnitConfig.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UnitBrains/UnitP.cs" Line="18" Column="36" />
+      <File FileName="Assets/Scripts/Controller/LevelController.cs" Line="55" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="XYx" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>Assembly-CSharp-Editor.csproj</String>
+    <String>Assembly-CSharp.csproj</String>
+  </DisabledProjects>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Root PreferredExecutionTarget="2d0bb8d2-7d57-4c27-b992-36a99e8b34df" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

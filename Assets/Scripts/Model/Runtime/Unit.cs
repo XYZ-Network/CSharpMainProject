@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Model.Runtime;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
@@ -26,14 +27,17 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
-        public Unit(UnitConfig config, Vector2Int startPos)
+        private float _moveDelayMultiplier = 1f;
+        private int _bonusProjectiles = 0;
+        private float _attackRangeMultiplier = 1f;
+        public Unit(UnitConfig config, Vector2Int startPos, UnitManager manager)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
+            _brain.SetUnitManager(manager);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
         }
 
@@ -41,19 +45,19 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
-                Move();
+                 _nextMoveTime = time + Config.MoveDelay * _moveDelayMultiplier;
+                    Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
                 _nextAttackTime = time + Config.AttackDelay;
@@ -97,6 +101,46 @@ namespace Model.Runtime
         public void TakeDamage(int projectileDamage)
         {
             Health -= projectileDamage;
+        }
+
+        public void SetMoveDelayMultiplier(float multiplier)
+        {
+            _moveDelayMultiplier = multiplier;
+        }
+
+        public void ResetMoveDelayMultiplier()
+        {
+            _moveDelayMultiplier = 1f;
+        }
+
+        public void SetBonusProjectiles(int count)
+        {
+            _bonusProjectiles = count;
+        }
+
+        public void ResetBonusProjectiles()
+        {
+            _bonusProjectiles = 0;
+        }
+
+        public int GetBonusProjectiles()
+        {
+            return _bonusProjectiles;
+        }
+
+        public void SetAttackRangeMultiplier(float multiplier)
+        {
+            _attackRangeMultiplier = multiplier;
+        }
+
+        public void ResetAttackRangeMultiplier()
+        {
+            _attackRangeMultiplier = 1f;
+        }
+
+        public float GetAttackRange()
+        {
+            return Config.AttackRange * _attackRangeMultiplier;
         }
     }
 }

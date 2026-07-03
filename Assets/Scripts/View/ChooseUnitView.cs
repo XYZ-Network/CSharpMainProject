@@ -26,6 +26,12 @@ namespace View
         
         private void Update()
         {
+            if (_model == null)
+                _model = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            if (_model == null)
+                return;
+
             var visible = _model.Stage == RuntimeModel.GameStage.ChooseUnit;
             if (visible != _root.gameObject.activeSelf)
                 _root.gameObject.SetActive(visible);
