@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Artem\\XYZCSharpMainProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|c:\\users\\artem\\xyzcsharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:2:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|c:\\users\\artem\\xyzcsharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:2:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|c:\\users\\artem\\xyzcsharpmainproject\\assets\\scripts\\utilities\\extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|solutionrelative:assets\\scripts\\utilities\\extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\EnterPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|solutionrelative:Assets\\Scripts\\EnterPoint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:1:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|c:\\users\\artem\\xyzcsharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:1:0:{9FC7ECE3-79BE-A77D-EC35-EE5975456EDD}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,8 +26,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Extensions.cs",
+              "DocumentMoniker": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\Utilities\\Extensions.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Utilities\\Extensions.cs",
+              "ToolTip": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\Utilities\\Extensions.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Utilities\\Extensions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-05T10:39:47.723Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -28,14 +49,27 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "ToolTip": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAUwBoAAAAvAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAjwC0AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-14T16:01:29.26Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-05T10:02:18.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "EnterPoint.cs",
               "DocumentMoniker": "C:\\Users\\Artem\\XYZCSharpMainProject\\Assets\\Scripts\\EnterPoint.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EnterPoint.cs",

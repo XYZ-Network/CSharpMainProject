@@ -1,6 +1,8 @@
 ﻿using Model.Runtime.Projectiles;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utilities;
 using static UnityEngine.GraphicsBuffer;
 
 namespace UnitBrains.Player
@@ -13,7 +15,8 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private List<Vector2Int> _unreachableTargets = new();
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -36,6 +39,12 @@ namespace UnitBrains.Player
 
         public override Vector2Int GetNextStep()
         {
+            if (HasTargetsInRange())
+                return unit.Pos;
+            
+            if (_unreachableTargets.Count > 0)
+                return unit.Pos.CalcNextStepTowards(_unreachableTargets[0]);
+            
             return base.GetNextStep();
         }
 
@@ -44,27 +53,37 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
+            List<Vector2Int> result = new();
+            IEnumerable<Vector2Int> allTargets = GetAllTargets();
+            _unreachableTargets.Clear();
+           
 
-            float minDistance = float.MaxValue;
-            Vector2Int nearestTarget = new Vector2Int();
-
-            if (result.Count > 0)
+            if (allTargets.Any())
             {
-                foreach (var target in result)
-                {
-                    if (DistanceToOwnBase(target) < minDistance) nearestTarget = target;
-                }
-                result.Clear();
-                result.Add(nearestTarget);
-            }
+                float minDistance = float.MaxValue;
+                Vector2Int nearestTarget = Vector2Int.zero;
 
-            //while (result.Count > 1)
-            //{
-            //    result.RemoveAt(result.Count - 1);
-            //}
+                foreach (var target in allTargets)
+                {
+                    float distance = DistanceToOwnBase(target);
+                    
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        nearestTarget = target;
+                    }
+                }
+                
+                if (IsTargetInRange(nearestTarget))
+                {
+                    result.Add(nearestTarget);
+                }
+                else
+                { 
+                    _unreachableTargets.Add(nearestTarget);
+                }
+            }
             return result;
-            ///////////////////////////////////////
         }
 
 
