@@ -1,9 +1,13 @@
 ﻿using Model.Runtime.Projectiles;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Utilities;
 using static UnityEngine.GraphicsBuffer;
+
+
+
 
 namespace UnitBrains.Player
 {
@@ -16,6 +20,14 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
         private List<Vector2Int> _unreachableTargets = new();
+        private static int _unitCounter = 0;
+        private int _unitNumber;
+        private const int MaxTargetsCount = 3;
+
+        public SecondUnitBrain()
+        {
+            _unitNumber = _unitCounter++;
+        }
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
@@ -41,10 +53,10 @@ namespace UnitBrains.Player
         {
             if (HasTargetsInRange())
                 return unit.Pos;
-            
+
             if (_unreachableTargets.Count > 0)
                 return unit.Pos.CalcNextStepTowards(_unreachableTargets[0]);
-            
+
             return base.GetNextStep();
         }
 
@@ -53,37 +65,25 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = new();
-            IEnumerable<Vector2Int> allTargets = GetAllTargets();
+            List<Vector2Int> sortedTargets = GetAllTargets().ToList();
+            List<Vector2Int> targetsInRange = new();
             _unreachableTargets.Clear();
-           
+            SortByDistanceToOwnBase(sortedTargets);
 
-            if (allTargets.Any())
+            int targetsCount = Mathf.Min(sortedTargets.Count, MaxTargetsCount);
+            int targetIndex = _unitNumber % targetsCount;
+            Vector2Int selectedTarget = sortedTargets[targetIndex];
+
+            if (IsTargetInRange(selectedTarget))
             {
-                float minDistance = float.MaxValue;
-                Vector2Int nearestTarget = Vector2Int.zero;
-
-                foreach (var target in allTargets)
-                {
-                    float distance = DistanceToOwnBase(target);
-                    
-                    if (distance < minDistance)
-                    {
-                        minDistance = distance;
-                        nearestTarget = target;
-                    }
-                }
-                
-                if (IsTargetInRange(nearestTarget))
-                {
-                    result.Add(nearestTarget);
-                }
-                else
-                { 
-                    _unreachableTargets.Add(nearestTarget);
-                }
+                targetsInRange.Add(selectedTarget);
             }
-            return result;
+            else
+            { 
+                _unreachableTargets.Add(selectedTarget);
+            }
+            
+            return targetsInRange;
         }
 
 
