@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +15,46 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        private Vector2Int _targetToChase = new Vector2Int(-1, -1);
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            if (GetTemperature() >= overheatTemperature)
+            {
+                return;
+            }
+            for (int i = 0; i < _temperature+1; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+            //Debug.Log(intoList.Count);
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            Vector2Int currentPos = unit.Pos;
+
+            if (_targetToChase.x == -1 && _targetToChase.y == -1)
+            {
+                return currentPos;
+            }
+
+            if (IsTargetInRange(_targetToChase))
+            {
+                _targetToChase = new Vector2Int(-1, -1);
+                return currentPos;
+            }
+            
+            Vector2Int nestStep = currentPos.CalcNextStepTowards(_targetToChase);
+            return nestStep;
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,11 +62,41 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> allTargets = GetAllTargets().ToList();
+
+            if (allTargets.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                Vector2Int enemyBasePos = runtimeModel.RoMap.Bases[enemyBaseId];
+                allTargets.Add(enemyBasePos);
             }
+
+            Vector2Int choseTarget = allTargets[0];
+            float minDistToOwnBase = DistanceToOwnBase(choseTarget);
+            foreach (Vector2Int target in allTargets)
+            {
+                float dist = DistanceToOwnBase(target);
+                if (dist < minDistToOwnBase)
+                {
+                    minDistToOwnBase = dist;
+                    choseTarget = target;
+                } 
+            }
+
+            bool inAttackRange = IsTargetInRange(choseTarget);
+
+            List<Vector2Int> result = new List<Vector2Int>();
+
+            if (inAttackRange)
+            {
+                result.Add(choseTarget);
+                _targetToChase = new Vector2Int(-1, -1);
+            }
+            else
+            {
+                _targetToChase = choseTarget;
+            }
+
             return result;
             ///////////////////////////////////////
         }
