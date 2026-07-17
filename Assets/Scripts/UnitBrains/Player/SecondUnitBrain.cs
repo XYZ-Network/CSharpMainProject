@@ -59,7 +59,6 @@ namespace UnitBrains.Player
 
             return base.GetNextStep();
         }
-
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
@@ -85,6 +84,7 @@ namespace UnitBrains.Player
             
             return targetsInRange;
         }
+        
 
 
         public override void Update(float deltaTime, float time)
