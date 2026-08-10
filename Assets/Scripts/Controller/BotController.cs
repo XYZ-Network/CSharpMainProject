@@ -9,6 +9,10 @@ using Utilities;
 //hello
 //How are you?
 //i'm fine
+//Me too, thank`s
+//Don`t u think that the weather is fine too?
+//Sure, it is
+//So, what else should I say?
 namespace Controller
 {
     public class BotController
