@@ -13,7 +13,8 @@ public class EnterPoint : MonoBehaviour
     private float _timeScale = 1;
     // Hi. My Mira
     /*/
-     * is this you?
+     * How are u Hase
+     * I fine
      * /*/
     void Start()
     {
