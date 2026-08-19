@@ -1,0 +1,108 @@
+using System.Collections.Generic;
+using Model.Runtime.Projectiles;
+using UnityEngine;
+
+namespace UnitBrains.Player
+{
+    public class ThirdUnitBrain : DefaultPlayerUnitBrain
+    {
+        public override string TargetUnitName => "Ironclad Behemoth";
+
+        private const float TransitionDuration = 1f;
+
+        private enum UnitState
+        {
+            Moving,
+            Attacking,
+            Transition
+        }
+
+        private UnitState _state = UnitState.Moving;
+        private UnitState _nextState = UnitState.Moving;
+        private float _transitionTimer;
+
+        private List<Vector2Int> _targetsToMove = new List<Vector2Int>();
+
+        protected override List<Vector2Int> SelectTargets()
+        {
+            if (_state != UnitState.Attacking)
+            {
+                return new List<Vector2Int>();
+            }
+
+            return base.SelectTargets();
+        }
+
+        public override Vector2Int GetNextStep()
+        {
+            if (_state != UnitState.Moving)
+            {
+                return Position;
+            }
+
+            List<Vector2Int> targets = GetAllTargets();
+            _targetsToMove.Clear();
+
+            if (targets.Count == 0)
+            {
+                return Position;
+            }
+
+            Vector2Int nearestTarget = targets[0];
+            float minDistance = DistanceToOwnBase(nearestTarget);
+
+            foreach (Vector2Int target in targets)
+            {
+                float distance = DistanceToOwnBase(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestTarget = target;
+                }
+            }
+
+            _targetsToMove.Add(nearestTarget);
+
+            if (GetReachableTargets().Contains(nearestTarget))
+            {
+                return Position;
+            }
+
+            return Position.CalcNextStepTowards(nearestTarget);
+        }
+
+        public override void Update(float deltaTime, float time)
+        {
+            if (_state == UnitState.Transition)
+            {
+                _transitionTimer -= deltaTime;
+
+                if (_transitionTimer <= 0f)
+                {
+                    _state = _nextState;
+                }
+
+                return;
+            }
+
+            bool targetInRange = HasTargetsInRange();
+
+            if (_state == UnitState.Moving && targetInRange)
+            {
+                StartTransition(UnitState.Attacking);
+            }
+            else if (_state == UnitState.Attacking && !targetInRange)
+            {
+                StartTransition(UnitState.Moving);
+            }
+        }
+
+        private void StartTransition(UnitState nextState)
+        {
+            _nextState = nextState;
+            _state = UnitState.Transition;
+            _transitionTimer = TransitionDuration;
+        }
+    }
+}
