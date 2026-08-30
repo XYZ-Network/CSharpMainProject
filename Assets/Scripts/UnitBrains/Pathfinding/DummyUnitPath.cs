@@ -5,11 +5,11 @@ using Utilities;
 
 namespace UnitBrains.Pathfinding
 {
-    public class DummyUnitPath : BaseUnitPath
+    public class AdvancedUnitPath : BaseUnitPath
     {
         private const int MaxLength = 100;
         
-        public DummyUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
+        public AdvancedUnitPath(IReadOnlyRuntimeModel runtimeModel, Vector2Int startPoint, Vector2Int endPoint) : base(runtimeModel, startPoint, endPoint)
         {
         }
 
