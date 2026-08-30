@@ -15,8 +15,10 @@ namespace UnitBrains
         public virtual string TargetUnitName => string.Empty;
         public virtual bool IsPlayerUnitBrain => true;
         public virtual BaseUnitPath ActivePath => _activePath;
+        public virtual float SearchRadius => 3;
         
         protected Unit unit { get; private set; }
+        protected PriorityActions priorityActions { get; private set; }
         protected IReadOnlyRuntimeModel runtimeModel => ServiceLocator.Get<IReadOnlyRuntimeModel>();
         private BaseUnitPath _activePath = null;
         
@@ -36,10 +38,9 @@ namespace UnitBrains
             if (HasTargetsInRange())
                 return unit.Pos;
 
-            var target = runtimeModel.RoMap.Bases[
-                IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
+            var target = priorityActions.GetPriorityStep(unit);
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            _activePath = new SmartUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -60,6 +61,11 @@ namespace UnitBrains
             return result;
         }
 
+        public void SetPriorityActions(PriorityActions priorityActions)
+        {
+            this.priorityActions = priorityActions;
+        }
+
         public void SetUnit(Unit unit)
         {
             this.unit = unit;
@@ -76,7 +82,14 @@ namespace UnitBrains
 
         protected virtual List<Vector2Int> SelectTargets()
         {
-            var result = GetReachableTargets();
+            var target = priorityActions.GetPriorityTarget();
+            List<Vector2Int > result = new List<Vector2Int>();
+            if (GetUnitsInRadius(SearchRadius * unit.Config.AttackRange, true).Contains(target))
+            {
+                result.Add(target.Pos);
+                return result;
+            }
+            result = GetReachableTargets();
             while (result.Count > 1)
                 result.RemoveAt(result.Count - 1);
             return result;

@@ -18,6 +18,8 @@ namespace Controller
         private readonly Gameplay3dView _gameplayView;
         private readonly Settings _settings;
         private readonly TimeUtil _timeUtil;
+        private PriorityActions _priorityPlayerActions;
+        private PriorityActions _priorityEnemyActions;
 
         public LevelController(RuntimeModel runtimeModel, RootController rootController)
         {
@@ -48,6 +50,9 @@ namespace Controller
             _runtimeModel.Bases[RuntimeModel.PlayerId] = new MainBase(_settings.MainBaseMaxHp);
             _runtimeModel.Bases[RuntimeModel.BotPlayerId] = new MainBase(_settings.MainBaseMaxHp);
 
+            _priorityPlayerActions = new PriorityActions(true, _runtimeModel, _timeUtil);
+            _priorityEnemyActions = new PriorityActions(false, _runtimeModel, _timeUtil);
+
             _gameplayView.Reinitialize();
         }
 
@@ -56,23 +61,23 @@ namespace Controller
             if (unitConfig.Cost > _runtimeModel.Money[RuntimeModel.PlayerId])
                 return;
             
-            SpawnUnit(RuntimeModel.PlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.PlayerId, unitConfig, _priorityPlayerActions);
             TryStartSimulation();
         }
 
         private void OnBotUnitChosen(UnitConfig unitConfig)
         {
-            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig);
+            SpawnUnit(RuntimeModel.BotPlayerId, unitConfig, _priorityEnemyActions);
             TryStartSimulation();
         }
 
-        private void SpawnUnit(int forPlayer, UnitConfig config)
+        private void SpawnUnit(int forPlayer, UnitConfig config, PriorityActions priorityActions)
         {
             var pos = _runtimeModel.Map.FindFreeCellNear(
                 _runtimeModel.Map.Bases[forPlayer],
                 _runtimeModel.RoUnits.Select(x => x.Pos).ToHashSet());
             
-            var unit = new Unit(config, pos);
+            var unit = new Unit(config, pos, priorityActions);
             _runtimeModel.Money[forPlayer] -= config.Cost;
             _runtimeModel.PlayersUnits[forPlayer].Add(unit);
         }
