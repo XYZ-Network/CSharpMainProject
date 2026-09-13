@@ -32,8 +32,26 @@ namespace UnitBrains.Pathfinding
 
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            // TODO Implement me
-            yield break;
+            if (path == null)
+                yield break;
+
+            // Небольшая задержка между подсветками, чтобы путь "рисовался" постепенно
+            const float stepDelay = 0.05f;
+
+            foreach (var tile in path.GetPath())
+            {
+                // Подсвечиваем текущую клетку пути
+                CreateHighlight(tile);
+
+                // Ограничиваем количество одновременных подсветок
+                while (allHighlights.Count > maxHighlights)
+                {
+                    DestroyHighlight(0);
+                }
+
+                // Ждём немного перед следующей клеткой
+                yield return new WaitForSeconds(stepDelay);
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)

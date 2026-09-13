@@ -39,7 +39,35 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            // Пересчитываем путь, если:
+            // 1) путь ещё не построен,
+            // 2) сменилась цель,
+            // 3) юнит больше не находится на пути,
+            // 4) следующий шаг заблокирован (стена или другой юнит).
+            bool needRecompute = _activePath == null || _activePath.EndPoint != target;
+
+            if (!needRecompute)
+            {
+                bool onPath = false;
+                foreach (var cell in _activePath.GetPath())
+                {
+                    if (cell == unit.Pos) { onPath = true; break; }
+                }
+                if (!onPath) needRecompute = true;
+            }
+
+            if (!needRecompute)
+            {
+                var next = _activePath.GetNextStepFrom(unit.Pos);
+                if (next == unit.Pos) needRecompute = true;                 // конец пути
+                if (runtimeModel.RoMap[next]) needRecompute = true;         // стена
+                if (runtimeModel.RoUnits.Any(u => u.Pos == next && u != unit))
+                    needRecompute = true;                                   // другой юнит
+            }
+
+            if (needRecompute)
+                _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
