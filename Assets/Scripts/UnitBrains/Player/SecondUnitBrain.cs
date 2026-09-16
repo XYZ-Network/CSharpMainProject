@@ -38,7 +38,7 @@ namespace UnitBrains.Player
         public List<Vector2Int> unreachableTargets = new();
         public override Vector2Int GetNextStep()
         {
-            if (unreachableTargets.Count > 0)
+            if (unreachableTargets.Count > 0 && !IsTargetInRange(unreachableTargets[0]))
             {
                 return unit.Pos.CalcNextStepTowards(unreachableTargets[0]);
             }
@@ -70,13 +70,13 @@ namespace UnitBrains.Player
                     }
                 }
                 
+                unreachableTargets.Clear();
                 if (IsTargetInRange(target))
                 {
                     result.Add(target);
                 }
                 else
                 {
-                    unreachableTargets.Clear();
                     unreachableTargets.Add(target);
                 }
             }
