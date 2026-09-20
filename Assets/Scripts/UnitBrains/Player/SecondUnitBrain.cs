@@ -1,6 +1,13 @@
-﻿using System.Collections.Generic;
-using Model.Runtime.Projectiles;
+﻿using Model.Runtime.Projectiles;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utilities;
+using static UnityEngine.GraphicsBuffer;
+
+
+
 
 namespace UnitBrains.Player
 {
@@ -12,7 +19,16 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+        private List<Vector2Int> _unreachableTargets = new();
+        private static int _unitCounter = 0;
+        private int _unitNumber;
+        private const int MaxTargetsCount = 3;
+
+        public SecondUnitBrain()
+        {
+            _unitNumber = _unitCounter++;
+        }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -20,28 +36,56 @@ namespace UnitBrains.Player
             // Homework 1.3 (1st block, 3rd module)
             ///////////////////////////////////////           
             var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            
+            if (_overheated) return;
+            int shotCount = GetTemperature() +1;
+            //Debug.Log("Temperature: " + GetTemperature());
+            for (int i = 0; i < shotCount; i++)
+            {
+                AddProjectileToList(projectile, intoList);
+            }
+            // Debug.Log("Projectile count: " + intoList.Count);
+            IncreaseTemperature();
             ///////////////////////////////////////
         }
 
         public override Vector2Int GetNextStep()
         {
+            if (HasTargetsInRange())
+                return unit.Pos;
+
+            if (_unreachableTargets.Count > 0)
+                return unit.Pos.CalcNextStepTowards(_unreachableTargets[0]);
+
             return base.GetNextStep();
         }
-
         protected override List<Vector2Int> SelectTargets()
         {
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            List<Vector2Int> sortedTargets = GetAllTargets().ToList();
+            List<Vector2Int> targetsInRange = new();
+            _unreachableTargets.Clear();
+            SortByDistanceToOwnBase(sortedTargets);
+
+            int targetsCount = Mathf.Min(sortedTargets.Count, MaxTargetsCount);
+            int targetIndex = _unitNumber % targetsCount;
+            Vector2Int selectedTarget = sortedTargets[targetIndex];
+
+            if (IsTargetInRange(selectedTarget))
             {
-                result.RemoveAt(result.Count - 1);
+                targetsInRange.Add(selectedTarget);
             }
-            return result;
-            ///////////////////////////////////////
+            else
+            { 
+                _unreachableTargets.Add(selectedTarget);
+            }
+            
+            return targetsInRange;
         }
+        
+
 
         public override void Update(float deltaTime, float time)
         {
