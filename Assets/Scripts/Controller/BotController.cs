@@ -6,9 +6,11 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
-//How are you?
-//i'm fine
+
+
+//Коммент из гитхаба
+//Второй коммент из гитхаба. Намбер 2
+//Третий коммент из IDE. Намбер 3. Который надо запушить в гитхаб
 namespace Controller
 {
     public class BotController
