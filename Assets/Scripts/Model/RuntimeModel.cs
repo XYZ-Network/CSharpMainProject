@@ -2,6 +2,8 @@
 using System.Linq;
 using Model.Runtime;
 using Model.Runtime.Projectiles;
+using Model.Runtime.Buffs;
+using Utilities;
 using Model.Runtime.ReadOnly;
 using UnityEngine;
 
@@ -62,6 +64,9 @@ namespace Model
             {
                 list.Remove(hitUnit);
             }
+
+            if (ServiceLocator.Contains<IBuffSystem>())
+                ServiceLocator.Get<IBuffSystem>().ClearBuffs(hitUnit);
         }
 
         public void Clear()

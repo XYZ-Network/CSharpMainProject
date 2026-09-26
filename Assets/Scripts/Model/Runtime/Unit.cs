@@ -2,6 +2,7 @@
 using System.Linq;
 using Model.Config;
 using Model.Runtime.Projectiles;
+using Model.Runtime.Buffs;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
@@ -50,13 +51,13 @@ namespace Model.Runtime
             
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + GetEffectiveMoveDelay();
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + GetEffectiveAttackDelay();
             }
         }
 
@@ -87,6 +88,37 @@ namespace Model.Runtime
             }
             
             Pos = targetPos;
+        }
+
+
+        public void AddBuff(UnitBuff buff)
+        {
+            ServiceLocator.Get<IBuffSystem>().AddBuff(this, buff);
+        }
+
+        public bool RemoveBuff(UnitBuff buff)
+        {
+            return ServiceLocator.Get<IBuffSystem>().RemoveBuff(this, buff);
+        }
+
+        public float GetMoveSpeedMultiplier()
+        {
+            return ServiceLocator.Get<IBuffSystem>().GetMoveSpeedMultiplier(this);
+        }
+
+        public float GetAttackSpeedMultiplier()
+        {
+            return ServiceLocator.Get<IBuffSystem>().GetAttackSpeedMultiplier(this);
+        }
+
+        private float GetEffectiveMoveDelay()
+        {
+            return Config.MoveDelay / Mathf.Max(0.0001f, GetMoveSpeedMultiplier());
+        }
+
+        private float GetEffectiveAttackDelay()
+        {
+            return Config.AttackDelay / Mathf.Max(0.0001f, GetAttackSpeedMultiplier());
         }
 
         public void ClearPendingProjectiles()
