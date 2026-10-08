@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\XYZ_Projects\\MyFirstProject\\CSharpMainProjectKirill\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:2:0:{8685A858-3AED-F1AF-E7E9-CE2E0BBD7646}|Root.csproj|d:\\xyz_projects\\myfirstproject\\csharpmainprojectkirill\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:2:0:{8685A858-3AED-F1AF-E7E9-CE2E0BBD7646}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:1:0:{8685A858-3AED-F1AF-E7E9-CE2E0BBD7646}|Root.csproj|d:\\xyz_projects\\myfirstproject\\csharpmainprojectkirill\\assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:1:0:{8685A858-3AED-F1AF-E7E9-CE2E0BBD7646}|Root.csproj|solutionrelative:assets\\scripts\\controller\\botcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "D:\\XYZ_Projects\\MyFirstProject\\CSharpMainProjectKirill\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "D:\\XYZ_Projects\\MyFirstProject\\CSharpMainProjectKirill\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T07:29:45.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BotController.cs",
+              "DocumentMoniker": "D:\\XYZ_Projects\\MyFirstProject\\CSharpMainProjectKirill\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ToolTip": "D:\\XYZ_Projects\\MyFirstProject\\CSharpMainProjectKirill\\Assets\\Scripts\\Controller\\BotController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\BotController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T07:36:10.194Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
