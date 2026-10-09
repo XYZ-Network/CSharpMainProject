@@ -18,9 +18,19 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            /////////////////////////////////////// 
+            if (GetTemperature() >= overheatTemperature)//Проверяем нет ли перегрева.
+            {
+                return;
+            }
+
+            IncreaseTemperature();//Сразу увеличиваем перегрев на 1, чтобы не было 0 при температуре 0.
+
+            for (int i = 0; i < GetTemperature(); i++)//Запускаем цикл определяющий кол. снарядом в зависимости от перегрева
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
@@ -35,11 +45,26 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            float minDistance = float.MaxValue; // Фиксируем максимальное расстояние
+            Vector2Int? closestTarget = null; // Объявляем пустой вектор
+            
+            foreach (var target in result) // Прозодимся по списку векторов доступных целей
             {
-                result.RemoveAt(result.Count - 1);
+                var currentEnemyDistance = DistanceToOwnBase(target); // Получаем расстояние доступной цели до нашей базы
+                if (minDistance > currentEnemyDistance)
+                {
+                    minDistance = currentEnemyDistance;
+                    closestTarget = target;
+                }
             }
-            return result;
+            result.Clear(); // чистим лист от всех значений
+
+            if (closestTarget.HasValue) // Если значение в векторе closestTraget?
+            {
+                result.Add(closestTarget.Value); // Если значение имеется, то добавляем его в лист целей
+            }
+            return result; //Возвращаем цель
+
             ///////////////////////////////////////
         }
 
