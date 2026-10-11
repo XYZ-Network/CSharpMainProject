@@ -134,7 +134,7 @@ namespace UnitBrains
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain);
         }
 
-        protected IEnumerable<Vector2Int> GetAllTargets()
+        protected IEnumerable<Vector2Int>   GetAllTargets()
         {
             return runtimeModel.RoUnits
                 .Where(u => u.Config.IsPlayerUnit != IsPlayerUnitBrain)
