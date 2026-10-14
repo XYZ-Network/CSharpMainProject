@@ -47,17 +47,17 @@ namespace UnitBrains.Player
         }
 
 
-        public override Vector2Int GetNextStep()
-        {
-            if (unreachableTargets.Count > 0 && !IsTargetInRange(unreachableTargets[0]))
-            {
-                return unit.Pos.CalcNextStepTowards(unreachableTargets[0]);
-            }
-            else
-            {
-                return unit.Pos;
-            }
-        }
+        // public override Vector2Int GetNextStep()
+        // {
+        //     if (unreachableTargets.Count > 0 && !IsTargetInRange(unreachableTargets[0]))
+        //     {
+        //         return unit.Pos.CalcNextStepTowards(unreachableTargets[0]);
+        //     }
+        //     else
+        //     {
+        //         return unit.Pos;
+        //     }
+        // }
 
         protected override List<Vector2Int> SelectTargets()
         {
