@@ -28,21 +28,36 @@ namespace UnitBrains.Player
         {
             return base.GetNextStep();
         }
-
+        ///////////////////////////////////////
+        // Homework 1.4 (1st block, 4rd module)
+        ///////////////////////////////////////
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
-            ///////////////////////////////////////
-        }
 
+            float minDistance = float.MaxValue;
+            Vector2Int closestTarget = Vector2Int.zero;
+
+            foreach (Vector2Int target in result)
+            {
+                float distance = DistanceToOwnBase(target);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestTarget = target;
+                }
+            }
+
+            if (closestTarget != Vector2Int.zero)
+            {
+                result.Clear();
+                result.Add(closestTarget);
+            }
+
+            return result;
+            
+        }
+                ///////////////////////////////////////
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
