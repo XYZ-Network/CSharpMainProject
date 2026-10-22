@@ -17,7 +17,7 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
             // Модуль 3. Задание 1
-            while(true)
+              while(true)
             {
 
                 var projectile = CreateProjectile(forTarget);
