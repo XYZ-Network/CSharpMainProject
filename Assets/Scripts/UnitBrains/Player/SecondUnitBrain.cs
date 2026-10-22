@@ -17,20 +17,20 @@ namespace UnitBrains.Player
         {
             float overheatTemperature = OverheatTemperature;
             // Модуль 3. Задание 1
-              while(true)
-            {
+               while(true)
+               {
 
-                var projectile = CreateProjectile(forTarget);
-                AddProjectileToList(projectile, intoList);
-                GetTemperature();
+                  var projectile = CreateProjectile(forTarget);
+                  AddProjectileToList(projectile, intoList);
+                  GetTemperature();
 
-                if(GetTemperature() >= overheatTemperature )
-                {
+                  if(GetTemperature() >= overheatTemperature )
+                  {
                     break;
                 }
-                IncreaseTemperature();
+              IncreaseTemperature();
 
-            }
+        }
         }
 
         public override Vector2Int GetNextStep()
