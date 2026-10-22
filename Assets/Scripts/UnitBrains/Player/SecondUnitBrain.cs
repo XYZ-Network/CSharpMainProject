@@ -16,12 +16,21 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+            // Модуль 3. Задание 1
+               while(true)
+               {
+
+                  var projectile = CreateProjectile(forTarget);
+                  AddProjectileToList(projectile, intoList);
+                  GetTemperature();
+
+                  if(GetTemperature() >= overheatTemperature )
+                  {
+                    break;
+                }
+              IncreaseTemperature();
+
+        }
         }
 
         public override Vector2Int GetNextStep()
@@ -31,17 +40,30 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
+            
+             // Задание 1.4 Киктенко А.А.
+             float minDistance = float.MaxValue;
+             Vector2 closestTarget = Vector2.right;
+
+             List <Vector2Int> result = GetReachableTargets();
+             foreach (var target in result)
+             {
+              float currentDistance = DistanceToOwnBase(target);
+
+              if (currentDistance < minDistance)
+             {
+               minDistance = currentDistance;
+               closestTarget = target;
+              }
             }
-            return result;
-            ///////////////////////////////////////
-        }
+           if (closestTarget != null)
+           {
+     
+            result.Clear();
+           }   
+           return result;
+            
+         }
 
         public override void Update(float deltaTime, float time)
         {
