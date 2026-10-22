@@ -40,7 +40,7 @@ namespace UnitBrains.Player
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
+            
              // Задание 1.4 Киктенко А.А.
              float minDistance = float.MaxValue;
              Vector2 closestTarget = Vector2.right;
@@ -62,7 +62,7 @@ namespace UnitBrains.Player
             result.Clear();
            }   
            return result;
-            ///////////////////////////////////////
+            
          }
 
         public override void Update(float deltaTime, float time)
