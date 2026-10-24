@@ -12,16 +12,36 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
+            //
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+            float currentTemperature = GetTemperature();
+
             var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+           
+
+            int projectilesCount = (int)currentTemperature;
+
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            if (projectilesCount <= 0)
+            {
+                projectilesCount = 1;
+            }
+
+            for (int i = 0; i < projectilesCount; i++)
+            {
+                projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
@@ -35,10 +55,29 @@ namespace UnitBrains.Player
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
             List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+
+           
+            if (result.Count == 0)
             {
-                result.RemoveAt(result.Count - 1);
+                return result;
             }
+           
+            Vector2Int closestTarget = result[0];
+            float minDistance = DistanceToOwnBase(closestTarget);
+
+            for (int i = 1; i < result.Count; i++)
+            {
+                float dist = DistanceToOwnBase(result[i]);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    closestTarget = result[i];
+                }
+            }
+
+            
+            result.Clear();
+            result.Add(closestTarget);
             return result;
             ///////////////////////////////////////
         }
