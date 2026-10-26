@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Model.Buffs;
 using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System.Collections.Generic;
+using System.Linq;
 using UnitBrains;
 using UnitBrains.Pathfinding;
 using UnityEngine;
@@ -47,16 +48,26 @@ namespace Model.Runtime
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-            
+
+            // Спрашиваем у системы баффов актуальные множители скорости.
+            // Если система ещё не в ServiceLocator — берём её напрямую (ленивая инициализация).
+            var buffs = ServiceLocator.Contains<BuffSystem>()
+                ? ServiceLocator.Get<BuffSystem>()
+                : BuffSystem.Instance;
+            buffs.TrySubscribe();
+
+            float moveMult = Mathf.Max(0.01f, buffs.GetMoveSpeedMultiplier(this));
+            float attackMult = Mathf.Max(0.01f, buffs.GetAttackSpeedMultiplier(this));
+
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay;
+                _nextMoveTime = time + Config.MoveDelay / moveMult;
                 Move();
             }
-            
+
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay;
+                _nextAttackTime = time + Config.AttackDelay / attackMult;
             }
         }
 
