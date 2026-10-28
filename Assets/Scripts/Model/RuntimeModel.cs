@@ -39,7 +39,11 @@ namespace Model
             { PlayerId, 0 },
             { BotPlayerId, 0 }
         };
-        
+
+        int IReadOnlyRuntimeModel.BotPlayerId => throw new System.NotImplementedException();
+
+        public int PlayerID => throw new System.NotImplementedException();
+
         private readonly List<List<Unit>> _playersUnits = new()
         {
             new (), new ()

@@ -17,6 +17,8 @@ namespace Model
         public IEnumerable<IReadOnlyUnit> RoPlayerUnits { get; }
         public IEnumerable<IReadOnlyUnit> RoBotUnits { get; }
         public IReadOnlyList<IReadOnlyBase> RoBases { get; }
+        int BotPlayerId { get; }
+        int PlayerID { get; }
 
         public bool IsTileWalkable(Vector2Int pos);
     }
