@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Model;
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,21 +15,76 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        private List<Vector2Int> outOfReachTargets = new List<Vector2Int>(); // коллекция целей вне досягаемости
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
+            //
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
+            float currentTemperature = GetTemperature();
+
             var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+           
+
+            int projectilesCount = (int)currentTemperature;
+
+            if (currentTemperature >= overheatTemperature)
+            {
+                return;
+            }
+
+            if (projectilesCount <= 0)
+            {
+                projectilesCount = 1;
+            }
+
+            for (int i = 0; i < projectilesCount; i++)
+            {
+                projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+
+            
+            IncreaseTemperature();
         }
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            
+            Vector2Int currentPosition = unit.Pos; // текущая позиция
+
+            
+            List<Vector2Int> targets = SelectTargets(); // Заправшиваем список целей
+            Vector2Int targetPosition = Vector2Int.zero;
+            bool hasTarget = false;
+
+            
+            if (targets.Count > 0)
+            {
+                targetPosition = targets[0];
+                hasTarget = true;
+            }
+            else if (outOfReachTargets.Count > 0)
+            {
+                targetPosition = outOfReachTargets[0];
+                hasTarget = true;
+            }
+
+            
+            if (!hasTarget) // если нет целей
+            {
+                return currentPosition;
+            }
+
+            
+            if (targets.Count > 0 && IsTargetInRange(targetPosition)) // если в цели отаки стоим и атакуем
+            {
+                return currentPosition;
+            }
+
+            
+            return currentPosition.CalcNextStepTowards(targetPosition); // если нет движемся к ней
         }
 
         protected override List<Vector2Int> SelectTargets()
@@ -34,12 +92,64 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
             // Homework 1.4 (1st block, 4rd module)
             ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            outOfReachTargets.Clear();
+
+           
+            IEnumerable<Vector2Int> allTargetsEnum = GetAllTargets(); // получение цели на карте
+            List<Vector2Int> result = new List<Vector2Int>();
+
+          
+            List<Vector2Int> allTarget = allTargetsEnum    // если список не ноль добавляем иначе пустой список
+                != null ? allTargetsEnum.ToList() 
+                : new List<Vector2Int>();
+
+           
+            if (allTarget.Count > 0) // если в целях есть ищем самую близкую к базе
             {
-                result.RemoveAt(result.Count - 1);
+                Vector2Int closestTarget = allTarget[0];
+                float minDistance = DistanceToOwnBase(closestTarget);
+
+                for (int i = 1; i < allTarget.Count; i++)
+                {
+                    float dist = DistanceToOwnBase(allTarget[i]);
+                    if (dist < minDistance)
+                    {
+                        minDistance = dist;
+                        closestTarget = allTarget[i];
+                    }
+                }
+
+                
+                List<Vector2Int> reachableTargets = GetReachableTargets(); // проверка зоны досягаесмости
+
+                if (reachableTargets != null && reachableTargets.Contains(closestTarget))
+                {
+                   
+                    result.Add(closestTarget); // если да то добавляем  в список result
+                }
+                else
+                {
+                   
+                    outOfReachTargets.Add(closestTarget); //иначе в список вне досягаемости
+                }
             }
+            
+            else // если нет добовляем базу противника как сказана в инструкции к уроку
+            {
+                
+                int enemyPlayerId = IsPlayerUnitBrain // если юнит игрок  то враг компьютер, иначе - игрок
+                    ? RuntimeModel.BotPlayerId 
+                    : RuntimeModel.PlayerId;
+
+                
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyPlayerId]; // определение базы противника
+
+               
+                result.Add(enemyBase); // добавляю в список
+            }
+
             return result;
+            
             ///////////////////////////////////////
         }
 
