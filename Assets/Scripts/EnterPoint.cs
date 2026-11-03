@@ -7,11 +7,13 @@ using UnityEngine;
 using Utilities;
 
 public class EnterPoint : MonoBehaviour
-{
+{ 
     [SerializeField] private Settings _settings;
     [SerializeField] private Canvas _targetCanvas;
     private float _timeScale = 1;
     
+    //я снова тють яяяххх...
+
     void Start()
     {
         Time.timeScale = _timeScale;
