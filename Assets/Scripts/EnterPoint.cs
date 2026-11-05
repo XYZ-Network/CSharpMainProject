@@ -5,6 +5,11 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
+// комментарий 
+/*/
+*** проверка
+*** проверка 
+/*/
 
 public class EnterPoint : MonoBehaviour
 {
