@@ -69,6 +69,7 @@ namespace UnitBrains.Player
 
             if (all.Count == 0)
             {
+                result.Add(runtimeModel.RoMap.Bases[RuntimeModel.EnemyId]);
                 return result;
             }
 
