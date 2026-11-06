@@ -1,0 +1,231 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:2:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|c:\\users\\\u0445\u0430\u0441\u0430\u043D\\csharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:2:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\data\\idatastore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|solutionrelative:assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\data\\idatastore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\data\\idatasaver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|solutionrelative:assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\data\\idatasaver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\baseunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\baseunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\enemy\\defaultenemyunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\enemy\\defaultenemyunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\model\\runtimemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\model\\runtimemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\health\\ialignmentprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EC268356-A770-5511-F91E-CEF9E21C61F9}|Assembly-CSharp.csproj|solutionrelative:assets\\unitytechnologies\\towerdefensetemplate\\scripts\\core\\health\\ialignmentprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\unitbrainprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\unitbrainprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\model\\runtime\\mainbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\model\\runtime\\mainbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\pathfinding\\dummyunitpath.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\pathfinding\\dummyunitpath.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\pathfinding\\baseunitpath.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\pathfinding\\baseunitpath.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\assets\\scripts\\unitbrains\\player\\defaultplayerunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\defaultplayerunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:1:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|c:\\users\\\u0445\u0430\u0441\u0430\u043D\\csharpmainproject\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:1:0:{30E4A36B-DBC1-3EB5-7C27-41F2EDC2C301}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RuntimeModel.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\Model\\RuntimeModel.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\RuntimeModel.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\Model\\RuntimeModel.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Model\\RuntimeModel.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAsAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-27T18:28:13.839Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SecondUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-27T18:32:03.049Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T08:46:13.758Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IAlignmentProvider.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Health\\IAlignmentProvider.cs",
+              "RelativeDocumentMoniker": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Health\\IAlignmentProvider.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Health\\IAlignmentProvider.cs",
+              "RelativeToolTip": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Health\\IAlignmentProvider.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T08:13:00.797Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IDataStore.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataStore.cs",
+              "RelativeDocumentMoniker": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataStore.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataStore.cs",
+              "RelativeToolTip": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataStore.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T08:12:59.311Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IDataSaver.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataSaver.cs",
+              "RelativeDocumentMoniker": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataSaver.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataSaver.cs",
+              "RelativeToolTip": "Assets\\UnityTechnologies\\TowerDefenseTemplate\\Scripts\\Core\\Data\\IDataSaver.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T08:12:47.609Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DefaultEnemyUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Enemy\\DefaultEnemyUnitBrain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:10:59.03Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BaseUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\BaseUnitBrain.cs",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAAAKYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:10:55.877Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UnitBrainProvider.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\UnitBrainProvider.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\UnitBrainProvider.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\UnitBrainProvider.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\UnitBrainProvider.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:10:56.669Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MainBase.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\Model\\Runtime\\MainBase.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Model\\Runtime\\MainBase.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\Model\\Runtime\\MainBase.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Model\\Runtime\\MainBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-28T08:01:07.812Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DummyUnitPath.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Pathfinding\\DummyUnitPath.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Pathfinding\\DummyUnitPath.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Pathfinding\\DummyUnitPath.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Pathfinding\\DummyUnitPath.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:10:51.135Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "BaseUnitPath.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Pathfinding\\BaseUnitPath.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Pathfinding\\BaseUnitPath.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Pathfinding\\BaseUnitPath.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Pathfinding\\BaseUnitPath.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:10:01.158Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "DefaultPlayerUnitBrain.cs",
+              "DocumentMoniker": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "ToolTip": "C:\\Users\\\u0425\u0430\u0441\u0430\u043D\\CSharpMainProject\\Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-26T18:09:45.973Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
