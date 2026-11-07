@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
-public class Level2 : MonoBehaviour
+public class Modul3HomeWork1 : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

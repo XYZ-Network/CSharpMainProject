@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Modul3HomeWork2 : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
