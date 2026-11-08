@@ -1,5 +1,4 @@
-﻿using Model.Buffs;
-using Model.Config;
+﻿using Model.Config;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using System.Collections.Generic;
@@ -20,6 +19,18 @@ namespace Model.Runtime
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
 
+        // ----- Эффективные характеристики -----
+        public float MoveSpeedMultiplier => _moveSpeedMult.Total;
+        public float AttackSpeedMultiplier => _attackSpeedMult.Total;
+        public float ProjectileCountMultiplier => _projectileCountMult.Total;
+        public float AttackRangeBonus => _attackRangeBonus.Total;
+
+        public float EffectiveMoveDelay => Config.MoveDelay / Mathf.Max(0.01f, MoveSpeedMultiplier);
+        public float EffectiveAttackDelay => Config.AttackDelay / Mathf.Max(0.01f, AttackSpeedMultiplier);
+        public float EffectiveAttackRange => Config.AttackRange + AttackRangeBonus;
+
+        public BaseUnitBrain Brain => _brain;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
@@ -27,7 +38,13 @@ namespace Model.Runtime
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-        
+
+        // ----- Модификаторы от баффов/дебаффов -----
+        private readonly StatModifiers _moveSpeedMult = new(1f, (a, b) => a * b);
+        private readonly StatModifiers _attackSpeedMult = new(1f, (a, b) => a * b);
+        private readonly StatModifiers _projectileCountMult = new(1f, (a, b) => a * b);
+        private readonly StatModifiers _attackRangeBonus = new(0f, (a, b) => a + b);
+
         public Unit(UnitConfig config, Vector2Int startPos)
         {
             Config = config;
@@ -42,32 +59,22 @@ namespace Model.Runtime
         {
             if (IsDead)
                 return;
-            
+
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
 
-            // Спрашиваем у системы баффов актуальные множители скорости.
-            // Если система ещё не в ServiceLocator — берём её напрямую (ленивая инициализация).
-            var buffs = ServiceLocator.Contains<BuffSystem>()
-                ? ServiceLocator.Get<BuffSystem>()
-                : BuffSystem.Instance;
-            buffs.TrySubscribe();
-
-            float moveMult = Mathf.Max(0.01f, buffs.GetMoveSpeedMultiplier(this));
-            float attackMult = Mathf.Max(0.01f, buffs.GetAttackSpeedMultiplier(this));
-
             if (_nextMoveTime < time)
             {
-                _nextMoveTime = time + Config.MoveDelay / moveMult;
+                _nextMoveTime = time + EffectiveMoveDelay;
                 Move();
             }
 
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + Config.AttackDelay / attackMult;
+                _nextAttackTime = time + EffectiveAttackDelay;
             }
         }
 
@@ -76,7 +83,7 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
-            
+
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
@@ -96,18 +103,25 @@ namespace Model.Runtime
             {
                 return;
             }
-            
+
             Pos = targetPos;
         }
 
-        public void ClearPendingProjectiles()
-        {
-            _pendingProjectiles.Clear();
-        }
+        public void ClearPendingProjectiles() => _pendingProjectiles.Clear();
 
-        public void TakeDamage(int projectileDamage)
-        {
-            Health -= projectileDamage;
-        }
+        public void TakeDamage(int projectileDamage) => Health -= projectileDamage;
+
+        // ----- Методы, которые вызывают баффы -----
+        public void AddMoveSpeedModifier(object source, float multiplier) => _moveSpeedMult.Set(source, multiplier);
+        public void RemoveMoveSpeedModifier(object source) => _moveSpeedMult.Remove(source);
+
+        public void AddAttackSpeedModifier(object source, float multiplier) => _attackSpeedMult.Set(source, multiplier);
+        public void RemoveAttackSpeedModifier(object source) => _attackSpeedMult.Remove(source);
+
+        public void AddProjectileCountModifier(object source, float multiplier) => _projectileCountMult.Set(source, multiplier);
+        public void RemoveProjectileCountModifier(object source) => _projectileCountMult.Remove(source);
+
+        public void AddAttackRangeModifier(object source, float bonus) => _attackRangeBonus.Set(source, bonus);
+        public void RemoveAttackRangeModifier(object source) => _attackRangeBonus.Remove(source);
     }
 }

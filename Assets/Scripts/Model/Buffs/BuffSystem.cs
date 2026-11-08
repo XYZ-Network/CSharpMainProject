@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using Model.Runtime;
 using Model.Runtime.ReadOnly;
 using Utilities;
-using UnityEngine;
 
 namespace Model.Buffs
 {
@@ -15,78 +15,48 @@ namespace Model.Buffs
 
         private BuffSystem() { TrySubscribe(); }
 
-        /// <summary>
-        /// Подписка на TimeUtil. Вызывается при создании.
-        /// Если TimeUtil ещё не зарегистрирован, вызовем позже —
-        /// при первом обращении к системе из Unit.
-        /// </summary>
         public void TrySubscribe()
         {
             if (_subscribed) return;
             if (!ServiceLocator.Contains<TimeUtil>()) return;
-
             ServiceLocator.Get<TimeUtil>().AddUpdateAction(Tick);
             _subscribed = true;
         }
 
-        // ---------- API ----------
-
         public void ApplyBuff(IReadOnlyUnit unit, Buff buff)
         {
             if (unit == null || buff == null) return;
+            if (unit is not Unit concrete) return;
+            if (!buff.CanApplyTo(concrete)) return;
 
             if (!_buffs.TryGetValue(unit, out var list))
             {
                 list = new List<Buff>();
                 _buffs[unit] = list;
             }
+
+            buff.Apply(concrete);
             list.Add(buff);
         }
 
         public bool HasBuff(IReadOnlyUnit unit)
-            => unit != null
-               && _buffs.TryGetValue(unit, out var list)
-               && list.Count > 0;
+            => unit != null && _buffs.TryGetValue(unit, out var list) && list.Count > 0;
 
-        public bool HasBuff(IReadOnlyUnit unit, BuffType type)
+        public bool HasBuff(IReadOnlyUnit unit, System.Type buffType)
         {
-            if (unit == null) return false;
-            if (!_buffs.TryGetValue(unit, out var list)) return false;
-
+            if (unit == null || !_buffs.TryGetValue(unit, out var list)) return false;
             foreach (var b in list)
-                if (b.Type == type) return true;
+                if (b.GetType() == buffType) return true;
             return false;
         }
 
-        /// <summary>
-        /// Итоговый множитель скорости движения (перемножаем все эффекты).
-        /// </summary>
-        public float GetMoveSpeedMultiplier(IReadOnlyUnit unit)
+        public void Clear()
         {
-            if (unit == null || !_buffs.TryGetValue(unit, out var list))
-                return 1f;
-
-            float m = 1f;
-            foreach (var b in list) m *= b.MoveSpeedMultiplier;
-            return m;
+            foreach (var pair in _buffs)
+                foreach (var b in pair.Value)
+                    if (pair.Key is Unit u) b.Remove(u);
+            _buffs.Clear();
         }
-
-        /// <summary>
-        /// Итоговый множитель скорости атаки.
-        /// </summary>
-        public float GetAttackSpeedMultiplier(IReadOnlyUnit unit)
-        {
-            if (unit == null || !_buffs.TryGetValue(unit, out var list))
-                return 1f;
-
-            float m = 1f;
-            foreach (var b in list) m *= b.AttackSpeedMultiplier;
-            return m;
-        }
-
-        public void Clear() => _buffs.Clear();
-
-        // ---------- Тик ----------
 
         private void Tick(float deltaTime)
         {
@@ -95,9 +65,12 @@ namespace Model.Buffs
                 var list = pair.Value;
                 for (int i = list.Count - 1; i >= 0; i--)
                 {
-                    list[i].TimeLeft -= deltaTime;
+                    list[i].Tick(deltaTime);
                     if (list[i].IsExpired)
+                    {
+                        if (pair.Key is Unit u) list[i].Remove(u);
                         list.RemoveAt(i);
+                    }
                 }
             }
         }

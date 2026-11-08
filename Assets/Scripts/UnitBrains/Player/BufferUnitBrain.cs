@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Model.Buffs;
+using Model.Runtime;
 using Model.Runtime.ReadOnly;
 using UnitBrains.Pathfinding;
 using UnityEngine;
@@ -11,19 +12,20 @@ namespace UnitBrains.Player
 {
     public class BufferUnitBrain : DefaultPlayerUnitBrain
     {
-        public override string TargetUnitName => "Buff Guardian"; // ← как в префабе
+        public override string TargetUnitName => "Buff Guardian";
 
         private enum State { Moving, PreBuff, PostBuff }
 
-        private const float BuffInterval = 3f;    // раз в 3 секунды
-        private const float PrePostDelay = 0.5f;  // стоп до и после баффа
-        private const float BuffDuration = 5f;    // длительность баффа
-        private const float BuffMultiplier = 1.5f; // ускорение движения ×1.5
+        private const float BuffInterval = 3f;
+        private const float PrePostDelay = 0.5f;
+        private const float BuffDuration = 5f;
+        private const float BuffMultiplier = 1.5f;
 
         private State _state = State.Moving;
         private float _stateTimer;
         private float _buffCooldown;
         private IReadOnlyUnit _buffTarget;
+        private Buff _pendingBuff;           // ← ДОБАВЛЕНО
 
         private AStarUnitPath _path;
         private VFXView _vfxView;
@@ -45,7 +47,7 @@ namespace UnitBrains.Player
 
         public override void Update(float deltaTime, float time)
         {
-            base.Update(deltaTime, time); // тик координатора
+            base.Update(deltaTime, time);
 
             _buffCooldown -= deltaTime;
 
@@ -57,15 +59,17 @@ namespace UnitBrains.Player
                         var ally = FindAllyToBuff();
                         if (ally != null)
                         {
-                            _buffTarget = ally;
-                            _state = State.PreBuff;
-                            _stateTimer = PrePostDelay;
+                            var buff = CreateBuffFor(ally);      // ← ИЗМЕНЕНО
+                            if (buff != null)
+                            {
+                                _buffTarget = ally;
+                                _pendingBuff = buff;
+                                _state = State.PreBuff;
+                                _stateTimer = PrePostDelay;
+                            }
+                            else _buffCooldown = 0.2f;
                         }
-                        else
-                        {
-                            // Рядом нет цели для баффа — попробуем через мгновение
-                            _buffCooldown = 0.2f;
-                        }
+                        else _buffCooldown = 0.2f;
                     }
                     break;
 
@@ -73,16 +77,14 @@ namespace UnitBrains.Player
                     _stateTimer -= deltaTime;
                     if (_stateTimer <= 0f)
                     {
-                        // На момент применения — ещё раз проверяем, что баффа нет
-                        if (_buffTarget != null && !BuffSystem.Instance.HasBuff(_buffTarget))
+                        if (_buffTarget != null && _pendingBuff != null)
                         {
-                            BuffSystem.Instance.ApplyBuff(
-                                _buffTarget,
-                                BuffFactory.AttackSpeedUp(BuffDuration, BuffMultiplier));
+                            BuffSystem.Instance.ApplyBuff(_buffTarget, _pendingBuff); // ← ИЗМЕНЕНО
                             PlayBuffVfx();
                         }
                         _state = State.PostBuff;
                         _stateTimer = PrePostDelay;
+                        _pendingBuff = null;
                     }
                     break;
 
@@ -98,10 +100,6 @@ namespace UnitBrains.Player
             }
         }
 
-        /// <summary>
-        /// Движение к точке сбора координатора через A*.
-        /// В PreBuff / PostBuff стоим.
-        /// </summary>
         public override Vector2Int GetNextStep()
         {
             if (_state != State.Moving)
@@ -120,16 +118,12 @@ namespace UnitBrains.Player
 
             var next = _path.GetNextStepFrom(unit.Pos);
 
-            // Не толкаемся в клетку, занятую другим юнитом
             if (runtimeModel.RoUnits.Any(u => u != unit && u.Pos == next))
                 return unit.Pos;
 
             return next;
         }
 
-        /// <summary>
-        /// Стрельбу отключаем — пустой список целей.
-        /// </summary>
         protected override List<Vector2Int> SelectTargets() => new();
 
         // ---------- Вспомогательное ----------
@@ -143,6 +137,23 @@ namespace UnitBrains.Player
                     return ally;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Выбирает бафф по типу юнита союзника.
+        /// Возвращает null, если бафф применить нельзя.
+        /// </summary>
+        private Buff CreateBuffFor(IReadOnlyUnit ally)
+        {
+            if (ally is not Unit u) return null;
+            if (BuffSystem.Instance.HasBuff(ally)) return null;
+
+            return u.Brain switch
+            {
+                SecondUnitBrain => BuffFactory.DoubleShot(BuffDuration),
+                ThirdUnitBrain => BuffFactory.IncreasedRange(BuffDuration),
+                _ => BuffFactory.MoveSpeedUp(BuffDuration, BuffMultiplier),
+            };
         }
 
         private void PlayBuffVfx()

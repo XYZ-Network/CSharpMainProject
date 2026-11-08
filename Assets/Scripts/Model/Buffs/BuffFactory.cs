@@ -2,36 +2,12 @@ namespace Model.Buffs
 {
     public static class BuffFactory
     {
-        public static Buff MoveSpeedUp(float duration, float multiplier = 1.5f) => new()
-        {
-            Type = BuffType.MoveSpeedUp,
-            Duration = duration,
-            TimeLeft = duration,
-            MoveSpeedMultiplier = multiplier,
-        };
+        public static MoveSpeedUpBuff MoveSpeedUp(float duration, float mult = 1.5f) => new(duration, mult);
+        public static AttackSpeedUpBuff AttackSpeedUp(float duration, float mult = 1.5f) => new(duration, mult);
+        public static MoveSpeedDownBuff MoveSpeedDown(float duration, float mult = 0.5f) => new(duration, mult);
+        public static AttackSpeedDownBuff AttackSpeedDown(float duration, float mult = 0.5f) => new(duration, mult);
 
-        public static Buff AttackSpeedUp(float duration, float multiplier = 1.5f) => new()
-        {
-            Type = BuffType.AttackSpeedUp,
-            Duration = duration,
-            TimeLeft = duration,
-            AttackSpeedMultiplier = multiplier,
-        };
-
-        public static Buff MoveSpeedDown(float duration, float multiplier = 0.5f) => new()
-        {
-            Type = BuffType.MoveSpeedDown,
-            Duration = duration,
-            TimeLeft = duration,
-            MoveSpeedMultiplier = multiplier,
-        };
-
-        public static Buff AttackSpeedDown(float duration, float multiplier = 0.5f) => new()
-        {
-            Type = BuffType.AttackSpeedDown,
-            Duration = duration,
-            TimeLeft = duration,
-            AttackSpeedMultiplier = multiplier,
-        };
+        public static DoubleShotBuff DoubleShot(float duration, float mult = 2f) => new(duration, mult);
+        public static IncreasedRangeBuff IncreasedRange(float duration, float bonus = 2f) => new(duration, bonus);
     }
 }
