@@ -29,7 +29,9 @@ namespace Model.Runtime.Projectiles
             ///////////////////////////////////////
             // Insert you code here
             ///////////////////////////////////////
-
+float maxHeight = totalDistance * 0.6f;
+float normalizedTime = t * 2f - 1f;
+localHeight = maxHeight * (-normalizedTime * normalizedTime + 1f);
 
             ///////////////////////////////////////
             // End of the code to insert
