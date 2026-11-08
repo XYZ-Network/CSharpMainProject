@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,35 +15,21 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
-        }
+            if (GetTemperature() >= OverheatTemperature)
+                return;
 
-        public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
-        }
+            int baseShots = (int)_temperature + 1;
+            int shots = Mathf.RoundToInt(baseShots * unit.ProjectileCountMultiplier);
 
-        protected override List<Vector2Int> SelectTargets()
-        {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> result = GetReachableTargets();
-            while (result.Count > 1)
+            for (int i = 0; i < shots; i++)
             {
-                result.RemoveAt(result.Count - 1);
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
             }
-            return result;
-            ///////////////////////////////////////
+            IncreaseTemperature();
         }
 
         public override void Update(float deltaTime, float time)
