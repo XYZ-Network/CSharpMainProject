@@ -18,7 +18,14 @@ public class EnterPoint : MonoBehaviour
         _settings.LoadPrefabs();
         ServiceLocator.Register(_settings);
         
+
         var rootController = new RootController(_settings, _targetCanvas);
         ServiceLocator.Register(rootController);
     }
+    // test changes
+
+    /*
+     * also some test changes
+     * also some test changes
+     */
 }
