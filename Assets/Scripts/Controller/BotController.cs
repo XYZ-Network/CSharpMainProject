@@ -6,6 +6,7 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
+
 // I like writing comments
 
 namespace Controller
