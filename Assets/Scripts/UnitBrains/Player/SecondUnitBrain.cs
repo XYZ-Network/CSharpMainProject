@@ -13,6 +13,9 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
 
+        
+        private Vector2Int? _targetToMove = null;
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -34,48 +37,62 @@ namespace UnitBrains.Player
             IncreaseTemperature();
         }
 
-        public override Vector2Int GetNextStep()
-        {
-            return base.GetNextStep();
-        }
-
         protected override List<Vector2Int> SelectTargets()
         {
+            List<Vector2Int> result = new List<Vector2Int>();
+            _targetToMove = null;
+
             
-            List<Vector2Int> result = GetReachableTargets();
+            IEnumerable<Vector2Int> allTargets = GetAllTargets();
 
-
-
-            if (result.Count == 0)
-                return result;
-
-            Vector2Int bestTarget = result[0];
             float minDistance = float.MaxValue;
+            Vector2Int bestTarget = Vector2Int.zero;
 
-            foreach (Vector2Int target in result)
+            
+            foreach (Vector2Int target in allTargets)
             {
-                float distance = DistanceToOwnBase(target);
-
-                if (distance < minDistance)
+                float dist = DistanceToOwnBase(target);
+                if (dist < minDistance)
                 {
-                    minDistance = distance;
+                    minDistance = dist;
                     bestTarget = target;
                 }
             }
 
-            result.Clear();
-            result.Add(bestTarget);
-            return result;
             
+            if (minDistance != float.MaxValue)
+            {
+                _targetToMove = bestTarget;
+
+                
+                if (IsTargetInRange(bestTarget))
+                {
+                    result.Add(bestTarget);
+                }
+            }
+
+            return result;
         }
 
+        
+        public override Vector2Int GetNextStep()
+        {
+            
+            if (_targetToMove == null)
+            {
+                return base.GetNextStep();
+            }
+
+            
+            return base.GetNextStep();
+        }
 
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {              
+            {
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown/10);
+                float t = _cooldownTime / (OverheatCooldown / 10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -87,7 +104,7 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if(_overheated) return (int) OverheatTemperature;
+            if (_overheated) return (int)OverheatTemperature;
             else return (int)_temperature;
         }
 
