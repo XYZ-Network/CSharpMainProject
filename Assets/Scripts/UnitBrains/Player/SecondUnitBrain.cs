@@ -18,9 +18,23 @@ namespace UnitBrains.Player
             float overheatTemperature = OverheatTemperature;
             ///////////////////////////////////////
             // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
+            /////////////////////////////////////// 
+            if (GetTemperature() >= overheatTemperature)
+                return;
+
+            // I think GetTemperature() function is redundant, I'd use
+            //if (_overheated)
+            //    return;
+            // 'cos it's already calculated in IncreaseTemperature() method
+
+            // float overheatTemperature = OverheatTemperature; is also redundant
+
+            IncreaseTemperature();
+            for (int i = 0; i < _temperature; i++)
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
             ///////////////////////////////////////
         }
 
