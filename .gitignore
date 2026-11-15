@@ -7,3 +7,8 @@ Logs
 Assembly-CSharp.csproj
 Assembly-CSharp-Editor.csproj
 CsharpMainProject.sln
+
+# Visual Studio
+.vs/
+*.user
+*.suo
