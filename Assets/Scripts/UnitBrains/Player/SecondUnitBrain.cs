@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Model;
 using Model.Runtime.Projectiles;
 using UnityEngine;
+using Utilities;
 
 namespace UnitBrains.Player
 {
@@ -12,7 +14,9 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
+        private List<Vector2Int> _outOfRangeTargets = new List<Vector2Int>(); // цели, к которым нужно идти
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
@@ -37,26 +41,40 @@ namespace UnitBrains.Player
             ///////////////////////////////////////
         }
 
-        
+
 
         public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
+            // целей нет - стоим на месте
+            if (_outOfRangeTargets.Count == 0)
+            {
+                return unit.Pos;
+            }
+
+            Vector2Int target = _outOfRangeTargets[0]; // цель, к которой идём
+
+            // цель уже в зоне атаки тоже стоим и стреляем
+            if (IsTargetInRange(target))
+            {
+                return unit.Pos;
+            }
+
+            // цель далеко делаем шаг к ней
+            return unit.Pos.CalcNextStepTowards(target);
         }
 
         protected override List<Vector2Int> SelectTargets()
         {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
-            List<Vector2Int> targets = GetReachableTargets();
             List<Vector2Int> result = new List<Vector2Int>();
+            _outOfRangeTargets.Clear(); // очищаем с прошлого раза
 
             float minDistance = float.MaxValue;
             Vector2Int closestTarget = Vector2Int.zero;
+            bool hasTargets = false;
 
-            foreach (Vector2Int target in targets)
+            foreach (Vector2Int target in GetAllTargets()) // все цели, не только достижимые
             {
+                hasTargets = true;
                 float distance = DistanceToOwnBase(target);
                 if (distance < minDistance)
                 {
@@ -64,13 +82,24 @@ namespace UnitBrains.Player
                     closestTarget = target;
                 }
             }
-            if (targets.Count > 0)
+
+            if (hasTargets)
             {
-                result.Add(closestTarget);
+                _outOfRangeTargets.Add(closestTarget); // самая опасная цель - идём к ней
+
+                if (IsTargetInRange(closestTarget)) // если она в зоне досягаемости, ещё и стреляем
+                {
+                    result.Add(closestTarget);
+                }
             }
+            else
+            {
+                // целей нет - идём к базе противника
+                int enemyId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+                _outOfRangeTargets.Add(runtimeModel.RoMap.Bases[enemyId]);
+            }
+
             return result;
-
-
         }
 
         public override void Update(float deltaTime, float time)
@@ -87,6 +116,8 @@ namespace UnitBrains.Player
                 }
             }
         }
+
+        
 
         private int GetTemperature()
         {
