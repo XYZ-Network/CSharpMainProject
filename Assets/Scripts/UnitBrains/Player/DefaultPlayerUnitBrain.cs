@@ -51,7 +51,7 @@ namespace UnitBrains.Player
             {
                 return unit.Pos;
             }
-            return unit.Pos.CalcNextStepTowards(target);
+            return GetStepAlongPath(target);
         }
         protected List<Vector2Int> GetAssignedTargetIfInRange()
         {
