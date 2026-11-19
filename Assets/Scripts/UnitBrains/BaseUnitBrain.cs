@@ -39,7 +39,11 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            return GetStepAlongPath(target);
+        }
+        protected Vector2Int GetStepAlongPath(Vector2Int target)
+        {
+            _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
@@ -163,5 +167,6 @@ namespace UnitBrains
 
             return result;
         }
+
     }
 }

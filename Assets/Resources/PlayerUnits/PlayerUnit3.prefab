@@ -67,7 +67,7 @@ MonoBehaviour:
   _maxHealth: 400
   _brainUpdateDelay: 0.25
   _moveDelay: 0.25
-  _attackDelay: 0.75
+  _attackDelay: 0.15
   _attackRange: 3.5
   _shotsPerTarget: 1
   _targetsInVolley: 1
