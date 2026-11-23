@@ -6,8 +6,8 @@ using Model;
 using Model.Config;
 using UnityEngine;
 using Utilities;
-//hello
-//How are you?
+//hello //I'm Dima
+//How are you? // norm
 //i'm fine
 namespace Controller
 {

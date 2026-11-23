@@ -26,14 +26,14 @@ namespace Model.Runtime.Projectiles
             float localHeight = 0f;
             float totalDistance = _totalDistance;
 
-            ///////////////////////////////////////
-            // Insert you code here
-            ///////////////////////////////////////
+            // 1. Вычисляем максимальную высоту (60% от общей дистанции)
+            float maxHeight = totalDistance * 0.6f;
 
+            // 2. Выносим повторяющуюся часть формулы в отдельную переменную
+            float tFactor = t * 2f - 1f;
 
-            ///////////////////////////////////////
-            // End of the code to insert
-            ///////////////////////////////////////
+            // 3. Считаем итоговую высоту, используя возведение в квадрат
+            localHeight = maxHeight * (-(tFactor * tFactor) + 1f);
             
             Height = localHeight;
             if (time > StartTime + _timeToTarget)
