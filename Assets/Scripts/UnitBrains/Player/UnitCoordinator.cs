@@ -1,73 +1,93 @@
-﻿using Model;
-using Model.Runtime;
+﻿using System.Linq;
+using Model;
 using Model.Runtime.ReadOnly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Utilities;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.UI.CanvasScaler;
-using Unit = Model.Runtime.Unit;
 
-namespace Assets.Scripts.Utilities
+namespace UnitBrains.Player
 {
     public class UnitCoordinator
     {
-        private readonly IReadOnlyRuntimeModel _runtimeModel;
+        private readonly RuntimeModel _runtimeModel;
         private readonly TimeUtil _timeUtil;
-        private int _playerId;
-        public IReadOnlyUnit recommendTarget = null;
 
+        private readonly int _halfMapWidth;
+        private readonly bool _isPlayerOnLeftSide;
 
-        public UnitCoordinator(IReadOnlyRuntimeModel runtimeModel, TimeUtil timeUtil, int playerId)
+        public Vector2Int Target { get; private set; }
+        public Vector2Int Destination { get; private set; }
+
+        public UnitCoordinator(RuntimeModel runtimeModel, TimeUtil timeUtil)
         {
             _runtimeModel = runtimeModel;
+            _halfMapWidth = _runtimeModel.RoMap.Width / 2;
+            _isPlayerOnLeftSide = _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId].y < _halfMapWidth;
+            
             _timeUtil = timeUtil;
-            _playerId = playerId;
-
-            _timeUtil.AddUpdateAction(GetRecommendedTarget);
+            _timeUtil.AddFixedUpdateAction(Update);
         }
 
-        private void GetRecommendedTarget(float deltaTime)
+        ~UnitCoordinator()
         {
-            recommendTarget = null;
+            _timeUtil.RemoveFixedUpdateAction(Update);
+        }
 
-            if (_runtimeModel.RoMap == null)
-            {
+        private void Update(float deltaTime)
+        {
+            UpdateTarget();
+            UpdateDestination();
+        }
+
+        private void UpdateTarget()
+        {
+            // Default target is bot base
+            Target = _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+            
+            var enemies = _runtimeModel.RoBotUnits.ToList();
+            if (!enemies.Any())
                 return;
-            }
-
-            int firstHalfMapX = _runtimeModel.RoMap.Width / 2;
-            float closedDist = float.MaxValue;
-            IEnumerable<IReadOnlyUnit> units = _playerId == RuntimeModel.PlayerId ? _runtimeModel.RoBotUnits : _runtimeModel.RoPlayerUnits;
-            List<IReadOnlyUnit> Targets = units.ToList();
-
-            foreach (IReadOnlyUnit target in Targets)
-            {
-                if (target.Pos.x < firstHalfMapX && closedDist > (target.Pos - _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]).magnitude)
-                {
-                    closedDist = (target.Pos - _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]).magnitude;
-                    recommendTarget = target;
-                }
-            }
-
-            if (recommendTarget != null)
-            {
+            enemies.Sort(CompareByHealth);
+            Target = enemies.First().Pos;
+            
+            var enemiesOnPlayerSide = enemies.Where(IsTargetOnPlayerSide).ToList();
+            if (!enemiesOnPlayerSide.Any())
                 return;
-            }
+            enemiesOnPlayerSide.Sort(CompareByDistanceToPlayerBase);
+            Target = enemiesOnPlayerSide.First().Pos;
+        }
 
-            int minHP = int.MaxValue;
-            foreach (IReadOnlyUnit target in Targets)
-            {
-                if (minHP > target.Health)
-                {
-                    minHP = target.Health;
-                    recommendTarget = target;
-                }
-            }
+        private void UpdateDestination()
+        {
+            // Default destination is bot base
+            Destination = _runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+            
+            var enemies = _runtimeModel.RoBotUnits.ToList();
+            if (!enemies.Any())
+                return;
+            enemies.Sort(CompareByDistanceToPlayerBase);
+            Destination = enemies.First().Pos;
+            
+            var enemiesOnPlayerSide = enemies.Where(IsTargetOnPlayerSide).ToList();
+            if (!enemiesOnPlayerSide.Any())
+                return;
+            Destination = _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId];
+        }
+
+        private int CompareByHealth(IReadOnlyUnit a, IReadOnlyUnit b) =>
+            a.Health.CompareTo(b.Health);
+
+        private bool IsTargetOnPlayerSide(IReadOnlyUnit target) =>
+            (target.Pos.y < _halfMapWidth && _isPlayerOnLeftSide)
+            || (target.Pos.y >= _halfMapWidth && !_isPlayerOnLeftSide);
+
+        private int CompareByDistanceToPlayerBase(IReadOnlyUnit a, IReadOnlyUnit b)
+        {
+            var distanceA = DistanceToPlayerBase(a);
+            var distanceB = DistanceToPlayerBase(b);
+            return distanceA.CompareTo(distanceB);
+
+            float DistanceToPlayerBase(IReadOnlyUnit target) =>
+                Vector2Int.Distance(target.Pos, _runtimeModel.RoMap.Bases[RuntimeModel.PlayerId]);
         }
     }
 }

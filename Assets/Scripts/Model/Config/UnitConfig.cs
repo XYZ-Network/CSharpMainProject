@@ -14,7 +14,9 @@ namespace Model.Config
         [SerializeField] private float _moveDelay = 0.25f;
         [SerializeField] private float _attackDelay = 0.75f;
         [SerializeField] private float _attackRange = 3.5f;
+        [SerializeField] private float _coordinatorAcceptanceRange = 7f;
         [SerializeField] private ProjectileType _projectileType = ProjectileType.ArchToTile;
+        [SerializeField] private int _projectilesPerShot = 1;
         [SerializeField] private int _damage = 15;
         
         public bool IsPlayerUnit => _isPlayerUnit;
@@ -26,7 +28,9 @@ namespace Model.Config
         public float MoveDelay => _moveDelay;
         public float AttackDelay => _attackDelay;
         public float AttackRange => _attackRange;
+        public float CoordinatorAcceptanceRange => _coordinatorAcceptanceRange;
         public ProjectileType ProjectileType => _projectileType;
+        public int ProjectilesPerShot => _projectilesPerShot;
         public int Damage => _damage;
     }
 }

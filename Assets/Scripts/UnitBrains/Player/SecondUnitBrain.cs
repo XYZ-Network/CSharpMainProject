@@ -10,86 +10,73 @@ namespace UnitBrains.Player
 {
     public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
+        private static int _unitCounter = 0;
+        private int _unitNumber = _unitCounter++;
+        
         public override string TargetUnitName => "Cobra Commando";
         private const float OverheatTemperature = 3f;
         private const float OverheatCooldown = 2f;
+        private const int SmartTargetingFactor = 3;
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        private List<Vector2Int> _priorityTargets = new List<Vector2Int>();
-
-        public static int unitСounter = 0;
-        private int unitNumber;
-        private const int maxTargetsCount = 3;
-
-        public SecondUnitBrain()
-        {
-
-            unitNumber = unitСounter++;
-        }
-
+        private List<Vector2Int> _priorityTargets = new();
+        
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;
-
-            if (GetTemperature() >= overheatTemperature)
+            int currentTemperature = GetTemperature();
+            if (currentTemperature >= OverheatTemperature) 
                 return;
-            else
+            
+            for (int i = 0; i <= currentTemperature; i++)
             {
-                for (int i = 0; i <= GetTemperature(); i++)
+                for (int j = 0; j < unit.ProjectilesPerShot; j++)
                 {
                     var projectile = CreateProjectile(forTarget);
                     AddProjectileToList(projectile, intoList);
                 }
-                IncreaseTemperature();
             }
+            
+            IncreaseTemperature();
         }
-        public override Vector2Int GetNextStep()
-        {
-            Vector2Int targetPosition;
-            targetPosition = _priorityTargets.Count > 0 ? _priorityTargets[0] : unit.Pos;
-            return IsTargetInRange(targetPosition) ? unit.Pos : base.GetNextStep();
-        }
+
+        // Override only target selection to use base pathfinding
+        public override Vector2Int GetNextStepTarget() =>
+            _priorityTargets.Any() 
+                ? _priorityTargets.First() 
+                : runtimeModel.RoMap.Bases[RuntimeModel.BotPlayerId];
+
         protected override List<Vector2Int> SelectTargets()
         {
-            var iD = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.BotPlayerId;
-            var baseCoords = runtimeModel.RoMap.Bases[iD];
-
+            // Enemy base already in GetAllTargets(). No need to add it explicitly.
+            var result = GetAllTargets().ToList();
+            
+            // Remove base as possible target when we have enemy units
+            if (result.Count > _unitNumber) 
+                result.Remove(result.Last());
+            
+            SortByDistanceToOwnBase(result);
+            
+            // In case if number of targets is less than smart targeting factor
+            var divider = Math.Min(result.Count, SmartTargetingFactor);
+            var target = result[_unitNumber % divider];
+            
             _priorityTargets.Clear();
-            List<Vector2Int> allTargets = GetAllTargets().ToList();
-            List<Vector2Int> reachableTargets = GetReachableTargets();
-            List<Vector2Int> closestTargets = new List<Vector2Int>();
-
-            SortByDistanceToOwnBase(allTargets);
-
-            var closestCount = maxTargetsCount > allTargets.Count ? allTargets.Count : maxTargetsCount;
-            closestTargets.AddRange(allTargets.GetRange(0, closestCount));
-
-            var targetIndex = unitNumber % maxTargetsCount;
-            var indexIsExist = targetIndex < closestTargets.Count && targetIndex > 0;
-            if (indexIsExist)
-            {
-                _priorityTargets.Add(closestTargets[targetIndex]);
-            }
-            else if (closestTargets.Count > 0)
-            {
-                _priorityTargets.Add(closestTargets[0]);
-            }
-
-            else
-            {
-                _priorityTargets.Add(baseCoords);
-            }
-
-            return reachableTargets.Contains(_priorityTargets.LastOrDefault()) ? _priorityTargets : reachableTargets;
+            _priorityTargets.Add(target);
+            
+            result.Clear();
+            if (IsTargetInRange(target))
+                result.Add(target);
+            
+            return result;
         }
+
         public override void Update(float deltaTime, float time)
         {
             if (_overheated)
-            {
-
+            {              
                 _cooldownTime += Time.deltaTime;
-                float t = _cooldownTime / (OverheatCooldown / 10);
+                float t = _cooldownTime / (OverheatCooldown/10);
                 _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
                 if (t >= 1)
                 {
@@ -101,14 +88,13 @@ namespace UnitBrains.Player
 
         private int GetTemperature()
         {
-            if (_overheated) return (int)OverheatTemperature;
+            if(_overheated) return (int) OverheatTemperature;
             else return (int)_temperature;
         }
 
         private void IncreaseTemperature()
         {
             _temperature += 1f;
-
             if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }

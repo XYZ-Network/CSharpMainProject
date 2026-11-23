@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Model.Config;
+using Model.Runtime.Buffs;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
 using UnitBrains;
 using UnitBrains.Pathfinding;
+using UnitBrains.Player;
 using UnityEngine;
 using Utilities;
-using Assets.Scripts.Utilities;
-using Assets.Scripts.UnitBrains;
-using Assets.Scripts.UnitBrains.Player;
 
 namespace Model.Runtime
 {
@@ -21,56 +20,59 @@ namespace Model.Runtime
         public bool IsDead => Health <= 0;
         public BaseUnitPath ActivePath => _brain?.ActivePath;
         public IReadOnlyList<BaseProjectile> PendingProjectiles => _pendingProjectiles;
+
         private readonly List<BaseProjectile> _pendingProjectiles = new();
         private IReadOnlyRuntimeModel _runtimeModel;
         private BaseUnitBrain _brain;
+        
+        // Actual values that can be modified by buffs
+        public float CurrentMoveDelay { get; private set; }
+        public float CurrentAttackDelay { get; private set; }
+        public float CurrentAttackRange { get; private set; }
+        public int ProjectilesPerShot { get; private set; }
+        public bool Invulnerability { get; private set; }
+        
         private float _nextBrainUpdateTime = 0f;
         private float _nextMoveTime = 0f;
         private float _nextAttackTime = 0f;
-
-        public float Speed { get; set; } // Скорость движения
-        public float AttackSpeed { get; set; } // Скорость атаки
-
-        public Unit(UnitConfig config, Vector2Int startPos, UnitCoordinator coordinator)
+        
+        public Unit(UnitConfig config, UnitCoordinator coordinator, Vector2Int startPos)
         {
             Config = config;
             Pos = startPos;
             Health = config.MaxHealth;
-            Speed = Config.MoveDelay; // Инициализация стандартной скоростью
-            AttackSpeed = Config.AttackDelay; // Инициализация стандартной скоростью атаки
             _brain = UnitBrainProvider.GetBrain(config);
             _brain.SetUnit(this);
             _brain.SetCoordinator(coordinator);
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
+
+            CurrentMoveDelay = Config.MoveDelay;
+            CurrentAttackDelay = Config.AttackDelay;
+            CurrentAttackRange = Config.AttackRange;
+            ProjectilesPerShot = 1;
+            Invulnerability = false;
         }
 
         public void Update(float deltaTime, float time)
         {
             if (IsDead)
                 return;
-
-            BuffSystem buffSystem = ServiceLocator.Get<BuffSystem>();
-
-            // Получаем модификаторы от баффов
-            float moveSpeedModifier = buffSystem.GetMoveSpeedModifier(this);
-            float attackSpeedModifier = buffSystem.GetAttackSpeedModifier(this);
-
+            
             if (_nextBrainUpdateTime < time)
             {
                 _nextBrainUpdateTime = time + Config.BrainUpdateInterval;
                 _brain.Update(deltaTime, time);
             }
-
+            
             if (_nextMoveTime < time)
             {
-
-                _nextMoveTime = time + Speed * moveSpeedModifier; // Учитываем бафф на скорость передвижения
+                _nextMoveTime = time + CurrentMoveDelay;
                 Move();
             }
-
+            
             if (_nextAttackTime < time && Attack())
             {
-                _nextAttackTime = time + AttackSpeed * attackSpeedModifier; // Учитываем бафф на скорость атаки
+                _nextAttackTime = time + CurrentAttackDelay;
             }
         }
 
@@ -79,9 +81,11 @@ namespace Model.Runtime
             var projectiles = _brain.GetProjectiles();
             if (projectiles == null || projectiles.Count == 0)
                 return false;
+            
             _pendingProjectiles.AddRange(projectiles);
             return true;
         }
+
         private void Move()
         {
             var targetPos = _brain.GetNextStep();
@@ -91,11 +95,13 @@ namespace Model.Runtime
                 Debug.LogError($"Brain for unit {Config.Name} returned invalid move: {delta}");
                 return;
             }
+
             if (_runtimeModel.RoMap[targetPos] ||
                 _runtimeModel.RoUnits.Any(u => u.Pos == targetPos))
             {
                 return;
             }
+            
             Pos = targetPos;
         }
 
@@ -103,9 +109,44 @@ namespace Model.Runtime
         {
             _pendingProjectiles.Clear();
         }
+
         public void TakeDamage(int projectileDamage)
         {
+            if (Invulnerability) 
+                return;
+
             Health -= projectileDamage;
         }
+        
+        public void ModifyMoveSpeed(float value) =>
+            CurrentMoveDelay = value > 0
+                ? Config.MoveDelay / value
+                : Config.MoveDelay * -value;
+        
+        public void ResetMoveSpeed() =>
+            CurrentMoveDelay = Config.MoveDelay;
+        
+        public void ModifyAttackSpeed(float value) =>
+            CurrentAttackDelay = value > 0
+                ? Config.AttackDelay / value
+                : Config.AttackDelay * -value;
+        
+        public void ResetAttackSpeed() =>
+            CurrentAttackDelay = Config.AttackDelay;
+
+        public void ModifyAttackRange(int value) =>
+            CurrentAttackRange += value;
+
+        public void ResetAttackRange() =>
+            CurrentAttackRange = Config.AttackRange;
+
+        public void ModifyProjectilesPerShot(int value) => 
+            ProjectilesPerShot += value;
+
+        public void ResetProjectilesPerShot() =>
+            ProjectilesPerShot = Config.ProjectilesPerShot;
+
+        public void SetInvulnerability(bool value) =>
+            Invulnerability = value;
     }
 }

@@ -18,22 +18,25 @@ namespace Controller
         private readonly List<UnitConfig> _sortedUnits;
         private readonly Action<UnitConfig> _onBotUnitChosen;
         private Coroutine _updateCoroutine;
-
+        
         public BotController(Action<UnitConfig> onBotUnitChosen)
         {
             _onBotUnitChosen = onBotUnitChosen;
-
+            
             _timeUtil = ServiceLocator.Get<TimeUtil>();
             _runtimeModel = ServiceLocator.Get<IReadOnlyRuntimeModel>();
             _sortedUnits = ServiceLocator.Get<Settings>().EnemyUnits.Keys
                 .OrderBy(x => x.Cost).ToList();
+
             _updateCoroutine = _timeUtil.StartCoroutine(UpdateCoroutine());
         }
+
         public void Stop()
         {
             _timeUtil.StopCoroutine(_updateCoroutine);
             _updateCoroutine = null;
         }
+
         private IEnumerator UpdateCoroutine()
         {
             var delay = new WaitForSeconds(1f);
@@ -46,14 +49,17 @@ namespace Controller
                         ChooseUnit();
                         break;
                 }
+
                 yield return delay;
             }
         }
+
         private void ChooseUnit()
         {
             var moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];
             if (_sortedUnits[0].Cost > moneyLeft)
                 return;
+
             for (int i = _sortedUnits.Count - 1; i >= 0; i--)
             {
                 moneyLeft = _runtimeModel.RoMoney[RuntimeModel.BotPlayerId];

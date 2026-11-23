@@ -59,20 +59,19 @@
     <Analyzer Include="E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\UnitBrains\Player\BufferawnBrain.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\SpeedBoostBuff.cs" />
+    <Compile Include="Assets\Scripts\Model\Runtime\Buffs\InvulnerabilityBuff.cs" />
     <Compile Include="Assets\Scripts\View\TileView.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\BaseBuff.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\Projectiles\BaseProjectile.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Player\UnitCoordinator.cs" />
+    <Compile Include="Assets\Scripts\Model\Runtime\Buffs\BuffSystem.cs" />
+    <Compile Include="Assets\Scripts\UnitBrains\Player\FourthUnitBrain.cs" />
     <Compile Include="Assets\Scripts\View\UnitView.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyUnit.cs" />
+    <Compile Include="Assets\Scripts\Model\Runtime\Buffs\IBuff.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\BaseUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Utilities\CameraPositioning.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\AttackSpeedBoostBuff.cs" />
     <Compile Include="Assets\Scripts\View\ChooseUnitView.cs" />
     <Compile Include="Assets\Scripts\View\UnitCardView.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Pathfinding\SmartNode.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Player\DefaultPlayerUnitBrain.cs" />
     <Compile Include="Assets\Scripts\View\LevelFinishedView.cs" />
     <Compile Include="Assets\Scripts\View\Gameplay3dView.cs" />
@@ -91,26 +90,24 @@
     <Compile Include="Assets\Scripts\UnitBrains\Player\SecondUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Model\PersistedModel.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyBase.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Pathfinding\SmartUnitPath.cs" />
     <Compile Include="Assets\Scripts\Utilities\TimeUtil.cs" />
+    <Compile Include="Assets\Scripts\Model\Runtime\Buffs\MultiShotBuff.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Player\ThirdUnitBrain.cs" />
     <Compile Include="Assets\Scripts\Controller\LevelController.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\ReadOnly\IReadOnlyProjectile.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Enemy\DefaultEnemyUnitBrain.cs" />
     <Compile Include="Assets\Scripts\View\ProjectileView.cs" />
     <Compile Include="Assets\Scripts\View\StartMenuView.cs" />
+    <Compile Include="Assets\Scripts\Model\Runtime\Buffs\AttackRangeBuff.cs" />
     <Compile Include="Assets\Scripts\Model\RuntimeModel.cs" />
     <Compile Include="Assets\Scripts\View\HealthBar.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\SlowMovementBuff.cs" />
     <Compile Include="Assets\Scripts\View\VFXView.cs" />
     <Compile Include="Assets\Scripts\Controller\IPlayerUnitChoosingListener.cs" />
     <Compile Include="Assets\Scripts\Utilities\Extensions.cs" />
     <Compile Include="Assets\Scripts\Utilities\ServiceLocator.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\Projectiles\ArchToTileProjectile.cs" />
     <Compile Include="Assets\Scripts\UnitBrains\Pathfinding\DummyUnitPath.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\BuffSystem.cs" />
     <Compile Include="Assets\Scripts\Controller\RootController.cs" />
-    <Compile Include="Assets\Scripts\UnitBrains\Buff\SlowAttackBuff.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\Unit.cs" />
     <Compile Include="Assets\Scripts\Model\IReadOnlyRuntimeModel.cs" />
     <Compile Include="Assets\Scripts\Model\Runtime\Projectiles\HorizontalLineProjectile.cs" />
@@ -376,6 +373,9 @@
     <Reference Include="UnityEditor.Graphs">
       <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\PlaybackEngines\AndroidPlayer\UnityEditor.Android.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
@@ -405,6 +405,15 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.1\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Types">
+      <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.Gradle">
+      <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Gradle.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Android.GradleProject">
+      <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.GradleProject.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>E:\XYZ\UnityHub\Editor\2022.3.12f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>

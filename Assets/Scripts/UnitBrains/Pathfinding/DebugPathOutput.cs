@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using View;
 
@@ -10,10 +9,10 @@ namespace UnitBrains.Pathfinding
     {
         [SerializeField] private GameObject cellHighlightPrefab;
         [SerializeField] private int maxHighlights = 5;
+
         public BaseUnitPath Path { get; private set; }
         private readonly List<GameObject> allHighlights = new();
         private Coroutine highlightCoroutine;
-        private static float delayHighlight = 0.15f;
 
         public void HighlightPath(BaseUnitPath path)
         {
@@ -22,28 +21,34 @@ namespace UnitBrains.Pathfinding
             {
                 DestroyHighlight(0);
             }
-
-
+            
             if (highlightCoroutine != null)
             {
                 StopCoroutine(highlightCoroutine);
             }
+
             highlightCoroutine = StartCoroutine(HighlightCoroutine(path));
         }
+
         private IEnumerator HighlightCoroutine(BaseUnitPath path)
         {
-            foreach (var cell in path.GetPath())
+            // Fade In
+            foreach (var pos in path.GetPath())
             {
-                CreateHighlight(cell);
-
-                if (allHighlights.Count() > maxHighlights)
-                {
+                CreateHighlight(pos);
+                if (allHighlights.Count >= maxHighlights)
                     DestroyHighlight(0);
-                }
-                yield return new WaitForSeconds(delayHighlight);
+                
+                yield return new WaitForSeconds(0.05f);
             }
 
-            HighlightPath(path);
+            // Fade Out
+            while (allHighlights.Count > 0)
+            {
+                DestroyHighlight(0);
+                
+                yield return new WaitForSeconds(0.05f);
+            }
         }
 
         private void CreateHighlight(Vector2Int atCell)
@@ -53,6 +58,7 @@ namespace UnitBrains.Pathfinding
             highlight.transform.SetParent(transform);
             allHighlights.Add(highlight);
         }
+
         private void DestroyHighlight(int index)
         {
             Destroy(allHighlights[index]);
