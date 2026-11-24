@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Model; // Для RuntimeModel.PlayerId и BotPlayerId
 using Model.Runtime.Projectiles;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace UnitBrains.Player
 {
@@ -13,7 +15,6 @@ namespace UnitBrains.Player
         private float _cooldownTime = 0f;
         private bool _overheated;
 
-        
         private Vector2Int? _targetToMove = null;
 
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
@@ -42,13 +43,13 @@ namespace UnitBrains.Player
             List<Vector2Int> result = new List<Vector2Int>();
             _targetToMove = null;
 
-            
+            // А. Получаем все цели
             IEnumerable<Vector2Int> allTargets = GetAllTargets();
 
             float minDistance = float.MaxValue;
             Vector2Int bestTarget = Vector2Int.zero;
 
-            
+            // Б. Ищем ближайшего к базе
             foreach (Vector2Int target in allTargets)
             {
                 float dist = DistanceToOwnBase(target);
@@ -59,31 +60,43 @@ namespace UnitBrains.Player
                 }
             }
 
-            
             if (minDistance != float.MaxValue)
             {
                 _targetToMove = bestTarget;
 
-                
                 if (IsTargetInRange(bestTarget))
                 {
                     result.Add(bestTarget);
+                }
+            }
+            else
+            {
+                // В. База противника. Берем ID базы врага
+                int enemyBaseId = RuntimeModel.PlayerId == 1 ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId;
+
+                // Используем runtimeModel (с маленькой буквы), как в родительском классе
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];
+                _targetToMove = enemyBase;
+
+                if (IsTargetInRange(enemyBase))
+                {
+                    result.Add(enemyBase);
                 }
             }
 
             return result;
         }
 
-        
         public override Vector2Int GetNextStep()
         {
-            
+            // Если цели нет, идем как обычно
             if (_targetToMove == null)
             {
                 return base.GetNextStep();
             }
 
-            
+            // В остальных случаях доверяем движение родительскому классу.
+            // Он сам поведет юнита в сторону врага, а мы будем стрелять по выбранной цели.
             return base.GetNextStep();
         }
 
