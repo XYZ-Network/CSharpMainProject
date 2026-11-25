@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Assets.Scripts.UnitBrains.Pathfinding;
 using Model;
 using Model.Runtime.Projectiles;
 using Model.Runtime.ReadOnly;
+using System.Collections.Generic;
+using System.Linq;
 using UnitBrains.Pathfinding;
 using UnityEngine;
 using Utilities;
@@ -39,7 +40,24 @@ namespace UnitBrains
             var target = runtimeModel.RoMap.Bases[
                 IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId];
 
-            _activePath = new DummyUnitPath(runtimeModel, unit.Pos, target);
+            bool needNewPath = _activePath == null ||
+                               _activePath.EndPoint != target ||
+                               !_activePath.GetPath().Contains(unit.Pos);
+
+            if (!needNewPath)
+            {
+                Vector2Int nextStep = _activePath.GetNextStepFrom(unit.Pos);
+                if (nextStep != unit.Pos && runtimeModel.RoUnits.Any(u => u.Pos == nextStep && u != unit))
+                {
+                    needNewPath = true;
+                }
+            }
+
+            if (needNewPath)
+            {
+                _activePath = new AStarUnitPath(runtimeModel, unit.Pos, target);
+            }
+
             return _activePath.GetNextStepFrom(unit.Pos);
         }
 
